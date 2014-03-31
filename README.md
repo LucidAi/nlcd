@@ -1,4 +1,2 @@
-nlcd
-====
-
-News Life Cycle Detector
+`nlcd` - News Life Cycle Detector
+=================================

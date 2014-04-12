@@ -11,7 +11,6 @@ class Fetcher(object):
     def __init__(self):
         pass
 
-
     def fetch(self, url):
         response = requests.get(url)
         return response.text

@@ -1,0 +1,6 @@
+requests
+textblob
+sklearn
+numpy
+scipy
+nltk

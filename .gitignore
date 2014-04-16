@@ -52,5 +52,7 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+# Fab
+local.json
 dev.json
 tests.json

@@ -1,6 +1,29 @@
 {
-    "api": [{
-        "id": "google_cse",
-        "key": "GOOGLE_API_KEY"
-    }]
+    "stage": {
+        "id":                       "example",
+    },
+
+    "deploy": {
+        "repository":               "https://github.com/MediaAnalysisTools/nlcd.git",
+        "branch":                   "master",
+        "host":                     "example.com",
+        "user":                     "ubuntu",
+        "path":                     "/home/nlcd",
+        "os":                       "ubuntu",
+        "local":                    false
+    },
+
+    "test": {
+
+    },
+
+    "nlcd": {
+
+        "searchApi": [{
+            "id":                   "api.GoogleCSE",
+            "googleApiKey":         "GOOGLE_API_KEY",
+            "googleEngineId":       "GOOGLE_ENGINE_ID"
+        }]
+
+    }
 }

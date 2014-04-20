@@ -2,6 +2,28 @@
   <div class="panel-heading">Related Articles</div>
   <div class="panel-body">
 
+
+    <table class="table table-condensed table-bordered">
+        <tr ng-repeat="r_item in related">
+            <td>{{r_item.relation.id}}</td>
+            <td>
+              <span class="badge badge-primary">{{r_item.foundDocuments.length}}</span> {{r_item.relation.text}}
+              <br/>
+              <ul>
+                <li ng-repeat="f_doc in r_item.foundDocuments">
+                  <span class="label label-primary">{{f_doc.displayLink}}</span>
+                  <strong>{{f_doc.title}}</strong>
+                  <small>{{f_doc.pagemap.NewsItem[0].description}}</small>
+                </li>
+              </ul>
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
     <br/>
     <button type="button" class="btn btn-success" ng-click="FindRelated()">
         Find Related

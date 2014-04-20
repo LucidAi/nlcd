@@ -12,16 +12,18 @@ app.controller("NlcdRelatedSearchController", ["$scope", "$location", "$http", "
         $scope.FindRelated = function() {
 
 
-            if ($scope.query.storyOriginSegments.length == 0) {
-                //TODO(zaytsev@usc.edu): Show Error Message
-                alert("//TODO(zaytsev@usc.edu): Show Error Message");
-                return;
-            }
-
-            NcldApiFactory.findRelated($scope.query.storyOriginSegments)
+            // if ($scope.query.storyOriginSegments.length == 0) {
+            //     //TODO(zaytsev@usc.edu): Show Error Message
+            //     alert("//TODO(zaytsev@usc.edu): Show Error Message");
+            //     return;
+            // }
+            //$scope.query.storyOriginSegments
+            NcldApiFactory.findRelated([])
             .success(function(response) {
 
                 console.log(response);
+
+                $scope.related = response.results;
 
             }).
             error(function(data, status, headers, config) {

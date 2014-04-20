@@ -80,23 +80,52 @@ def find_related(request):
         related = json.loads(request.GET.get("segments"))
         results = []
 
-        for entry in related:
+        # for entry in related:
+        #     entry_query = cse.make_query(query_string=entry["text"].encode('utf-8'))
+        #     found_documents = list(cse.find_results(entry_query, number=30))
+        #     results.append({
+        #         "relation": {
+        #             "id": entry["id"],
+        #             "type": "relations.SegmentText",
+        #             "text": entry["text"],
+        #             "query": entry_query,
+        #         },
+        #         "foundDocuments": found_documents,
+        #     })
 
-            entry_query = cse.make_query(query_string=entry["text"])
-            found_documents = list(cse.find_results(entry_query))
+        with open("webapp/json/results.json", "rb") as fl:
+            results = json.load(fl)["results"]
 
-            results.append({
+        for relSet in results:
 
-                "relation": {
-                    "id": entry["id"],
-                    "type": "relations.SegmentText",
-                    "text": entry["text"],
-                    "query": entry_query,
-                },
+            for entry in relSet["foundDocuments"]:
 
-                "foundDocuments": found_documents,
+                author = []
+                source = []
+                urls   = []
 
-            })
+                try: source.append(entry["pagemap"]["NewsItem"][0]["site_name"])
+                except: pass
+                try: source.append(entry["pagemap"]["metatags"][0]["og:site_name"])
+                except: pass
+                try: source.append(entry["pagemap"]["metatags"][0]["source"])
+                except: pass
+                try: source.append(entry["displayLink"])
+                except: pass
+
+                try: author.append(entry["pagemap"]["metatags"][0]["author"])
+                except: pass
+                try: author.append(entry["pagemap"]["metatags"][0]["dc.creator"])
+                except: pass
+
+                urls.append(entry["link"])
+
+                entry["nlcdMeta"] = {
+                    "author": list(set(author)),
+                    "source": list(set(source)),
+                    "urls":   urls,
+                }
+
 
 
         return HttpResponse(json.dumps({

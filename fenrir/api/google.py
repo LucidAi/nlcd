@@ -46,8 +46,6 @@ class CseAPI(object):
             "sort": None,           # The sort expression to apply to the results (string)
             "start": None,          # The index of the first result to return (integer)
 
-            "cx": self.engine_id,
-            "key": self.key,
         }
         for k, v in q.items():
             if v is None:
@@ -68,7 +66,8 @@ class CseAPI(object):
     def find_results(self, query, number=10):
         for start_index in self.make_query_pages(number):
             query["start"] = start_index
-            url = self.make_cse_url(query)
+            url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
+            print "URL", url
             try:
                 logging.info("Calling %s" % url)
                 items = requests.get(url).json()["items"]

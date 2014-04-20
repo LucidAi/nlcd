@@ -16,7 +16,7 @@ def config(stage_id):
     env.config = ""
 
 
-def local():
+def localhost():
     env.host_string     = "localhost"
     env.user            = "localuser"
     env.local           = True
@@ -24,7 +24,7 @@ def local():
     local(cmd)
 
 
-def remote():
+def remotehost():
     env.host_string     = "remotehost"
     env.user            = "remoteuser"
     env.key_filename    = "ssh_key_path"
@@ -97,6 +97,8 @@ def deploy():
         # print(green("Creating indexes."))
         # run("python manage.py syncdb --noinput --settings=lccsrv.settings")
 
+def run_local():
+    local("pypy manage.py runserver 0.0.0.0:8000 --settings=nlcd.local")
 
 def run_test():
     config("dev")

@@ -1,0 +1,63 @@
+<!--
+Copyright (C) University of Southern California (http://usc.edu)
+Author: Vladimir M. Zaytsev <zaytsev@usc.edu>
+URL: <http://nlg.isi.edu/>
+For more information, see README.md
+For license information, see LICENSE
+ -->
+
+<!DOCTYPE html>
+<html lang="en" ng-app="NlcdClient">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>NLCD</title>
+    <link href="/webapp/vendor/bs/css/bootstrap.css" rel="stylesheet">
+    <link href="/webapp/css/custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/static/js/vendor/html5shiv.js"></script>
+      <script src="/static/js/vendor/respond.min.js"></script>
+    <![endif]-->
+    <script src="/webapp/js/vendor/angular.min.js"></script>
+  </head>
+
+  <body>
+
+
+    <div id="wrap" ng-view>
+
+    </div>
+
+<!--     <br/>
+    <br/>
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted">
+          2014 &copy; Mediator.domain<br/>
+          MediaAnalysisTools
+        </p>
+      </div>
+    </div>
+ -->
+
+    <script src="/webapp/js/vendor/angular-route.min.js"></script>
+    <script src="/webapp/js/vendor/angular-cookies.min.js"></script>
+
+    <script src="/webapp/js/vendor/jquery-2.1.0.min.js"></script>
+
+    <script src="/webapp/vendor/bs/js/bootstrap.min.js"></script>
+
+    <script src="/webapp/js/app.js"></script>
+    <script src="/webapp/js/client/client-controller.js"></script>
+    <script src="/webapp/js/client/origin-controller.js"></script>
+    <script src="/webapp/js/client/segmentizer-controller.js"></script>
+    <script src="/webapp/js/client/related-search-controller.js"></script>
+    <script src="/webapp/js/api/api-factory.js"></script>
+
+  </body>
+</html>

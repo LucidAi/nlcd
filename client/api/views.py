@@ -3,74 +3,44 @@
 
 import re
 import json
-import traceback
 
 from django.conf import settings
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
-from textblob import TextBlob
 
 from fenrir.fetcher import Fetcher
 from fenrir.api.google import CseAPI
-
 from fenrir.extraction.base import TextPreprocessor
 
+from client.api.decorators import nlcd_api_call
+
 
 @csrf_exempt
+@nlcd_api_call
 def get_article(request):
-
-    try:
-        url = request.GET.get("url")
-        text = Fetcher().fetch_document_text(url)
-        preproc = TextPreprocessor()
-        text = "\n".join([str(s) for s in preproc.sent_segmentize(text)])
-    except:
-        traceback.print_exc()
-
-    return HttpResponse(json.dumps({
+    url = request.GET.get("url")
+    text = Fetcher().fetch_document_text(url)
+    preproc = TextPreprocessor()
+    text = "\n".join([str(s) for s in preproc.sent_segmentize(text)])
+    return {
         "url": url,
         "text": text,
-    }), content_type="application/json")
+    }
 
 
 @csrf_exempt
+@nlcd_api_call
 def get_segments(request):
-    try:
-        text = request.GET.get("text")
-        preproc = TextPreprocessor()
-        sentences = preproc.sent_segmentize(text)
-        quoted = []
-        for sent in sentences:
-            s_quoted = re.findall('\"([^"]*)\"', sent) \
-                     + re.findall('\'([^"]*)\'', sent) \
-                     + re.findall('“([^"]*)”', sent)
-            quoted.extend(s_quoted)
-
-        all_segments = list(set(sentences + quoted))
-        filtered = []
-        for s_id, segment in enumerate(all_segments):
-            text = segment.decode("utf-8")
-            tokens = [t.lower() for t in TextBlob(text).tokens]
-            tk_size = len(tokens)
-            tx_size = len(text)
-            is_important = tk_size >= 4 and tk_size <= 30
-            filtered.append({
-                "id": s_id,
-                "text": text,
-                "tokens": tokens,
-                "tk_size": tk_size,
-                "tx_size": tx_size,
-                "is_important": is_important
-            })
-    except:
-        traceback.print_exc()
-
-    return HttpResponse(json.dumps({
-            "sentences": sentences,
-            "quoted": quoted,
-            "filtered": filtered,
-        }, sort_keys=True), content_type="application/json")
+    text = request.GET.get("text")
+    preproc = TextPreprocessor()
+    sentences = preproc.sent_segmentize(text)
+    quoted = preproc.extract_quoted(sentences)
+    all_segments = sentences + quoted
+    filtered = preproc.filter_sents(sentences, 4, 30)
+    return {
+        "sentences": sentences,
+        "quoted":    quoted,
+        "filtered":  filtered,
+    }
 
 
 @csrf_exempt

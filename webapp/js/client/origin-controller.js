@@ -18,11 +18,11 @@ app.controller("NlcdOriginController", ["$scope", "$location", "$http", "NcldApi
             }
 
             NcldApiFactory.getArticle($scope.query.storyOriginUrl)
-            .success(function(article) {
+            .success(function(response) {
 
                 //TODO(zaytsev@usc.edu): Show Message that Article Text is Loaded
-                console.log(article);
-                $scope.query.storyOriginText = article.text;
+                console.log(response);
+                $scope.query.storyOriginText = response.data.text;
 
             }).
             error(function(data, status, headers, config) {

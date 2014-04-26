@@ -19,7 +19,9 @@ app.controller("NlcdSegmentizerController", ["$scope", "$location", "$http", "Nc
             }
 
             NcldApiFactory.getSegments($scope.query.storyOriginText)
-            .success(function(segments) {
+            .success(function(response) {
+
+                var segments = response.data;
 
                 $scope.query.storyOriginSentences = segments.sentences;
                 $scope.query.storyOriginQuoted = segments.quoted;

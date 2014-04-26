@@ -10,8 +10,11 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from textblob import TextBlob
+
 from fenrir.fetcher import Fetcher
 from fenrir.api.google import CseAPI
+
+from fenrir.extraction.base import TextPreprocessor
 
 
 @csrf_exempt
@@ -20,9 +23,8 @@ def get_article(request):
     try:
         url = request.GET.get("url")
         text = Fetcher().fetch_document_text(url)
-        text = re.sub("\&#?[a-z0-9]+;", "", text)
-        blob = TextBlob(text)
-        text = "\n".join([str(s) for s in blob.sentences])
+        preproc = TextPreprocessor()
+        text = "\n".join([str(s) for s in preproc.sent_segmentize(text)])
     except:
         traceback.print_exc()
 
@@ -36,8 +38,8 @@ def get_article(request):
 def get_segments(request):
     try:
         text = request.GET.get("text")
-        blob = TextBlob(text)
-        sentences = [str(s) for s in blob.sentences]
+        preproc = TextPreprocessor()
+        sentences = preproc.sent_segmentize(text)
         quoted = []
         for sent in sentences:
             s_quoted = re.findall('\"([^"]*)\"', sent) \

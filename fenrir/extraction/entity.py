@@ -6,7 +6,7 @@ import nltk
 
 class NerExtractor(object):
 
-    def truecase(self, tokens):
+    def apply_truecase(self, tokens):
         tokens = tokens[:]
         for i in xrange(len(tokens)):
             if len(tokens[i]) <= 3 or tokens[i][0] == "@":
@@ -16,14 +16,19 @@ class NerExtractor(object):
         return tokens
 
     def extract_entities(self, texts, truecase=True, set_label=None):
+        """
+        Extracts named entites from set of strings `texts`.
+        If `truecase` is True, applies heuristic to match true cases of words (improves quality on short strings).
+        If set_label is None - uses binary classification with provided label. Otherwise uses multiclass classification
+        with default NLTK NE labels.
+        """
         entities = set()
         for text in texts:
             sentences = nltk.sent_tokenize(text)
             sentences = [nltk.word_tokenize(sent) for sent in sentences]
             if truecase:
                 for i, sent in enumerate(sentences):
-                    truecaed = self.truecase(sent)
-                    sentences[i] = truecaed
+                    sentences[i] = self.apply_truecase(sent)
             sentences = [nltk.pos_tag(sent) for sent in sentences]
             for sent in sentences:
                 ner_tree = nltk.ne_chunk(sent, binary=True)

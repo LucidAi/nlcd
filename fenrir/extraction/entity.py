@@ -39,7 +39,7 @@ class NerExtractor(object):
                     sentences[i] = self.apply_truecase(sent)
             sentences = [nltk.pos_tag(sent) for sent in sentences]
             for sent in sentences:
-                ner_tree = nltk.ne_chunk(sent, binary=True)
+                ner_tree = nltk.ne_chunk(sent, binary=set_label is not None)
                 for ne in ner_tree:
                     if hasattr(ne, "node"):
                         entities.add((ne.node, " ".join(l[0] for l in ne.leaves())))

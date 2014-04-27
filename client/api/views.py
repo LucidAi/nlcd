@@ -9,6 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from fenrir.fetcher import Fetcher
 from fenrir.api.google import CseAPI
+
+from fenrir.extraction.entity import NerExtractor
+from fenrir.extraction.pattern import get_extractor
 from fenrir.extraction.base import TextPreprocessor
 
 from client.api.decorators import nlcd_api_call
@@ -44,71 +47,54 @@ def get_segments(request):
 
 
 @csrf_exempt
+@nlcd_api_call
 def find_related(request):
-    try:
+    api = settings.CONF["nlcd"]["searchApi"][0]
+    cse = CseAPI(api["googleApiKey"], api["googleEngineId"])
+    doc_extractor = get_extractor(api["id"])
+    ner_extractor = NerExtractor()
+    related = json.loads(request.GET.get("segments"))
+    # for entry in related:
+    #     entry_query = cse.make_query(query_string=entry["text"].encode('utf-8'))
+    #     found_documents = list(cse.find_results(entry_query, number=30))
+    #     results.append({
+    #         "relation": {
+    #             "id": entry["id"],
+    #             "type": "relations.SegmentText",
+    #             "text": entry["text"],
+    #             "query": entry_query,
+    #         },
+    #         "foundDocuments": found_documents,
+    #     })
+    with open("webapp/json/results.json", "rb") as fl:
+        related = json.load(fl)["results"]
 
-        api = settings.CONF["nlcd"]["searchApi"][0]
-        cse = CseAPI(api["googleApiKey"], api["googleEngineId"])
-        related = json.loads(request.GET.get("segments"))
-        results = []
-
-        # for entry in related:
-        #     entry_query = cse.make_query(query_string=entry["text"].encode('utf-8'))
-        #     found_documents = list(cse.find_results(entry_query, number=30))
-        #     results.append({
-        #         "relation": {
-        #             "id": entry["id"],
-        #             "type": "relations.SegmentText",
-        #             "text": entry["text"],
-        #             "query": entry_query,
-        #         },
-        #         "foundDocuments": found_documents,
-        #     })
-
-        with open("webapp/json/results.json", "rb") as fl:
-            results = json.load(fl)["results"]
-
-        for relSet in results:
-
-            for entry in relSet["foundDocuments"]:
-
-                author = []
-                source = []
-                urls   = []
-
-                try: source.append(entry["pagemap"]["NewsItem"][0]["site_name"])
-                except: pass
-                try: source.append(entry["pagemap"]["metatags"][0]["og:site_name"])
-                except: pass
-                try: source.append(entry["pagemap"]["metatags"][0]["source"])
-                except: pass
-                try: source.append(entry["displayLink"])
-                except: pass
-
-                try: author.append(entry["pagemap"]["metatags"][0]["author"])
-                except: pass
-                try: author.append(entry["pagemap"]["metatags"][0]["dc.creator"])
-                except: pass
-
-                urls.append(entry["link"])
-
-                entry["nlcdMeta"] = {
-                    "author": list(set(author)),
-                    "source": list(set(source)),
-                    "urls":   urls,
+    results = []
+    for rel_set in related:
+        for entry in rel_set["foundDocuments"]:
+            urls = doc_extractor.extract_urls(entry)
+            authors = doc_extractor.extract_authors(entry)
+            sources = doc_extractor.extract_sources(entry)
+            titles = doc_extractor.extract_titles(entry)
+            pub_dates = doc_extractor.extract_publish_dates(entry)
+            results.append({
+                "nlcdMeta": {
+                    "url": entry.get("formattedUrl"),
+                    "cacheId": entry.get("cacheId"),
+                    "matchedEntities": {
+                        # "urls": urls,
+                        "authors": authors,
+                        "sources": sources,
+                        # "titles": titles,
+                        # "publishedDates": pub_dates,
+                    },
+                    "nerEntities": {
+                        "sources": ner_extractor.extract_entities(sources, set_label=None),
+                        "authors": ner_extractor.extract_entities(authors, set_label=None)
+                    },
                 }
+            })
 
-
-
-        return HttpResponse(json.dumps({
-
-            "results": results,
-
-        }, sort_keys=True), content_type="application/json")
-
-
-    except:
-        traceback.print_exc()
-
-
-
+    return {
+        "related": results,
+    }

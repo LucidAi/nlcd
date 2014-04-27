@@ -1,3 +1,4 @@
+jsonpath-rw
 requests
 textblob
 sklearn

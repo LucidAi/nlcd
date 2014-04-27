@@ -23,7 +23,7 @@ app.controller("NlcdRelatedSearchController", ["$scope", "$location", "$http", "
 
                 console.log(response);
 
-                $scope.related = response.results;
+                $scope.related = response.data.related;
 
             }).
             error(function(data, status, headers, config) {

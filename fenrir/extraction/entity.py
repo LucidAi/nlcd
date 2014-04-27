@@ -16,11 +16,19 @@ class NerExtractor(object):
         return tokens
 
     def extract_entities(self, texts, truecase=True, set_label=None):
-        """
-        Extracts named entites from set of strings `texts`.
-        If `truecase` is True, applies heuristic to match true cases of words (improves quality on short strings).
-        If set_label is None - uses binary classification with provided label. Otherwise uses multiclass classification
-        with default NLTK NE labels.
+        """Extracts named entites from set of strings.
+        
+        Args:
+            texts (list): Collection of input strings.
+        
+        Kwargs:
+            truecase (bool): If True, method applies heuristic to match true cases of words in texts (improves quality on short strings).
+            set_label (str): if not None, then method uses binary classification and label found entities with provided label value. Otherwise uses multiclass classification
+            with default NLTK NE labels.
+        
+        Returns:
+            set. Set of pairs (entity, label).
+        
         """
         entities = set()
         for text in texts:

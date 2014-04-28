@@ -9,6 +9,8 @@ from client.api import common
 
 class TextPreprocessor(object):
 
+    RE_EMPTY_STR = re.compile("^\s*$")
+
     RE_HTML_SPECIAL_CHARS = re.compile("\&#?[a-z0-9]+;")
 
     RE_Q_PHRASE_PATTERN_1 = re.compile("\"([^\"]*)\"")
@@ -28,7 +30,7 @@ class TextPreprocessor(object):
         for line in lines:
             blob = textblob.TextBlob(line)
             sents.extend(map(str, blob.sentences))
-        return sents
+        return [sent for sent in sents if not self.RE_EMPTY_STR.match(sent)]
 
     def extract_quoted(self, sentence_list):
         quoted = []
@@ -42,6 +44,7 @@ class TextPreprocessor(object):
                            tokens_min=4,
                            tokens_max=30):
         filtered = []
+        sentence_list = list(set((s for s in sentence_list if len(s) > 0)))
         for sentno, sent in enumerate(sentence_list):
             text = sent.decode("utf-8")
             tokens = [t.lower() for t in textblob.TextBlob(text).tokens]

@@ -35,8 +35,8 @@ def get_article(request):
 def get_segments(request):
     text = request.GET.get("text")
     preproc = TextPreprocessor()
-    sentences = preproc.sent_segmentize(text)
-    quoted = preproc.extract_quoted(sentences)
+    sentences = list(set(preproc.sent_segmentize(text)))
+    quoted = list(set(preproc.extract_quoted(sentences)))
     all_segments = sentences + quoted
     filtered = preproc.filter_sents(sentences, 4, 30)
     return {
@@ -78,15 +78,15 @@ def find_related(request):
             titles = doc_extractor.extract_titles(entry)
             pub_dates = doc_extractor.extract_publish_dates(entry)
             results.append({
-                "nlcdMeta": {
+                "nlcdAnnotation": {
                     "url": entry.get("formattedUrl"),
                     "cacheId": entry.get("cacheId"),
                     "matchedEntities": {
-                        # "urls": urls,
+                        "urls": urls,
                         "authors": authors,
                         "sources": sources,
-                        # "titles": titles,
-                        # "publishedDates": pub_dates,
+                        "titles": titles,
+                        "publishedDates": pub_dates,
                     },
                     "nerEntities": {
                         "sources": ner_extractor.extract_entities(sources, set_label=None),

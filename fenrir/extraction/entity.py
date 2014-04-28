@@ -26,12 +26,10 @@ class NerExtractor(object):
                              in texts (improves quality on short strings).
             set_label (str): If not None, then method uses binary classification and label
                              found entities with provided label value. Otherwise uses
-                             multiclass classification
-            with default NLTK NE labels.
+                             multiclass classification with default NLTK NE labels.
         
         Returns:
-            set. Set of pairs (entity, label).
-        
+            (set): Set of pairs (entity, label).
         """
         entities = set()
         for text in texts:

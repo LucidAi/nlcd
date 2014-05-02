@@ -89,13 +89,13 @@ def step_3_extracting_article_sentences(args):
             with open(text_file_name, "wb") as o_fl:
                 json.dump({
                     "url": article.url,
-                    "title": article.title,
-                    "text": article.text,
-                    "authors": article.authors,
-                    "keywords": article.keywords,
-                    "summary": article.summary,
+                    "title": article.title.encode("utf-8"),
+                    "text": article.text.encode("utf-8"),
+                    "authors": [a.encode("utf-8") for a in article.authors],
+                    "keywords": [kw.encode("utf-8") for kw in article.keywords],
+                    "summary": article.summary.encode("utf-8"),
                     "langid": text_preproc.langid(article.text),
-                }, o_fl, indent=4)
+                }, o_fl, indent=4, ensure_ascii=False)
 
 STEPS = (
 

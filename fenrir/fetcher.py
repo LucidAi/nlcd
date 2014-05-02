@@ -35,7 +35,7 @@ class Fetcher(object):
         return text#"\n".join(text.split("\n"))
 
     def fetch_documents(self, urls, max_threads=1):
-        return grequests.imap((grequests.get(u) for u in urls), size=max_threads)
+        return grequests.map((grequests.get(u) for u in urls), size=max_threads)
 
     def html_to_text(self, html):
         doc = readability.Document(html)

@@ -2,9 +2,11 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
+import nltk
 import langid
 import textblob
 import newspaper
+import readability
 
 from client.api import common
 
@@ -23,11 +25,21 @@ class TextPreprocessor(object):
         pass
 
     def extract_article(self, url, html):
-        article = newspaper.Article(url)
+        lang, _ = self.html_langid(html)
+        article = newspaper.Article(url, language=lang)
         article.set_html(html)
         article.parse()
         article.nlp()
         return article
+
+    def html_to_text(self, html):
+        doc = readability.Document(html)
+        summary = doc.summary()
+        text = nltk.util.clean_html(summary)
+        return text
+
+    def html_langid(self, html):
+        return langid.classify(self.html_to_text(html))
 
     def langid(self, text):
         return langid.classify(text)

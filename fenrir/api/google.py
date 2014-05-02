@@ -25,26 +25,27 @@ class CseAPI(object):
                      country=None,
                      date_start=None,
                      date_end=None,
-                     terms=None,
+                     exact_terms=None,
                      ):
         q = {
             "q": query_string,
 
-            "cr": country,          # Country restrict(s)
-            "dateRestrict": None,   # Specifies all search results are from a time period (string)
-            "exactTerms": None,     # Identifies a phrase that all documents in the search results must contain (string)
-            "excludeTerms": None,   # Identifies a word or phrase that should not appear in any documents in the search
-                                    # results (string)
-            "fileType": None,       # Returns images of a specified type. Some of the allowed values are: bmp, gif,
-                                    # png, jpg, svg, pdf, ... (string)
-            "num": None,            # Number of search results to return (integer),
-            "orTerms": None,        # Provides additional search terms to check for in a document, where each document
-                                    # in the search results must contain at least one of the additional search
-                                    # terms (string)
-            "relatedSite": None,    # Specifies that all search results should be pages that are related to the
-                                    # specified URL (string)
-            "sort": None,           # The sort expression to apply to the results (string)
-            "start": None,          # The index of the first result to return (integer)
+            "cr": country,                  # Country restrict(s)
+            "dateRestrict": None,           # Specifies all search results are from a time period (string)
+            "exactTerms": exact_terms,      # Identifies a phrase that all documents in the search results must
+                                            # contain (string)
+            "excludeTerms": None,           # Identifies a word or phrase that should not appear in any documents
+                                            # in the search results (string)
+            "fileType": None,               # Returns images of a specified type. Some of the allowed values are:
+                                            # bmp, gif, png, jpg, svg, pdf, ... (string)
+            "num": None,                    # Number of search results to return (integer),
+            "orTerms": None,                # Provides additional search terms to check for in a document, where each
+                                            # document in the search results must contain at least one of the additional
+                                            # search terms (string)
+            "relatedSite": None,            # Specifies that all search results should be pages that are related to the
+                                            # specified URL (string)
+            "sort": None,                   # The sort expression to apply to the results (string)
+            "start": None,                  # The index of the first result to return (integer)
 
         }
         for k, v in q.items():

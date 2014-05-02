@@ -17,8 +17,8 @@ app.controller("NlcdRelatedSearchController", ["$scope", "$location", "$http", "
             //     alert("//TODO(zaytsev@usc.edu): Show Error Message");
             //     return;
             // }
-            //$scope.query.storyOriginSegments
-            NcldApiFactory.findRelated([])
+
+            NcldApiFactory.findRelated($scope.query.storyOriginSegments)
             .success(function(response) {
 
                 console.log(response);

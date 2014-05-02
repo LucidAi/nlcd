@@ -2,15 +2,17 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
+import langid
 import textblob
+import newspaper
 
 from client.api import common
 
 
 class TextPreprocessor(object):
 
+    RE_WHITESPACE = re.compile(" +")
     RE_EMPTY_STR = re.compile("^\s*$")
-
     RE_HTML_SPECIAL_CHARS = re.compile("\&#?[a-z0-9]+;")
 
     RE_Q_PHRASE_PATTERN_1 = re.compile("\"([^\"]*)\"")
@@ -19,6 +21,16 @@ class TextPreprocessor(object):
 
     def __init__(self):
         pass
+
+    def extract_article(self, url, html):
+        article = newspaper.Article(url)
+        article.set_html(html)
+        article.parse()
+        article.nlp()
+        return article
+
+    def langid(self, text):
+        return langid.classify(text)
 
     def clean_html_junk(self, text):
         return self.RE_HTML_SPECIAL_CHARS.sub("", text)
@@ -30,7 +42,8 @@ class TextPreprocessor(object):
         for line in lines:
             blob = textblob.TextBlob(line)
             sents.extend(map(str, blob.sentences))
-        return [sent for sent in sents if not self.RE_EMPTY_STR.match(sent)]
+        sents = [sent for sent in sents if not self.RE_EMPTY_STR.match(sent)]
+        return [self.RE_WHITESPACE.sub(" ", sent) for sent in sents]
 
     def extract_quoted(self, sentence_list):
         quoted = []

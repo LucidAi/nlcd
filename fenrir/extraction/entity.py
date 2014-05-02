@@ -1,10 +1,12 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
+import re
 import nltk
 
 
 class NerExtractor(object):
+
 
     def apply_truecase(self, tokens):
         tokens = tokens[:]
@@ -17,17 +19,17 @@ class NerExtractor(object):
 
     def extract_entities(self, texts, truecase=True, set_label=None):
         """Extracts named entites from set of strings.
-        
+
         Args:
             texts (list): Collection of input strings.
-        
+
         Kwargs:
             truecase (bool): If True, method applies heuristic to match true cases of words
                              in texts (improves quality on short strings).
             set_label (str): If not None, then method uses binary classification and label
                              found entities with provided label value. Otherwise uses
                              multiclass classification with default NLTK NE labels.
-        
+
         Returns:
             (set): Set of pairs (entity, label).
         """

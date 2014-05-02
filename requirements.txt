@@ -1,7 +1,10 @@
+newspaper
 jsonpath-rw
+grequests
 requests
 textblob
 sklearn
+langid
 numpy
 scipy
 nltk

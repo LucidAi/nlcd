@@ -54,32 +54,44 @@ def find_related(request):
     doc_extractor = get_extractor(api["id"])
     ner_extractor = NerExtractor()
     related = json.loads(request.GET.get("segments"))
-    # for entry in related:
-    #     entry_query = cse.make_query(query_string=entry["text"].encode('utf-8'))
-    #     found_documents = list(cse.find_results(entry_query, number=30))
-    #     results.append({
-    #         "relation": {
-    #             "id": entry["id"],
-    #             "type": "relations.SegmentText",
-    #             "text": entry["text"],
-    #             "query": entry_query,
-    #         },
-    #         "foundDocuments": found_documents,
-    #     })
-    with open("webapp/json/results.json", "rb") as fl:
-        related = json.load(fl)["results"]
 
-    results = []
-    for rel_set in related:
-        for entry in rel_set["foundDocuments"]:
+    rel_sets = []
+
+    for entry in related:
+        text = entry["text"].encode("utf-8")
+        entry_query = cse.make_query(query_string=text, exact_terms=text)
+        found_documents = list(cse.find_results(entry_query, number=100))
+        rel_sets.append((
+            {
+                "id": entry["id"],
+                "type": "relations.SegmentText",
+                "text": entry["text"],
+                "query": entry_query,
+            },
+            found_documents,
+        ))
+
+    # with open("webapp/json/results.json", "rb") as fl:
+    #     related = json.load(fl)["results"]
+
+    nlcd_annotated = []
+
+    for relation, found_documents in rel_sets:
+        annotated_documents = []
+        nlcd_annotated.append({
+            "relation": relation,
+            "documents": annotated_documents,
+        })
+        for entry in found_documents:
             urls = doc_extractor.extract_urls(entry)
             authors = doc_extractor.extract_authors(entry)
             sources = doc_extractor.extract_sources(entry)
             titles = doc_extractor.extract_titles(entry)
             pub_dates = doc_extractor.extract_publish_dates(entry)
-            results.append({
+            annotated_documents.append({
+                "googleAnnotation": entry,
                 "nlcdAnnotation": {
-                    "url": entry.get("formattedUrl"),
+                    "url": entry.get("link"),
                     "cacheId": entry.get("cacheId"),
                     "matchedEntities": {
                         "urls": urls,
@@ -89,12 +101,29 @@ def find_related(request):
                         "publishedDates": pub_dates,
                     },
                     "nerEntities": {
-                        "sources": ner_extractor.extract_entities(sources, set_label=None),
-                        "authors": ner_extractor.extract_entities(authors, set_label=None)
+                        "sources": ner_extractor.extract_entities(sources, set_label="ORG"),
+                        "authors": ner_extractor.extract_entities(authors, set_label="PER")
                     },
                 }
             })
 
     return {
-        "related": results,
+        "related": nlcd_annotated,
+    }
+
+@csrf_exempt
+@nlcd_api_call
+def fetch_related(request):
+    import lz4
+    # query = json.loads(request.POST.get("query"))
+
+
+    query = json.loads(lz4.decompress(request.body))
+
+
+
+
+
+    return {
+        "response": "success",
     }

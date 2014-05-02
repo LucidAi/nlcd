@@ -13,4 +13,5 @@ urlpatterns = patterns("client.api.views",
     url(r"get_article/$",   "get_article",      name="get_article"),
     url(r"get_segments/$",  "get_segments",     name="get_segments"),
     url(r"find_related/$",  "find_related",     name="find_related"),
+    url(r"fetch_related/$", "fetch_related",    name="fetch_related"),
 )

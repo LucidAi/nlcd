@@ -14,11 +14,13 @@ import fenrir
 import fenrir.fetcher
 import fenrir.extraction
 import fenrir.extraction.base
+import fenrir.extraction.entity
 
 
-ORIGINS_FILE        = "1.origins.txt"
-ORIGINS_HTML_DIR    = "2.orignins.html"
-ORIGINS_TEXT_DIR    = "3.orignins.text"
+ORIGINS_FILE            = "1.origins.txt"
+ORIGINS_HTML_DIR        = "2.orignins.html"
+ORIGINS_TEXT_DIR        = "3.orignins.text"
+ORIGINS_FILTERED_DIR    = "4.filtered.text"
 
 
 def step_1_preprocessing(args):
@@ -97,11 +99,67 @@ def step_3_extracting_article_sentences(args):
                     "langid": text_preproc.langid(article.text),
                 }, o_fl, indent=4, ensure_ascii=False)
 
+
+def step_4_extract_key_sentences(args):
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
+    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
+    if os.path.exists(articles_filtered_dir):
+        logging.info("Cleaning previous articles (filtered) directory %s" % articles_filtered_dir)
+        rm_cmd = "rm -rf %s" % articles_filtered_dir
+        os.system(rm_cmd)
+    logging.info("Creating articles text directory: %s" % articles_text_dir)
+    os.mkdir(articles_filtered_dir)
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
+    logging.info("Filtering sentences, saving to: %s" % articles_filtered_dir)
+    text_preproc = fenrir.extraction.base.TextPreprocessor()
+    for i, url in enumerate(origin_urls):
+        logging.info("Loading article text from (%d): %s" % (i, url))
+        text_json_file_name = os.path.join(articles_text_dir, "%d.json" % i)
+        filtered_json_name = os.path.join(articles_filtered_dir, "%d.json" % i)
+        with open(text_json_file_name, "rb") as i_fl:
+            article = json.load(i_fl)
+            with open(filtered_json_name, "wb") as o_fl:
+
+
+
+                url = article["url"].encode("utf-8")
+                title = article["title"].encode("utf-8")
+                text = article["text"].encode("utf-8")
+                authors = [a.encode("utf-8") for a in article["authors"]],
+                keywords = [kw.encode("utf-8") for kw in article["keywords"]]
+                summary = article["summary"].encode("utf-8")
+                langid = text_preproc.langid(article["text"])[0]
+
+
+                sentenes = text_preproc.sent_segmentize(text)
+                sentenes.extend(text_preproc.sent_segmentize(summary))
+                quoted = text_preproc.extract_quoted(sentenes)
+                key_sentences = text_preproc.filter_sents(sentenes+quoted, langid, keywords=keywords)
+
+                json.dump({
+                    "url": url,
+                    "title": title,
+                    "text": text,
+                    "authors": authors,
+                    "keywords": keywords,
+                    "summary": summary,
+                    "langid": langid,
+                    "sentenes": {
+                        "key": [s for is_key,s in key_sentences if is_key],
+                        "junk": [s for is_key,s in key_sentences if not is_key],
+                    },
+                }, o_fl, indent=4, ensure_ascii=False)
+
+
 STEPS = (
 
     (step_1_preprocessing, "Prepare data for processing."),
     (step_2_fetch_origin_articles, "Fetch origin articles."),
-    (step_3_extracting_article_sentences, "Extract origin sentences.")
+    (step_3_extracting_article_sentences, "Extract origin sentences."),
+    (step_4_extract_key_sentences, "Filter non important sentences/segments."),
 
 )
 

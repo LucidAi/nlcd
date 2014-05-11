@@ -1,0 +1,240 @@
+{
+    "keywords": [
+        "eins", 
+        "chemiewaffen", 
+        "syriens", 
+        "auf", 
+        "die", 
+        "von", 
+        "mit", 
+        "werden", 
+        "tag", 
+        "und", 
+        "das", 
+        "zu", 
+        "zerstrung", 
+        "damaskus", 
+        "der", 
+        "unresolution"
+    ], 
+    "sentences": [
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Syriens+Staatschef+Baschar+al-Assad+hatte+zugesichert%2C+dass+sein+Land+die+Auflagen+erf%C3%BCllen+werde.&q=Syriens+Staatschef+Baschar+al-Assad+hatte+zugesichert%2C+dass+sein+Land+die+Auflagen+erf%C3%BCllen+werde.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Syriens Staatschef Baschar al-Assad hatte zugesichert, dass sein Land die Auflagen erfüllen werde.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Allerdings+gibt+es+daf%C3%BCr+auf+Druck+Russlands+keinen+Automatismus.&q=Allerdings+gibt+es+daf%C3%BCr+auf+Druck+Russlands+keinen+Automatismus.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Allerdings gibt es dafür auf Druck Russlands keinen Automatismus.", 
+            "totalResults": 7
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+Vernichtung+der+Chemiewaffen+soll+mit+der+UN-Resolution+2118+durchgesetzt+werden.&q=Die+Vernichtung+der+Chemiewaffen+soll+mit+der+UN-Resolution+2118+durchgesetzt+werden.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die Vernichtung der Chemiewaffen soll mit der UN-Resolution 2118 durchgesetzt werden.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=%22Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung%22%2C+hie%C3%9F+es+aus+den+Reihen+der+Chemiewaffenexperten.+&q=%22Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung%22%2C+hie%C3%9F+es+aus+den+Reihen+der+Chemiewaffenexperten.+&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "\"Heute ist der erste Tag der Zerstörung\", hieß es aus den Reihen der Chemiewaffenexperten. ", 
+            "totalResults": 4
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Raketensprengk%C3%B6pfe%2C+Bomben+sowie+mobile+und+station%C3%A4re+Anlagen+zur+Herstellung+von+Chemiewaffen+w%C3%BCrden+nun+vernichtet.&q=Raketensprengk%C3%B6pfe%2C+Bomben+sowie+mobile+und+station%C3%A4re+Anlagen+zur+Herstellung+von+Chemiewaffen+w%C3%BCrden+nun+vernichtet.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Raketensprengköpfe, Bomben sowie mobile und stationäre Anlagen zur Herstellung von Chemiewaffen würden nun vernichtet.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Infolge+des+Einsatzes+von+Giftgas+sind+nach+bisherigen+Sch%C3%A4tzungen+mehr+als+1.000+Menschen+in+Syrien+get%C3%B6tet+worden.&q=Infolge+des+Einsatzes+von+Giftgas+sind+nach+bisherigen+Sch%C3%A4tzungen+mehr+als+1.000+Menschen+in+Syrien+get%C3%B6tet+worden.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Infolge des Einsatzes von Giftgas sind nach bisherigen Schätzungen mehr als 1.000 Menschen in Syrien getötet worden.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung&q=Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Heute ist der erste Tag der Zerstörung", 
+            "totalResults": 4
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+F%C3%BChrung+in+Damaskus+und+die+syrischen+Rebellengruppen+werfen+einander+weitere+Giftgasangriffe+vor.&q=Die+F%C3%BChrung+in+Damaskus+und+die+syrischen+Rebellengruppen+werfen+einander+weitere+Giftgasangriffe+vor.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die Führung in Damaskus und die syrischen Rebellengruppen werfen einander weitere Giftgasangriffe vor.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Fachleute+der+Vereinten+Nationen+und+der+Organisation+f%C3%BCr+das+Verbot+von+Chemiewaffen+%28OVCW%29+fuhren+zu+einem+unbekannten+Ort%2C+wo+sie+mit+der+Verifizierung+und+Vernichtung+der+Waffen+beginnen+sollen.&q=Fachleute+der+Vereinten+Nationen+und+der+Organisation+f%C3%BCr+das+Verbot+von+Chemiewaffen+%28OVCW%29+fuhren+zu+einem+unbekannten+Ort%2C+wo+sie+mit+der+Verifizierung+und+Vernichtung+der+Waffen+beginnen+sollen.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Fachleute der Vereinten Nationen und der Organisation für das Verbot von Chemiewaffen (OVCW) fuhren zu einem unbekannten Ort, wo sie mit der Verifizierung und Vernichtung der Waffen beginnen sollen.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=%22Wir+sind+transparent%2C+die+Experten+d%C3%BCrfen+zu+jeder+Anlage+gehen.&q=%22Wir+sind+transparent%2C+die+Experten+d%C3%BCrfen+zu+jeder+Anlage+gehen.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "\"Wir sind transparent, die Experten dürfen zu jeder Anlage gehen.", 
+            "totalResults": 52
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=1.000+Tonnen+Giftgas+sollen+nach+dem+Willen+der+UN+unsch%C3%A4dlich+gemacht+werden%3A+Das+Expertenteam+in+Syrien+hat+heute+mit+der+Vernichtung+von+Assads+Arsenal+begonnen.&q=1.000+Tonnen+Giftgas+sollen+nach+dem+Willen+der+UN+unsch%C3%A4dlich+gemacht+werden%3A+Das+Expertenteam+in+Syrien+hat+heute+mit+der+Vernichtung+von+Assads+Arsenal+begonnen.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "1.000 Tonnen Giftgas sollen nach dem Willen der UN unschädlich gemacht werden: Das Expertenteam in Syrien hat heute mit der Vernichtung von Assads Arsenal begonnen.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+Experten+waren+bereits+am+Dienstag+in+Damaskus+eingetroffen+und+hatten+damit+begonnen%2C+das+syrische+C-Waffen-Arsenal+zu+erfassen.&q=Die+Experten+waren+bereits+am+Dienstag+in+Damaskus+eingetroffen+und+hatten+damit+begonnen%2C+das+syrische+C-Waffen-Arsenal+zu+erfassen.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die Experten waren bereits am Dienstag in Damaskus eingetroffen und hatten damit begonnen, das syrische C-Waffen-Arsenal zu erfassen.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+Vernichtung+der+Chemiewaffen+soll+mit+der+UN-Resolution+2118+durchgesetzt+werden.%0D&q=Die+Vernichtung+der+Chemiewaffen+soll+mit+der+UN-Resolution+2118+durchgesetzt+werden.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die Vernichtung der Chemiewaffen soll mit der UN-Resolution 2118 durchgesetzt werden.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=%22Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung%22%2C+hie%C3%9F+es+aus+den+Reihen+der+Chemiewaffenexperten.%0D&q=%22Heute+ist+der+erste+Tag+der+Zerst%C3%B6rung%22%2C+hie%C3%9F+es+aus+den+Reihen+der+Chemiewaffenexperten.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "\"Heute ist der erste Tag der Zerstörung\", hieß es aus den Reihen der Chemiewaffenexperten.\r", 
+            "totalResults": 4
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Fachleute+der+Vereinten+Nationen+und+der+Organisation+f%C3%BCr+das+Verbot+von+Chemiewaffen+%28OVCW%29+fuhren+zu+einem+unbekannten+Ort%2C+wo+sie+mit+der+Verifizierung+und+Vernichtung+der+Waffen+beginnen+sollen.%0D&q=Fachleute+der+Vereinten+Nationen+und+der+Organisation+f%C3%BCr+das+Verbot+von+Chemiewaffen+%28OVCW%29+fuhren+zu+einem+unbekannten+Ort%2C+wo+sie+mit+der+Verifizierung+und+Vernichtung+der+Waffen+beginnen+sollen.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Fachleute der Vereinten Nationen und der Organisation für das Verbot von Chemiewaffen (OVCW) fuhren zu einem unbekannten Ort, wo sie mit der Verifizierung und Vernichtung der Waffen beginnen sollen.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Mit+der+Resolution+reagierte+der+UN-Sicherheitsrat+auf+einen+Angriff+mit+Saringas%2C+der+am+21.%0D&q=Mit+der+Resolution+reagierte+der+UN-Sicherheitsrat+auf+einen+Angriff+mit+Saringas%2C+der+am+21.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Mit der Resolution reagierte der UN-Sicherheitsrat auf einen Angriff mit Saringas, der am 21.\r", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Ein+internationales+Expertenteam+hat+den+Prozess+zur+Zerst%C3%B6rung+von+Syriens+Chemiewaffen+eingeleitet.&q=Ein+internationales+Expertenteam+hat+den+Prozess+zur+Zerst%C3%B6rung+von+Syriens+Chemiewaffen+eingeleitet.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Ein internationales Expertenteam hat den Prozess zur Zerstörung von Syriens Chemiewaffen eingeleitet.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=August+auf+einen+Vorort+von+Damaskus+ver%C3%BCbt+wurde.&q=August+auf+einen+Vorort+von+Damaskus+ver%C3%BCbt+wurde.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "August auf einen Vorort von Damaskus verübt wurde.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+USA+legt+den+Einsatz+den+syrischen+Regierungstruppen+zur+Last.&q=Die+USA+legt+den+Einsatz+den+syrischen+Regierungstruppen+zur+Last.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die USA legt den Einsatz den syrischen Regierungstruppen zur Last.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Das+Team+besteht+aus+19+Inspektoren+und+14+UN-Angestellten.&q=Das+Team+besteht+aus+19+Inspektoren+und+14+UN-Angestellten.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Das Team besteht aus 19 Inspektoren und 14 UN-Angestellten.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Der+Resolutionstext+erw%C3%A4hnt+die+M%C3%B6glichkeit+von+Strafma%C3%9Fnahmen+bis+hin+zu+milit%C3%A4rischer+Gewalt%2C+sollte+Damaskus+nicht+kooperieren.&q=Der+Resolutionstext+erw%C3%A4hnt+die+M%C3%B6glichkeit+von+Strafma%C3%9Fnahmen+bis+hin+zu+milit%C3%A4rischer+Gewalt%2C+sollte+Damaskus+nicht+kooperieren.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Der Resolutionstext erwähnt die Möglichkeit von Strafmaßnahmen bis hin zu militärischer Gewalt, sollte Damaskus nicht kooperieren.", 
+            "totalResults": 4
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Mit+der+Resolution+reagierte+der+UN-Sicherheitsrat+auf+einen+Angriff+mit+Saringas%2C+der+am+21.&q=Mit+der+Resolution+reagierte+der+UN-Sicherheitsrat+auf+einen+Angriff+mit+Saringas%2C+der+am+21.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Mit der Resolution reagierte der UN-Sicherheitsrat auf einen Angriff mit Saringas, der am 21.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Mitte+2014+k%C3%B6nnte+das+Land+laut+dem+Beschluss+des+UN-Sicherheitsrats+chemiewaffenfrei+sein.&q=Mitte+2014+k%C3%B6nnte+das+Land+laut+dem+Beschluss+des+UN-Sicherheitsrats+chemiewaffenfrei+sein.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Mitte 2014 könnte das Land laut dem Beschluss des UN-Sicherheitsrats chemiewaffenfrei sein.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Wie+aus+UN-Kreisen+verlautete%2C+begannen+die+Fachleute+am+Sonntag+mit+der+Feldarbeit%2C+nachdem+sie+ihre+Vorbereitungstreffen+mit+Vertretern+des+syrischen+Regimes+beendet+hatten.&q=Wie+aus+UN-Kreisen+verlautete%2C+begannen+die+Fachleute+am+Sonntag+mit+der+Feldarbeit%2C+nachdem+sie+ihre+Vorbereitungstreffen+mit+Vertretern+des+syrischen+Regimes+beendet+hatten.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Wie aus UN-Kreisen verlautete, begannen die Fachleute am Sonntag mit der Feldarbeit, nachdem sie ihre Vorbereitungstreffen mit Vertretern des syrischen Regimes beendet hatten.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Die+Best%C3%A4nde+werden+auf+1.000+Tonnen+gesch%C3%A4tzt%2C+die+auf+landesweit+45+Standorte+verteilt+sind.&q=Die+Best%C3%A4nde+werden+auf+1.000+Tonnen+gesch%C3%A4tzt%2C+die+auf+landesweit+45+Standorte+verteilt+sind.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Die Bestände werden auf 1.000 Tonnen geschätzt, die auf landesweit 45 Standorte verteilt sind.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Sie+werden+alle+Daten+von+uns+bekommen%22%2C+bekr%C3%A4ftigte+Assad+in+einem+Interview+mit+dem+Spiegel.&q=Sie+werden+alle+Daten+von+uns+bekommen%22%2C+bekr%C3%A4ftigte+Assad+in+einem+Interview+mit+dem+Spiegel.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Sie werden alle Daten von uns bekommen\", bekräftigte Assad in einem Interview mit dem Spiegel.", 
+            "totalResults": 1
+        }
+    ], 
+    "title": "UN-Resolution: Tag eins der Zerstörung von Syriens Chemie-Waffen", 
+    "url": "http://www.zeit.de/politik/ausland/2013-10/syrien-chemiewaffen-zerstoerung", 
+    "text": "1.000 Tonnen Giftgas sollen nach dem Willen der UN unschädlich gemacht werden: Das Expertenteam in Syrien hat heute mit der Vernichtung von Assads Arsenal begonnen.\n\nEin internationales Expertenteam hat den Prozess zur Zerstörung von Syriens Chemiewaffen eingeleitet. Fachleute der Vereinten Nationen und der Organisation für das Verbot von Chemiewaffen (OVCW) fuhren zu einem unbekannten Ort, wo sie mit der Verifizierung und Vernichtung der Waffen beginnen sollen. \"Heute ist der erste Tag der Zerstörung\", hieß es aus den Reihen der Chemiewaffenexperten. \n\n\n\nDas Team besteht aus 19 Inspektoren und 14 UN-Angestellten. Wie aus UN-Kreisen verlautete, begannen die Fachleute am Sonntag mit der Feldarbeit, nachdem sie ihre Vorbereitungstreffen mit Vertretern des syrischen Regimes beendet hatten. Raketensprengköpfe, Bomben sowie mobile und stationäre Anlagen zur Herstellung von Chemiewaffen würden nun vernichtet.\n\nDie Experten waren bereits am Dienstag in Damaskus eingetroffen und hatten damit begonnen, das syrische C-Waffen-Arsenal zu erfassen. Die Bestände werden auf 1.000 Tonnen geschätzt, die auf landesweit 45 Standorte verteilt sind. Mitte 2014 könnte das Land laut dem Beschluss des UN-Sicherheitsrats chemiewaffenfrei sein.\n\nDie Vernichtung der Chemiewaffen soll mit der UN-Resolution 2118 durchgesetzt werden. Der Resolutionstext erwähnt die Möglichkeit von Strafmaßnahmen bis hin zu militärischer Gewalt, sollte Damaskus nicht kooperieren. Allerdings gibt es dafür auf Druck Russlands keinen Automatismus.\n\nMit der Resolution reagierte der UN-Sicherheitsrat auf einen Angriff mit Saringas, der am 21. August auf einen Vorort von Damaskus verübt wurde. Infolge des Einsatzes von Giftgas sind nach bisherigen Schätzungen mehr als 1.000 Menschen in Syrien getötet worden. Die USA legt den Einsatz den syrischen Regierungstruppen zur Last. Die Führung in Damaskus und die syrischen Rebellengruppen werfen einander weitere Giftgasangriffe vor.\n\nSyriens Staatschef Baschar al-Assad hatte zugesichert, dass sein Land die Auflagen erfüllen werde. \"Wir sind transparent, die Experten dürfen zu jeder Anlage gehen. Sie werden alle Daten von uns bekommen\", bekräftigte Assad in einem Interview mit dem Spiegel.", 
+    "authors": [
+        [
+            "Zeit Online Gmbh Hamburg Germany"
+        ]
+    ], 
+    "langid": "de", 
+    "summary": "Fachleute der Vereinten Nationen und der Organisation für das Verbot von Chemiewaffen (OVCW) fuhren zu einem unbekannten Ort, wo sie mit der Verifizierung und Vernichtung der Waffen beginnen sollen.\r\nMit der Resolution reagierte der UN-Sicherheitsrat auf einen Angriff mit Saringas, der am 21.\r\n\"Heute ist der erste Tag der Zerstörung\", hieß es aus den Reihen der Chemiewaffenexperten.\r\nDie Vernichtung der Chemiewaffen soll mit der UN-Resolution 2118 durchgesetzt werden.\r\nDie Bestände werden auf 1.000 Tonnen geschätzt, die auf landesweit 45 Standorte verteilt sind."
+}

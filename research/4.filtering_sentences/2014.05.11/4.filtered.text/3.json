@@ -1,0 +1,164 @@
+{
+    "keywords": [
+        "non", 
+        "le", 
+        "fu", 
+        "la", 
+        "guerra", 
+        "siria", 
+        "usare", 
+        "ribelli", 
+        "del", 
+        "il", 
+        "siriano", 
+        "armi", 
+        "hersh", 
+        "di", 
+        "governo", 
+        "chimiche", 
+        "che"
+    ], 
+    "sentences": [
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=%28a.d.%29&q=%28a.d.%29&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": false, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "(a.d.)", 
+            "totalResults": 4750000000
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=L%27intelligence+americano+sapeva+che+i+ribelli+di+al+Nusra%2C+sostenuti+dalla+Turchia%2C+stavano+producendo+armi+chimiche.%0D&q=L%27intelligence+americano+sapeva+che+i+ribelli+di+al+Nusra%2C+sostenuti+dalla+Turchia%2C+stavano+producendo+armi+chimiche.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "L'intelligence americano sapeva che i ribelli di al Nusra, sostenuti dalla Turchia, stavano producendo armi chimiche.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Secondo+il+giornalista+investigativo+l%27attacco+del+21+agosto+nei+sobborghi+di+Damasco+non+fu+provocato+dal+governo+siriano+ma+dai+ribelli.%0D&q=Secondo+il+giornalista+investigativo+l%27attacco+del+21+agosto+nei+sobborghi+di+Damasco+non+fu+provocato+dal+governo+siriano+ma+dai+ribelli.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Secondo il giornalista investigativo l'attacco del 21 agosto nei sobborghi di Damasco non fu provocato dal governo siriano ma dai ribelli.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Vinse+il+premio+Pulitzer+nel+1970+per+il+reportage+sul+massacro+di+My+Lai+del+marzo+1968+durante+la+guerra+del+Vietnam%2C+in+cui+le+forze+armate+americane+uccisero+deliberatamente+almeno+109+civili.&q=Vinse+il+premio+Pulitzer+nel+1970+per+il+reportage+sul+massacro+di+My+Lai+del+marzo+1968+durante+la+guerra+del+Vietnam%2C+in+cui+le+forze+armate+americane+uccisero+deliberatamente+almeno+109+civili.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Vinse il premio Pulitzer nel 1970 per il reportage sul massacro di My Lai del marzo 1968 durante la guerra del Vietnam, in cui le forze armate americane uccisero deliberatamente almeno 109 civili.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Secondo+il+giornalista+investigativo+l%27attacco+del+21+agosto+nei+sobborghi+di+Damasco+non+fu+provocato+dal+governo+siriano+ma+dai+ribelli.&q=Secondo+il+giornalista+investigativo+l%27attacco+del+21+agosto+nei+sobborghi+di+Damasco+non+fu+provocato+dal+governo+siriano+ma+dai+ribelli.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Secondo il giornalista investigativo l'attacco del 21 agosto nei sobborghi di Damasco non fu provocato dal governo siriano ma dai ribelli.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Su+Repubblica+in+edicola+oggi+l%27inchiesta+del+premio+Pulitzer+Seymour+Hersh+sulla+guerra+chimica+in+Siria.&q=Su+Repubblica+in+edicola+oggi+l%27inchiesta+del+premio+Pulitzer+Seymour+Hersh+sulla+guerra+chimica+in+Siria.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Su Repubblica in edicola oggi l'inchiesta del premio Pulitzer Seymour Hersh sulla guerra chimica in Siria.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=L%27intelligence+americano+sapeva+che+i+ribelli+di+al+Nusra%2C+sostenuti+dalla+Turchia%2C+stavano+producendo+armi+chimiche.&q=L%27intelligence+americano+sapeva+che+i+ribelli+di+al+Nusra%2C+sostenuti+dalla+Turchia%2C+stavano+producendo+armi+chimiche.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "L'intelligence americano sapeva che i ribelli di al Nusra, sostenuti dalla Turchia, stavano producendo armi chimiche.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Le+accuse+ad+Assad+servivano+per+provocare+l%27intervento+americano+nella+guerra+civile.&q=Le+accuse+ad+Assad+servivano+per+provocare+l%27intervento+americano+nella+guerra+civile.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Le accuse ad Assad servivano per provocare l'intervento americano nella guerra civile.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Era+un+modo+per+evitare+l%27intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell%27attacco+del+21+agosto+erano+state+usate+dal+governo+siriano.%0D&q=Era+un+modo+per+evitare+l%27intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell%27attacco+del+21+agosto+erano+state+usate+dal+governo+siriano.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Era un modo per evitare l'intervento senza perdere la faccia, dopo aver affermato che le armi chimiche nell'attacco del 21 agosto erano state usate dal governo siriano.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=La+Casa+Bianca+allora+appoggi%C3%B2+la+mediazione+russa+per+convincere+Assad+a+rinunciare+alle+armi+chimiche+per+via+diplomatica.Seymour+Hersh+%C3%A8+uno+dei+decani+del+giornalismo+investigativo+americano%2C+collabora+con+il+New+Yorker.&q=La+Casa+Bianca+allora+appoggi%C3%B2+la+mediazione+russa+per+convincere+Assad+a+rinunciare+alle+armi+chimiche+per+via+diplomatica.Seymour+Hersh+%C3%A8+uno+dei+decani+del+giornalismo+investigativo+americano%2C+collabora+con+il+New+Yorker.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "La Casa Bianca allora appoggiò la mediazione russa per convincere Assad a rinunciare alle armi chimiche per via diplomatica.Seymour Hersh è uno dei decani del giornalismo investigativo americano, collabora con il New Yorker.", 
+            "totalResults": 0
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell&q=intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "intervento senza perdere la faccia, dopo aver affermato che le armi chimiche nell", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Era+un+modo+per+evitare+l%27intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell%27attacco+del+21+agosto+erano+state+usate+dal+governo+siriano.&q=Era+un+modo+per+evitare+l%27intervento+senza+perdere+la+faccia%2C+dopo+aver+affermato+che+le+armi+chimiche+nell%27attacco+del+21+agosto+erano+state+usate+dal+governo+siriano.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Era un modo per evitare l'intervento senza perdere la faccia, dopo aver affermato che le armi chimiche nell'attacco del 21 agosto erano state usate dal governo siriano.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Tra+le+sue+inchieste+pi%C3%B9+famose+i+servizi+sulle+torture+nella+prigione+di+Abu+Ghraib+in+Iraq+nel+2004.&q=Tra+le+sue+inchieste+pi%C3%B9+famose+i+servizi+sulle+torture+nella+prigione+di+Abu+Ghraib+in+Iraq+nel+2004.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Tra le sue inchieste più famose i servizi sulle torture nella prigione di Abu Ghraib in Iraq nel 2004.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Su+Repubblica+in+edicola+oggi+l%27inchiesta+del+premio+Pulitzer+Seymour+Hersh+sulla+guerra+chimica+in+Siria.%0D&q=Su+Repubblica+in+edicola+oggi+l%27inchiesta+del+premio+Pulitzer+Seymour+Hersh+sulla+guerra+chimica+in+Siria.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Su Repubblica in edicola oggi l'inchiesta del premio Pulitzer Seymour Hersh sulla guerra chimica in Siria.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Il+premier+Erdogan+aveva+assoluto+bisogno+in+quella+fase+che+gli+Stati+Uniti+intervenissero+a+fianco+dei+ribelli+che+stavano+perdendo+la+guerra.Il+31+agosto+il+presidente+Obama+sospese+l%27attacco+programmato+per+il+2+settembre+e+chiese+un+voto+del+Congresso.&q=Il+premier+Erdogan+aveva+assoluto+bisogno+in+quella+fase+che+gli+Stati+Uniti+intervenissero+a+fianco+dei+ribelli+che+stavano+perdendo+la+guerra.Il+31+agosto+il+presidente+Obama+sospese+l%27attacco+programmato+per+il+2+settembre+e+chiese+un+voto+del+Congresso.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Il premier Erdogan aveva assoluto bisogno in quella fase che gli Stati Uniti intervenissero a fianco dei ribelli che stavano perdendo la guerra.Il 31 agosto il presidente Obama sospese l'attacco programmato per il 2 settembre e chiese un voto del Congresso.", 
+            "totalResults": 0
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Si+trattava+di+un+complotto+in+cui+era+coinvolta+la+Turchia+di+Erdogan.Secondo+la+fonte+riservata+utilizzata+da+Hersh+fu+l%27intelligence+britannico%2C+in+collaborazione+con+i+servizi+russi%2C+ha+fornire+le+prove+che+gli+agenti+chimici+utilizzati+non+provenivano+dagli+arsenali+del+governo+siriano%2C+ma+dai+ribelli.&q=Si+trattava+di+un+complotto+in+cui+era+coinvolta+la+Turchia+di+Erdogan.Secondo+la+fonte+riservata+utilizzata+da+Hersh+fu+l%27intelligence+britannico%2C+in+collaborazione+con+i+servizi+russi%2C+ha+fornire+le+prove+che+gli+agenti+chimici+utilizzati+non+provenivano+dagli+arsenali+del+governo+siriano%2C+ma+dai+ribelli.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Si trattava di un complotto in cui era coinvolta la Turchia di Erdogan.Secondo la fonte riservata utilizzata da Hersh fu l'intelligence britannico, in collaborazione con i servizi russi, ha fornire le prove che gli agenti chimici utilizzati non provenivano dagli arsenali del governo siriano, ma dai ribelli.", 
+            "totalResults": 0
+        }
+    ], 
+    "title": "Hersh: \"Non fu la Siria a usare le armi chimiche\"", 
+    "url": "http://www.repubblica.it/esteri/2014/04/09/news/hersh_non_fu_la_siria_a_usare_le_armi_chimiche-83106851/", 
+    "text": "Su Repubblica in edicola oggi l'inchiesta del premio Pulitzer Seymour Hersh sulla guerra chimica in Siria. Secondo il giornalista investigativo l'attacco del 21 agosto nei sobborghi di Damasco non fu provocato dal governo siriano ma dai ribelli. Le accuse ad Assad servivano per provocare l'intervento americano nella guerra civile. Si trattava di un complotto in cui era coinvolta la Turchia di Erdogan.Secondo la fonte riservata utilizzata da Hersh fu l'intelligence britannico, in collaborazione con i servizi russi, ha fornire le prove che gli agenti chimici utilizzati non provenivano dagli arsenali del governo siriano, ma dai ribelli. L'intelligence americano sapeva che i ribelli di al Nusra, sostenuti dalla Turchia, stavano producendo armi chimiche. Il premier Erdogan aveva assoluto bisogno in quella fase che gli Stati Uniti intervenissero a fianco dei ribelli che stavano perdendo la guerra.Il 31 agosto il presidente Obama sospese l'attacco programmato per il 2 settembre e chiese un voto del Congresso. Era un modo per evitare l'intervento senza perdere la faccia, dopo aver affermato che le armi chimiche nell'attacco del 21 agosto erano state usate dal governo siriano. La Casa Bianca allora appoggiò la mediazione russa per convincere Assad a rinunciare alle armi chimiche per via diplomatica.Seymour Hersh è uno dei decani del giornalismo investigativo americano, collabora con il New Yorker. Vinse il premio Pulitzer nel 1970 per il reportage sul massacro di My Lai del marzo 1968 durante la guerra del Vietnam, in cui le forze armate americane uccisero deliberatamente almeno 109 civili. Tra le sue inchieste più famose i servizi sulle torture nella prigione di Abu Ghraib in Iraq nel 2004. (a.d.)", 
+    "authors": [
+        [
+            "Leda Ossimori", 
+            "Marina Gabrielli", 
+            "Antonino Cassata", 
+            "Di Marco Cinque E Alberto Ramundo"
+        ]
+    ], 
+    "langid": "it", 
+    "summary": "Secondo il giornalista investigativo l'attacco del 21 agosto nei sobborghi di Damasco non fu provocato dal governo siriano ma dai ribelli.\r\nL'intelligence americano sapeva che i ribelli di al Nusra, sostenuti dalla Turchia, stavano producendo armi chimiche.\r\nEra un modo per evitare l'intervento senza perdere la faccia, dopo aver affermato che le armi chimiche nell'attacco del 21 agosto erano state usate dal governo siriano.\r\nSu Repubblica in edicola oggi l'inchiesta del premio Pulitzer Seymour Hersh sulla guerra chimica in Siria.\r\nLa Casa Bianca allora appoggiò la mediazione russa per convincere Assad a rinunciare alle armi chimiche per via diplomatica.Seymour Hersh è uno dei decani del giornalismo investigativo americano, collabora con il New Yorker."
+}

@@ -1,0 +1,223 @@
+{
+    "keywords": [
+        "chemical", 
+        "deal", 
+        "syrias", 
+        "destroying", 
+        "material", 
+        "weapons", 
+        "chemicals", 
+        "including", 
+        "international", 
+        "ship", 
+        "port", 
+        "priority"
+    ], 
+    "sentences": [
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+Syrian+government+is+responsible+for+moving+the+chemicals+from+storage+sites+around+the+country+to+the+port+city+of+Latakia.&q=The+Syrian+government+is+responsible+for+moving+the+chemicals+from+storage+sites+around+the+country+to+the+port+city+of+Latakia.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The Syrian government is responsible for moving the chemicals from storage sites around the country to the port city of Latakia.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+ship+is+currently+docked+at+the+Spanish+port+of+Rota+until+all+the+priority+chemical+materials+have+left+Syria.&q=The+ship+is+currently+docked+at+the+Spanish+port+of+Rota+until+all+the+priority+chemical+materials+have+left+Syria.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The ship is currently docked at the Spanish port of Rota until all the priority chemical materials have left Syria.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Most+of+Syria%27s+chemical+weapons+substances+exist+as+separate+materials+that+only+create+the+highly+toxic+warfare+agents+when+mixed+together%2C+according+to+the+OPCW.%0D&q=Most+of+Syria%27s+chemical+weapons+substances+exist+as+separate+materials+that+only+create+the+highly+toxic+warfare+agents+when+mixed+together%2C+according+to+the+OPCW.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Most of Syria's chemical weapons substances exist as separate materials that only create the highly toxic warfare agents when mixed together, according to the OPCW.\r", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=How+will+the+process+work%3F&q=How+will+the+process+work%3F&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "How will the process work?", 
+            "totalResults": 4
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=industrial+grade&q=industrial+grade&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": false, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "industrial grade", 
+            "totalResults": 1670000
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Most+of+Syria%27s+chemical+weapons+substances+exist+as+separate+materials+that+only+create+the+highly+toxic+warfare+agents+when+mixed+together%2C+according+to+the+OPCW.&q=Most+of+Syria%27s+chemical+weapons+substances+exist+as+separate+materials+that+only+create+the+highly+toxic+warfare+agents+when+mixed+together%2C+according+to+the+OPCW.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Most of Syria's chemical weapons substances exist as separate materials that only create the highly toxic warfare agents when mixed together, according to the OPCW.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+multinational+mission+to+get+rid+of+them%2C+overseen+by+the+United+Nations+Security+Council+and+the+Organisation+for+the+Prohibition+of+Chemical+Weapons+%28OPCW%29%2C+is+due+to+be+completed+by+30+June+2014.&q=The+multinational+mission+to+get+rid+of+them%2C+overseen+by+the+United+Nations+Security+Council+and+the+Organisation+for+the+Prohibition+of+Chemical+Weapons+%28OPCW%29%2C+is+due+to+be+completed+by+30+June+2014.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The multinational mission to get rid of them, overseen by the United Nations Security Council and the Organisation for the Prohibition of Chemical Weapons (OPCW), is due to be completed by 30 June 2014.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+Russian-US+deal+to+eliminate+Syria%27s+arsenal+was+drawn+up+last+year+after+hundreds+of+people+died+in+a+sarin+rocket+attack+in+the+Ghouta+area+outside+Damascus+on+21+August.&q=The+Russian-US+deal+to+eliminate+Syria%27s+arsenal+was+drawn+up+last+year+after+hundreds+of+people+died+in+a+sarin+rocket+attack+in+the+Ghouta+area+outside+Damascus+on+21+August.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The Russian-US deal to eliminate Syria's arsenal was drawn up last year after hundreds of people died in a sarin rocket attack in the Ghouta area outside Damascus on 21 August.", 
+            "totalResults": 2
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=US+ship+the+MV+Cape+Ray+will+deal+with+the+majority+of+the+%22priority%22+toxic+substances+by+a+process+of+hydrolysis%2C+while+in+international+waters+in+the+Mediterranean+Sea.&q=US+ship+the+MV+Cape+Ray+will+deal+with+the+majority+of+the+%22priority%22+toxic+substances+by+a+process+of+hydrolysis%2C+while+in+international+waters+in+the+Mediterranean+Sea.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "US ship the MV Cape Ray will deal with the majority of the \"priority\" toxic substances by a process of hydrolysis, while in international waters in the Mediterranean Sea.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=A+similar+operation+for+the+less+dangerous+%22industrial+grade%22+chemicals+is+taking+place+with+a+Norwegian+vessel.&q=A+similar+operation+for+the+less+dangerous+%22industrial+grade%22+chemicals+is+taking+place+with+a+Norwegian+vessel.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "A similar operation for the less dangerous \"industrial grade\" chemicals is taking place with a Norwegian vessel.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Syria+is+believed+to+possess+1%2C300+tonnes+of+chemical+agents%2C+including+sulphur+mustard+%28which+forms+mustard+gas%29%2C+nerve+agents+sarin+and+VX+and+their+precursor+ingredients.&q=Syria+is+believed+to+possess+1%2C300+tonnes+of+chemical+agents%2C+including+sulphur+mustard+%28which+forms+mustard+gas%29%2C+nerve+agents+sarin+and+VX+and+their+precursor+ingredients.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Syria is believed to possess 1,300 tonnes of chemical agents, including sulphur mustard (which forms mustard gas), nerve agents sarin and VX and their precursor ingredients.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Syria+has+agreed+to+destroy+its+chemical+weapons+in+a+deal+brokered+by+the+US+and+Russia.&q=Syria+has+agreed+to+destroy+its+chemical+weapons+in+a+deal+brokered+by+the+US+and+Russia.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Syria has agreed to destroy its chemical weapons in a deal brokered by the US and Russia.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+ship+is+currently+docked+at+the+Spanish+port+of+Rota+until+all+the+priority+chemical+materials+have+left+Syria.%0D&q=The+ship+is+currently+docked+at+the+Spanish+port+of+Rota+until+all+the+priority+chemical+materials+have+left+Syria.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The ship is currently docked at the Spanish port of Rota until all the priority chemical materials have left Syria.\r", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=priority&q=priority&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": false, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "priority", 
+            "totalResults": 137000000
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+UK+will+also+deal+with+a+quantity+of+the+chemicals+at+a+plant+in+Ellesmere+Port.&q=The+UK+will+also+deal+with+a+quantity+of+the+chemicals+at+a+plant+in+Ellesmere+Port.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The UK will also deal with a quantity of the chemicals at a plant in Ellesmere Port.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+first+shipment+of+16+tonnes+of+priority+chemicals+left+Latakia+on+7+January+on+a+commercial+Danish+ship%2C+accompanied+by+a+naval+escort+from+Russia%2C+China%2C+Denmark+and+Norway.&q=The+first+shipment+of+16+tonnes+of+priority+chemicals+left+Latakia+on+7+January+on+a+commercial+Danish+ship%2C+accompanied+by+a+naval+escort+from+Russia%2C+China%2C+Denmark+and+Norway.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The first shipment of 16 tonnes of priority chemicals left Latakia on 7 January on a commercial Danish ship, accompanied by a naval escort from Russia, China, Denmark and Norway.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=priority+chemicals&q=priority+chemicals&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": false, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "priority chemicals", 
+            "totalResults": 8310
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Once+at+Gioia+Tauro%2C+some+560+tonnes+of+material%2C+including+sulphur+mustard+and+DF+-+the+precursor+to+sarin%2C+will+be+transferred+on+to+the+Cape+Ray%2C+which+will+sail+into+international+waters+to+carry+out+neutralisation+by+hydrolysis.&q=Once+at+Gioia+Tauro%2C+some+560+tonnes+of+material%2C+including+sulphur+mustard+and+DF+-+the+precursor+to+sarin%2C+will+be+transferred+on+to+the+Cape+Ray%2C+which+will+sail+into+international+waters+to+carry+out+neutralisation+by+hydrolysis.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Once at Gioia Tauro, some 560 tonnes of material, including sulphur mustard and DF - the precursor to sarin, will be transferred on to the Cape Ray, which will sail into international waters to carry out neutralisation by hydrolysis.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=While+some+of+the+chemicals+will+be+processed+at+facilities+in+the+US+and+Europe+-+including+the+UK%27s+Ellesmere+Port+-+much+of+the+toxic+material+will+be+destroyed+on+board+a+ship+at+sea.&q=While+some+of+the+chemicals+will+be+processed+at+facilities+in+the+US+and+Europe+-+including+the+UK%27s+Ellesmere+Port+-+much+of+the+toxic+material+will+be+destroyed+on+board+a+ship+at+sea.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "While some of the chemicals will be processed at facilities in the US and Europe - including the UK's Ellesmere Port - much of the toxic material will be destroyed on board a ship at sea.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=There%2C+the+five+so-called+%22priority+chemicals%22+are+loaded+on+to+a+Danish+cargo+vessel%2C+which+then+waits+in+international+waters+for+each+additional+shipment+before+eventually+setting+sail+for+the+Italian+container+port+of+Gioia+Tauro.&q=There%2C+the+five+so-called+%22priority+chemicals%22+are+loaded+on+to+a+Danish+cargo+vessel%2C+which+then+waits+in+international+waters+for+each+additional+shipment+before+eventually+setting+sail+for+the+Italian+container+port+of+Gioia+Tauro.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "There, the five so-called \"priority chemicals\" are loaded on to a Danish cargo vessel, which then waits in international waters for each additional shipment before eventually setting sail for the Italian container port of Gioia Tauro.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=They+are+in+liquid+form+and+held+in+drums+and+bulk+containers%2C+rather+than+already+placed+in+bombs+or+other+munitions.&q=They+are+in+liquid+form+and+held+in+drums+and+bulk+containers%2C+rather+than+already+placed+in+bombs+or+other+munitions.&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "They are in liquid form and held in drums and bulk containers, rather than already placed in bombs or other munitions.", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Most+of+Syria%27s+%22priority%22+chemical+weapons+material+will+be+destroyed+on+board+the+MV+Cape+Ray%2C+which+has+been+fitted+with+twin+hydrolysis+systemsSyria+has+agreed+to+destroy+its+chemical+weapons+in+a+deal+brokered+by+the+US+and+Russia.%0D&q=Most+of+Syria%27s+%22priority%22+chemical+weapons+material+will+be+destroyed+on+board+the+MV+Cape+Ray%2C+which+has+been+fitted+with+twin+hydrolysis+systemsSyria+has+agreed+to+destroy+its+chemical+weapons+in+a+deal+brokered+by+the+US+and+Russia.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Most of Syria's \"priority\" chemical weapons material will be destroyed on board the MV Cape Ray, which has been fitted with twin hydrolysis systemsSyria has agreed to destroy its chemical weapons in a deal brokered by the US and Russia.\r", 
+            "totalResults": 0
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=Most+of+Syria%27s+%22priority%22+chemical+weapons+material+will+be+destroyed+on+board+the+MV+Cape+Ray%2C+which+has+been+fitted+with+twin+hydrolysis+systems&q=Most+of+Syria%27s+%22priority%22+chemical+weapons+material+will+be+destroyed+on+board+the+MV+Cape+Ray%2C+which+has+been+fitted+with+twin+hydrolysis+systems&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "Most of Syria's \"priority\" chemical weapons material will be destroyed on board the MV Cape Ray, which has been fitted with twin hydrolysis systems", 
+            "totalResults": 1
+        }, 
+        {
+            "cseUrl": "https://www.googleapis.com/customsearch/v1?exactTerms=The+multinational+mission+to+get+rid+of+them%2C+overseen+by+the+United+Nations+Security+Council+and+the+Organisation+for+the+Prohibition+of+Chemical+Weapons+%28OPCW%29%2C+is+due+to+be+completed+by+30+June+2014.%0D&q=The+multinational+mission+to+get+rid+of+them%2C+overseen+by+the+United+Nations+Security+Council+and+the+Organisation+for+the+Prohibition+of+Chemical+Weapons+%28OPCW%29%2C+is+due+to+be+completed+by+30+June+2014.%0D&cx=006963090954080588802:tttidla4was&key=AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU", 
+            "isKey": true, 
+            "minThreshold": 0, 
+            "maxThreshold": 1000, 
+            "text": "The multinational mission to get rid of them, overseen by the United Nations Security Council and the Organisation for the Prohibition of Chemical Weapons (OPCW), is due to be completed by 30 June 2014.\r", 
+            "totalResults": 1
+        }
+    ], 
+    "title": "Destroying Syria's chemical weapons", 
+    "url": "http://www.bbc.com/news/world-middle-east-25810934", 
+    "text": "Most of Syria's \"priority\" chemical weapons material will be destroyed on board the MV Cape Ray, which has been fitted with twin hydrolysis systems\n\nSyria has agreed to destroy its chemical weapons in a deal brokered by the US and Russia. While some of the chemicals will be processed at facilities in the US and Europe - including the UK's Ellesmere Port - much of the toxic material will be destroyed on board a ship at sea. How will the process work?\n\nThe Russian-US deal to eliminate Syria's arsenal was drawn up last year after hundreds of people died in a sarin rocket attack in the Ghouta area outside Damascus on 21 August.\n\nSyria is believed to possess 1,300 tonnes of chemical agents, including sulphur mustard (which forms mustard gas), nerve agents sarin and VX and their precursor ingredients.\n\nThe multinational mission to get rid of them, overseen by the United Nations Security Council and the Organisation for the Prohibition of Chemical Weapons (OPCW), is due to be completed by 30 June 2014.\n\nUS ship the MV Cape Ray will deal with the majority of the \"priority\" toxic substances by a process of hydrolysis, while in international waters in the Mediterranean Sea.\n\nThe ship is currently docked at the Spanish port of Rota until all the priority chemical materials have left Syria. The UK will also deal with a quantity of the chemicals at a plant in Ellesmere Port.\n\nMost of Syria's chemical weapons substances exist as separate materials that only create the highly toxic warfare agents when mixed together, according to the OPCW.\n\nThey are in liquid form and held in drums and bulk containers, rather than already placed in bombs or other munitions.\n\nThe Syrian government is responsible for moving the chemicals from storage sites around the country to the port city of Latakia.\n\nThere, the five so-called \"priority chemicals\" are loaded on to a Danish cargo vessel, which then waits in international waters for each additional shipment before eventually setting sail for the Italian container port of Gioia Tauro.\n\nA similar operation for the less dangerous \"industrial grade\" chemicals is taking place with a Norwegian vessel.\n\nThe first shipment of 16 tonnes of priority chemicals left Latakia on 7 January on a commercial Danish ship, accompanied by a naval escort from Russia, China, Denmark and Norway.\n\nOnce at Gioia Tauro, some 560 tonnes of material, including sulphur mustard and DF - the precursor to sarin, will be transferred on to the Cape Ray, which will sail into international waters to carry out neutralisation by hydrolysis.", 
+    "authors": [
+        [
+            "Christine Jeavans", 
+            "David Shukman", 
+            "Science Editor", 
+            "Bbc News"
+        ]
+    ], 
+    "langid": "en", 
+    "summary": "Most of Syria's \"priority\" chemical weapons material will be destroyed on board the MV Cape Ray, which has been fitted with twin hydrolysis systemsSyria has agreed to destroy its chemical weapons in a deal brokered by the US and Russia.\r\nMost of Syria's chemical weapons substances exist as separate materials that only create the highly toxic warfare agents when mixed together, according to the OPCW.\r\nThe multinational mission to get rid of them, overseen by the United Nations Security Council and the Organisation for the Prohibition of Chemical Weapons (OPCW), is due to be completed by 30 June 2014.\r\nThe ship is currently docked at the Spanish port of Rota until all the priority chemical materials have left Syria.\r\nSyria is believed to possess 1,300 tonnes of chemical agents, including sulphur mustard (which forms mustard gas), nerve agents sarin and VX and their precursor ingredients."
+}

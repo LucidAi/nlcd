@@ -262,4 +262,3 @@ if __name__ == "__main__":
             logging.info("Starting step #%d: '%s'" % (step_i, step_description))
             step_function(args)
             logging.info("\n")
-

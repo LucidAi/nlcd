@@ -73,7 +73,7 @@ class TextPreprocessor(object):
                            keywords=set(),
                            tokens_min=7,
                            tokens_max=40,
-                           min_nonstop=4,
+                           min_nonstop=5,
                            min_keywords=1,
                            or_min_ner=2,
                            min_rakewords=5):
@@ -106,12 +106,12 @@ class TextPreprocessor(object):
                 triggers.append("N_TOKENS")
 
             #
-            n_keywords = 0 if langid == "en" else min_keywords
+            n_keywords = 0 if len(keywords) > 0 else min_keywords
             for t in tokens:
                 if t in keywords:
                     n_keywords += 1
             if n_keywords < min_keywords:
-                is_key_sent = False
+                # is_key_sent = F
                 triggers.append("N_KEYWORDS")
 
             #

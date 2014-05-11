@@ -2,10 +2,17 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
+import ner
 import nltk
 
 
 class NerExtractor(object):
+
+
+    def __init__(self):
+        # self.st = NERTagger("vendor/stanford-ner-models/english.all.3class.distsim.crf.ser.gz",
+        #                     "vendor/stanford-ner/stanford-ner-2014-01-04.jar")
+        self.st = ner.SocketNER(host="127.0.0.1", port=8000)
 
 
     def apply_truecase(self, tokens):
@@ -33,22 +40,43 @@ class NerExtractor(object):
         Returns:
             (set): Set of pairs (entity, label).
         """
-        entities = set()
+        entities = []
+
         for text in texts:
             sentences = nltk.sent_tokenize(text)
-            sentences = [nltk.word_tokenize(sent) for sent in sentences]
-            if truecase:
-                for i, sent in enumerate(sentences):
-                    sentences[i] = self.apply_truecase(sent)
-            sentences = [nltk.pos_tag(sent) for sent in sentences]
+            # sentences = [nltk.word_tokenize(sent) for sent in sentences]
+            # if truecase:
+            #     for i, sent in enumerate(sentences):
+            #         sentences[i] = self.apply_truecase(sent)
             for sent in sentences:
-                ner_tree = nltk.ne_chunk(sent, binary=set_label is not None)
-                for ne in ner_tree:
-                    if hasattr(ne, "node"):
-                        entities.add((ne.node, " ".join(l[0] for l in ne.leaves())))
+                print sent
+                tree = self.st.get_entities(sent)
+                print tree
+                print
+                print
+                prev_tag = None
+        exit(0)
+                # for w, tag in tree:
+                #     if tag is not "O":
+                #         if tag != prev_tag:
+                #             entities.append((tag, []))
+                #         entities[-1][1].append(w)
+                #     prev_tag = tag
+
+                # ner_tree = nltk.ne_chunk(sent, binary=set_label is not None)
+                # for ne in ner_tree:
+                #     if hasattr(ne, "node"):
+                #         entities.add((ne.node, " ".join(l[0] for l in ne.leaves())))
+        # if set_label is not None:
+        #     entities = [{"label":set_label, "entity": entity} for label,entity in entities]
+        # else:
+        #     entities = [{"label":label, "entity": entity} for label,entity in entities]
+
         if set_label is not None:
-            entities = [{"label":set_label, "entity": entity} for label,entity in entities]
+            entities = [{"label":set_label, "entity": " ".join(entity)} for label,entity in entities]
         else:
-            entities = [{"label":label, "entity": entity} for label,entity in entities]
+            entities = [{"label":label, "entity": " ".join(entity)} for label,entity in entities]
+
+        print entities
 
         return entities

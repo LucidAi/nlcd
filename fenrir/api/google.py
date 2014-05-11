@@ -68,7 +68,7 @@ class CseAPI(object):
         for start_index in self.make_query_pages(number):
             query["start"] = start_index
             url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
-            print "URL", url
+            logging.info("Querying URL: '%s'." % url)
             try:
                 logging.info("Calling %s" % url)
                 items = requests.get(url).json()["items"]
@@ -77,3 +77,48 @@ class CseAPI(object):
             except Exception:
                 formatted = traceback.format_exc()
                 logging.error("Error while calling '%s':%s" % (url, formatted))
+
+    def filter_sentences(self, sentences, min_threshold=0, max_threshold=10**5):
+        for sentence in sentences:
+            query = self.make_query(
+                query_string = sentence,
+                exact_terms = sentence
+            )
+            url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
+            try:
+                result = requests.get(url).json()
+            except Exception:
+                result = None
+            if result is not None and "searchInformation" in  result:
+                total_results = int(result["searchInformation"]["totalResults"])
+                if min_threshold <= total_results <= max_threshold:
+                    yield {
+                        "isKey": True,
+                        "totalResults": total_results,
+                        "minThreshold": min_threshold,
+                        "maxThreshold": max_threshold,
+                        "text": sentence,
+                        "cseUrl": url,
+                    }
+                else:
+                    yield {
+                        "isKey": False,
+                        "totalResults": total_results,
+                        "minThreshold": min_threshold,
+                        "maxThreshold": max_threshold,
+                        "text": sentence,
+                        "cseUrl": url,
+                    }
+            else:
+                yield {
+                    "isKey": False,
+                    "totalResults": "n/a",
+                    "minThreshold": min_threshold,
+                    "maxThreshold": max_threshold,
+                    "text": sentence,
+                    "cseUrl": url,
+                }
+
+
+    def __repr__(self):
+        return "<CseAPI(key='%s', engine='%s')>" % (self.key[:8]+"..", self.engine_id[:8]+"..")

@@ -16,4 +16,5 @@ $PYTHON $THISDIR/scripts/pipeline.py            \
     --first-step 4                              \
     --n-cpus 4                                  \
     --max-threads 1                             \
+    --cse-thresholds 0:1000                     \
     --nlcd-conf-file $THISDIR/fab/dev.json

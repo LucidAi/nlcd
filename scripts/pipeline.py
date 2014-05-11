@@ -15,6 +15,7 @@ import fenrir.fetcher
 import fenrir.extraction
 import fenrir.extraction.base
 import fenrir.extraction.entity
+import fenrir.api.google
 
 
 ORIGINS_FILE            = "1.origins.txt"
@@ -104,6 +105,8 @@ def step_4_extract_key_sentences(args):
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
     articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
+    with open(args.nlcd_conf_file, "rb") as fl:
+        nlcd_config = json.load(fl)
     if os.path.exists(articles_filtered_dir):
         logging.info("Cleaning previous articles (filtered) directory %s" % articles_filtered_dir)
         rm_cmd = "rm -rf %s" % articles_filtered_dir
@@ -114,11 +117,17 @@ def step_4_extract_key_sentences(args):
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
     logging.info("Filtering sentences, saving to: %s" % articles_filtered_dir)
-    text_preproc = fenrir.extraction.base.TextPreprocessor()
+    cse_conf = nlcd_config["nlcd"]["searchApi"][0]
+    cse_key = cse_conf["googleApiKey"]
+    cse_engine = cse_conf["googleEngineId"]
+    sentence_filterer = fenrir.api.google.CseAPI(cse_key, cse_engine)
+    min_threshold, max_threshold = map(int, args.cse_thresholds.split(":"))
+    logging.info("Created sentence filterer %r" % sentence_filterer)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article text from (%d): %s" % (i, url))
         text_json_file_name = os.path.join(articles_text_dir, "%d.json" % i)
         filtered_json_name = os.path.join(articles_filtered_dir, "%d.json" % i)
+        text_preproc = fenrir.extraction.base.TextPreprocessor()
         with open(text_json_file_name, "rb") as i_fl:
             article = json.load(i_fl)
             with open(filtered_json_name, "wb") as o_fl:
@@ -137,8 +146,8 @@ def step_4_extract_key_sentences(args):
                 sentenes = text_preproc.sent_segmentize(text)
                 sentenes.extend(text_preproc.sent_segmentize(summary))
                 quoted = text_preproc.extract_quoted(sentenes)
-                key_sentences = text_preproc.filter_sents(sentenes+quoted, langid, keywords=keywords)
-
+                all_sentences = list(set(sentenes+quoted))
+                filtered_sentences = list(sentence_filterer.filter_sentences(all_sentences, min_threshold, max_threshold))
                 json.dump({
                     "url": url,
                     "title": title,
@@ -147,10 +156,7 @@ def step_4_extract_key_sentences(args):
                     "keywords": keywords,
                     "summary": summary,
                     "langid": langid,
-                    "sentenes": {
-                        "key": [s for is_key,s in key_sentences if is_key],
-                        "junk": [s for is_key,s in key_sentences if not is_key],
-                    },
+                    "sentences": filtered_sentences,
                 }, o_fl, indent=4, ensure_ascii=False)
 
 
@@ -197,6 +203,11 @@ if __name__ == "__main__":
     argparser.add_argument("--nlcd-conf-file",
                            type=str,
                            help="NLCD JSON configuration file containing API credentials and other information.",
+                           default=None)
+
+    argparser.add_argument("--cse-thresholds",
+                           type=str,
+                           help="Google CSE result number thresholds to recognize given query as 'important'.",
                            default=None)
 
     argparser.add_argument("--pipeline-root",

@@ -2,10 +2,7 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import requests
-import nltk.util
 import grequests
-
-from readability import readability
 
 
 class PageFetcher(object):
@@ -23,26 +20,6 @@ class PageFetcher(object):
         response.encoding = "utf-8"
         return response.text.encode("utf-8")
 
-    def fetch_document(self, url):
-        html = self.fetch(url)
-        doc = readability.Document(html)
-        return doc
-
-    def fetch_document_text(self, url):
-        html = self.fetch(url)
-        doc = readability.Document(html)
-        summary = doc.summary()
-        text = nltk.util.clean_html(summary)
-        #text = " ".join(text.split())
-        return text #"\n".join(text.split("\n"))
-
     @staticmethod
     def fetch_documents(urls, max_threads=1):
         return grequests.map((grequests.get(u) for u in urls), size=max_threads)
-
-    @staticmethod
-    def html_to_text(html):
-        doc = readability.Document(html)
-        summary = doc.summary()
-        text = nltk.util.clean_html(summary)
-        return text

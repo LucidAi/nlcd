@@ -5,6 +5,7 @@ grequests
 requests
 textblob
 sklearn
+plyvel
 langid
 numpy
 scipy

@@ -13,8 +13,9 @@ ${PYTHON} ${THISDIR}/scripts/pipeline.py        \
     --app-root ${THISDIR}/fenrir                \
     --pipeline-root ${THISDIR}/scripts/pipeline \
     --work-dir ${WORKDIR}                       \
-    --first-step 6                              \
-    --last-step 6                               \
+    --first-step 8                              \
+    --last-step 8                               \
     --n-cpus 4                                  \
-    --max-threads 1                             \
+    --max-threads 16                            \
+    --use-compression 1							\
     --nlcd-conf-file ${THISDIR}/fab/dev.json

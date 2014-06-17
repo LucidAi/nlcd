@@ -7,12 +7,12 @@ import json
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from fenrir.fetcher import Fetcher
+from fenrir.fetcher import PageFetcher
 from fenrir.api.google import CseAPI
 
 from fenrir.extraction.entity import NerExtractor
-from fenrir.extraction.pattern import get_extractor
-from fenrir.extraction.base import TextPreprocessor
+from fenrir.extraction.google import get_extractor
+from fenrir.extraction.base import TextMiner
 
 from client.api.decorators import nlcd_api_call
 
@@ -21,9 +21,9 @@ from client.api.decorators import nlcd_api_call
 @nlcd_api_call
 def get_article(request):
     url = request.GET.get("url")
-    text = Fetcher().fetch_document_text(url)
-    preproc = TextPreprocessor()
-    text = "\n".join([str(s) for s in preproc.sent_segmentize(text)])
+    text = PageFetcher().fetch_document_text(url)
+    preproc = TextMiner()
+    text = "\n".join([str(s) for s in preproc.sent_tokenize(text)])
     return {
         "url": url,
         "text": text,
@@ -34,8 +34,8 @@ def get_article(request):
 @nlcd_api_call
 def get_segments(request):
     text = request.GET.get("text")
-    preproc = TextPreprocessor()
-    sentences = list(set(preproc.sent_segmentize(text)))
+    preproc = TextMiner()
+    sentences = list(set(preproc.sent_tokenize(text)))
     quoted = list(set(preproc.extract_quoted(sentences)))
     all_segments = sentences + quoted
     filtered = preproc.filter_sents(sentences, 4, 30)

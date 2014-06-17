@@ -2,64 +2,62 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
-import nltk
 import langid
-import textblob
 import newspaper
-import readability
+import textblob.tokenizers
 
 from nltk.corpus import stopwords
 from fenrir.extraction import NLCD_TO_NLTK_LANG
-from fenrir.extraction.kw import RakeKeywordExtractor
-from fenrir.extraction.entity import NerExtractor
 
-class TextPreprocessor(object):
+
+class SimpleArticle(object):
+
+    def __init__(self, url, title, text, lang_id):
+        self.url = url
+        self.title = title
+        self.text = text
+        self.lang_id = lang_id
+
+
+class TextMiner(object):
 
     RE_WHITESPACE = re.compile(" +")
     RE_EMPTY_STR = re.compile("^\s*$")
     RE_HTML_SPECIAL_CHARS = re.compile("\&#?[a-z0-9]+;")
 
     RE_Q_PHRASE_PATTERN_1 = re.compile("\"([^\"]*)\"")
-    RE_Q_PHRASE_PATTERN_2 = re.compile("\'([^\"]*)\'")
+    RE_Q_PHRASE_PATTERN_2 = re.compile("\'([^\']*)\'")
     RE_Q_PHRASE_PATTERN_3 = re.compile("“([^“”]*)”")
 
     def __init__(self):
-        self.ner = NerExtractor()
-        self.rake = RakeKeywordExtractor()
+        pass
 
-    def extract_article(self, url, html):
-        lang, _ = self.html_langid(html)
-        article = newspaper.Article(url, language=lang)
+    @staticmethod
+    def extract_article(url, html):
+        article = newspaper.Article(url)
         article.set_html(html)
         article.parse()
-        article.nlp()
-        return article
-
-    def html_to_text(self, html):
-        doc = readability.Document(html)
-        summary = doc.summary()
-        text = nltk.util.clean_html(summary)
-        return text
-
-    def html_langid(self, html):
-        return langid.classify(self.html_to_text(html))
-
-    def langid(self, text):
-        return langid.classify(text)
+        lang_id, _ = langid.classify(article.title)
+        article = newspaper.Article(url, language=lang_id)
+        article.set_html(html)
+        article.parse()
+        return SimpleArticle(url,
+                             article.title,
+                             article.text,
+                             lang_id)
 
     def clean_html_junk(self, text):
         return self.RE_HTML_SPECIAL_CHARS.sub("", text)
 
-    def sent_segmentize(self, text):
+    def sent_tokenize(self, text):
         text = text.decode("utf-8")
         text = self.clean_html_junk(text)
         lines = text.split("\n")
-        sents = []
+        sentences = []
         for line in lines:
-            blob = textblob.TextBlob(line)
-            sents.extend(map(str, blob.sentences))
-        sents = [sent for sent in sents if not self.RE_EMPTY_STR.match(sent)]
-        return [self.RE_WHITESPACE.sub(" ", sent) for sent in sents]
+            sentences.extend(textblob.tokenizers.sent_tokenize(line))
+        sentences = [sent for sent in sentences if not self.RE_EMPTY_STR.match(sent)]
+        return [self.RE_WHITESPACE.sub(" ", sent) for sent in sentences]
 
     def extract_quoted(self, sentence_list):
         quoted = []

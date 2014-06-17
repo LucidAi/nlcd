@@ -7,7 +7,7 @@ import unittest
 
 
 from fenrir.app import FenrirWorker
-from fenrir.fetcher import Fetcher
+from fenrir.fetcher import PageFetcher
 from fenrir.api import CseAPI
 
 
@@ -71,16 +71,16 @@ class CseAPITestCase(unittest.TestCase):
 class FetcherTestCase(unittest.TestCase):
 
     def test_init(self):
-        fetcher = Fetcher()
+        fetcher = PageFetcher()
 
     def test_fetch(self):
-        fetcher = Fetcher()
+        fetcher = PageFetcher()
         for url in TEST_URLS:
             html = fetcher.fetch(url).replace("\n", "").replace("\t", "").replace(" ", "")
             self.assertTrue(html.startswith("<!DOCTYPE"))
 
     def test_fetch_document(self):
-        fetcher = Fetcher()
+        fetcher = PageFetcher()
         for url in TEST_URLS:
             doc = fetcher.fetch_document(url)
             self.assertIsNotNone(doc)

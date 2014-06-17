@@ -1,0 +1,65 @@
+{
+    "url": [
+        "link"
+    ],
+
+    "title": [
+        "title",
+        "htmlTitle",
+        "pagemap.NewsItem[*].title",
+        "htmlTitle",
+        "pagemap.metatags[*].['og:title']"
+    ],
+
+    "sources": [
+        "pagemap.NewsItem[*].site_name",
+        "pagemap.metatags[*].['og:site_name']",
+        "pagemap.metatags[*].['source']",
+        "pagemap.metatags[*].['twitter:site']",
+        "pagemap.metatags[*].['article:publisher']",
+        "pagemap.metatags[*].['article:publisher']",
+        "displayLink"
+    ],
+
+    "authors": [
+        "pagemap.person[*].name",
+        "pagemap.hcard[*].fn",
+        "pagemap.article[*].author",
+        "pagemap.metatags[*].author",
+        "pagemap.metatags[*].['dc.creator']",
+        "pagemap.metatags[*].['twitter:creator']",
+        "pagemap.metatags[*].['sailthru.author']"
+    ],
+    
+    "dates": [
+        "pagemap.metatags[*].['article:modified_time']",
+        "pagemap.metatags[*].['article:published_time']",
+        "pagemap.metatags[*].dat",
+        "pagemap.metatags[*].ptime",
+        "pagemap.metatags[*].utime",
+        "pagemap.metatags[*].pdate",
+        "pagemap.metatags[*].displaydate",
+        "pagemap.NewsItem[*].datePublished",
+        "pagemap.newsarticle[*].datepublished",
+        "pagemap.newsarticle[*].datemodified",
+        "pagemap.article[*].datePublished",
+        "pagemap.metatags[*].['dc.date.issued']"
+    ],
+    
+    "images": [
+        "pagemap.imageobject[*].url",
+        "pagemap.imageobject[*].contenturl",
+        "pagemap.metatags[*].['og:image']",
+        "pagemap.metatags[*].['thumbnail']",
+        "pagemap.metatags[*].['twitter:image:src']",
+        "pagemap.cse_image.src",
+        "pagemap.cse_thumbnail.src",
+        "pagemap.thumbnail.src",
+        "pagemap.newsarticle.thumbnailurl"
+    ],
+    
+    "snippet": [
+        "snippet"
+    ]
+
+}

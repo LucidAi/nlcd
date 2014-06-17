@@ -8,7 +8,14 @@ import requests
 import traceback
 
 
-class CseError(Exception): pass
+class CseError(Exception):
+    pass
+
+
+class GoogleApiConfig(object):
+
+    def __init__(self, api_config_dict):
+        pass
 
 
 class CseAPI(object):
@@ -19,6 +26,13 @@ class CseAPI(object):
             raise CseError("API key cannot be None")
         self.key = key
         self.engine_id = engine_id
+        self.config = None
+
+    @staticmethod
+    def from_config(api_config):
+        api = CseAPI(key=api_config["googleApiKey"], engine_id=api_config["googleEngineId"])
+        api.config = GoogleApiConfig(api_config)
+        return api
 
     def make_query(self,
                      query_string=None,
@@ -48,9 +62,9 @@ class CseAPI(object):
             "start": None,                  # The index of the first result to return (integer)
 
         }
-        for k, v in q.items():
-            if v is None:
-                del q[k]
+        for key, value in q.items():
+            if value is None:
+                del q[key]
         return q
 
     def make_query_pages(self, results_number=10, start=1):
@@ -78,19 +92,19 @@ class CseAPI(object):
                 formatted = traceback.format_exc()
                 logging.error("Error while calling '%s':%s" % (url, formatted))
 
-    def filter_sentences(self, sentences, min_threshold=0, max_threshold=10**5):
+    def filter_sentences(self, sentences, min_threshold=0, max_threshold=500):
         for sentence in sentences:
             query = self.make_query(
-                query_string = sentence,
-                exact_terms = sentence
+                query_string=sentence,
+                exact_terms=sentence
             )
             url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
             try:
-                result = requests.get(url).json()
+                api_response = requests.get(url).json()
             except Exception:
-                result = None
-            if result is not None and "searchInformation" in  result:
-                total_results = int(result["searchInformation"]["totalResults"])
+                api_response = None
+            if api_response is not None and "searchInformation" in api_response:
+                total_results = int(api_response["searchInformation"]["totalResults"])
                 if min_threshold <= total_results <= max_threshold:
                     yield {
                         "isKey": True,
@@ -98,7 +112,8 @@ class CseAPI(object):
                         "minThreshold": min_threshold,
                         "maxThreshold": max_threshold,
                         "text": sentence,
-                        "cseUrl": url,
+                        "apiUrl": url,
+                        "apiResponse": api_response,
                     }
                 else:
                     yield {
@@ -107,7 +122,8 @@ class CseAPI(object):
                         "minThreshold": min_threshold,
                         "maxThreshold": max_threshold,
                         "text": sentence,
-                        "cseUrl": url,
+                        "apiUrl": url,
+                        "apiResponse": api_response,
                     }
             else:
                 yield {
@@ -116,7 +132,8 @@ class CseAPI(object):
                     "minThreshold": min_threshold,
                     "maxThreshold": max_threshold,
                     "text": sentence,
-                    "cseUrl": url,
+                    "apiUrl": url,
+                    "apiResponse": api_response,
                 }
 
 

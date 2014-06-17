@@ -8,16 +8,18 @@ import grequests
 from readability import readability
 
 
-class Fetcher(object):
+class PageFetcher(object):
 
     def __init__(self):
         pass
 
-    def fetch(self, url):
+    @staticmethod
+    def fetch(url):
         response = requests.get(url)
         return response.text
 
-    def response_to_utf_8(self, response):
+    @staticmethod
+    def response_to_utf_8(response):
         response.encoding = "utf-8"
         return response.text.encode("utf-8")
 
@@ -32,12 +34,14 @@ class Fetcher(object):
         summary = doc.summary()
         text = nltk.util.clean_html(summary)
         #text = " ".join(text.split())
-        return text#"\n".join(text.split("\n"))
+        return text #"\n".join(text.split("\n"))
 
-    def fetch_documents(self, urls, max_threads=1):
+    @staticmethod
+    def fetch_documents(urls, max_threads=1):
         return grequests.map((grequests.get(u) for u in urls), size=max_threads)
 
-    def html_to_text(self, html):
+    @staticmethod
+    def html_to_text(html):
         doc = readability.Document(html)
         summary = doc.summary()
         text = nltk.util.clean_html(summary)

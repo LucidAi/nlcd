@@ -4,24 +4,26 @@
 
 import os
 import sys
-import glob
 import json
 import logging
 import argparse
-import itertools
 
 import fenrir
 import fenrir.fetcher
 import fenrir.extraction
 import fenrir.extraction.base
 import fenrir.extraction.entity
+import fenrir.extraction.google
 import fenrir.api.google
 
 
-ORIGINS_FILE            = "1.origins.txt"
-ORIGINS_HTML_DIR        = "2.orignins.html"
-ORIGINS_TEXT_DIR        = "3.orignins.text"
-ORIGINS_FILTERED_DIR    = "4.filtered.text"
+ORIGINS_FILE                  = "1.origins.text"
+ORIGINS_HTML_DIR              = "2.origins.html"
+ORIGINS_TEXT_DIR              = "3.origins.text"
+ORIGINS_SENTENCES_DIR         = "4.origins.sents"
+ORIGINS_FILTERED_DIR          = "5.origins.fsent"
+RELATED_ANNOTATIONS_DIR       = "6.related.annot"
+RELATED_FULL_ANNOTATIONS_DIR  = "7.related.full"
 
 
 def step_1_preprocessing(args):
@@ -29,7 +31,7 @@ def step_1_preprocessing(args):
     """
     if not os.path.exists(args.work_dir):
         logging.info("Creating work directory: %s" % args.work_dir)
-        os.mkdir(args.workdir)
+        os.mkdir(args.work_dir)
     else:
         logging.info("Work directory already exists: %s" % args.work_dir)
     logging.info("Creating work directory: %s" % args.work_dir)
@@ -50,15 +52,15 @@ def step_2_fetch_origin_articles(args):
         os.system(rm_cmd)
     logging.info("Creating articles html directory: %s" % articles_html_dir)
     os.mkdir(articles_html_dir)
-    fetcher = fenrir.fetcher.Fetcher()
+    fetcher = fenrir.fetcher.PageFetcher()
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
     logging.info("Fetching origins to using %s threads: %s" % (args.max_threads, articles_html_dir))
     async_articles_list = fetcher.fetch_documents(origin_urls, max_threads=args.max_threads)
-    def save_html(i_response):
-        i, response = i_response
-        file_name = os.path.join(articles_html_dir, "%d.html" % i)
+    def save_html(j_response):
+        j, response = j_response
+        file_name = os.path.join(articles_html_dir, "%d.html" % j)
         with open(file_name, "wb") as fl:
             fl.write(fetcher.response_to_utf_8(response))
     map(save_html, enumerate(async_articles_list))
@@ -81,83 +83,161 @@ def step_3_extracting_article_sentences(args):
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
     logging.info("Extracting articles texts to: %s" % articles_text_dir)
-    text_preproc = fenrir.extraction.base.TextPreprocessor()
+    text_miner = fenrir.extraction.base.TextMiner()
     for i, url in enumerate(origin_urls):
         logging.info("Extracting text from (%d): %s" % (i, url))
         html_file_name = os.path.join(articles_html_dir, "%d.html" % i)
         text_file_name = os.path.join(articles_text_dir, "%d.json" % i)
         with open(html_file_name, "rb") as i_fl:
             html = i_fl.read()
-            article = text_preproc.extract_article(url, html)
+            article = text_miner.extract_article(url, html)
             with open(text_file_name, "wb") as o_fl:
                 json.dump({
-                    "url": article.url,
-                    "title": article.title.encode("utf-8"),
-                    "text": article.text.encode("utf-8"),
-                    "authors": [a.encode("utf-8") for a in article.authors],
-                    "keywords": [kw.encode("utf-8") for kw in article.keywords],
-                    "summary": article.summary.encode("utf-8"),
-                    "langid": text_preproc.langid(article.text),
+                    "url":      article.url,
+                    "title":    article.title.encode("utf-8"),
+                    "text":     article.text.encode("utf-8"),
+                    "lang_id":  article.lang_id,
                 }, o_fl, indent=4, ensure_ascii=False)
 
 
-def step_4_extract_key_sentences(args):
+def step_4_extract_sentences(args):
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
-    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
-    with open(args.nlcd_conf_file, "rb") as fl:
-        nlcd_config = json.load(fl)
-    if os.path.exists(articles_filtered_dir):
-        logging.info("Cleaning previous articles (filtered) directory %s" % articles_filtered_dir)
-        rm_cmd = "rm -rf %s" % articles_filtered_dir
+    articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
+    if os.path.exists(articles_sentences_dir):
+        logging.info("Cleaning previous articles (raw) directory %s" % articles_sentences_dir)
+        rm_cmd = "rm -rf %s" % articles_sentences_dir
         os.system(rm_cmd)
     logging.info("Creating articles text directory: %s" % articles_text_dir)
-    os.mkdir(articles_filtered_dir)
+    os.mkdir(articles_sentences_dir)
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    logging.info("Filtering sentences, saving to: %s" % articles_filtered_dir)
-    cse_conf = nlcd_config["nlcd"]["searchApi"][0]
-    cse_key = cse_conf["googleApiKey"]
-    cse_engine = cse_conf["googleEngineId"]
-    sentence_filterer = fenrir.api.google.CseAPI(cse_key, cse_engine)
-    min_threshold, max_threshold = map(int, args.cse_thresholds.split(":"))
-    logging.info("Created sentence filterer %r" % sentence_filterer)
+    logging.info("Sentences, saving to: %s" % articles_sentences_dir)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article text from (%d): %s" % (i, url))
         text_json_file_name = os.path.join(articles_text_dir, "%d.json" % i)
-        filtered_json_name = os.path.join(articles_filtered_dir, "%d.json" % i)
-        text_preproc = fenrir.extraction.base.TextPreprocessor()
+        sentences_json_name = os.path.join(articles_sentences_dir, "%d.json" % i)
+        text_miner = fenrir.extraction.base.TextMiner()
         with open(text_json_file_name, "rb") as i_fl:
             article = json.load(i_fl)
-            with open(filtered_json_name, "wb") as o_fl:
-
-
-
+            with open(sentences_json_name, "wb") as o_fl:
                 url = article["url"].encode("utf-8")
                 title = article["title"].encode("utf-8")
                 text = article["text"].encode("utf-8")
-                authors = [a.encode("utf-8") for a in article["authors"]],
-                keywords = [kw.encode("utf-8") for kw in article["keywords"]]
-                summary = article["summary"].encode("utf-8")
-                langid = text_preproc.langid(article["text"])[0]
-
-
-                sentenes = text_preproc.sent_segmentize(text)
-                sentenes.extend(text_preproc.sent_segmentize(summary))
-                quoted = text_preproc.extract_quoted(sentenes)
-                all_sentences = list(set(sentenes+quoted))
-                filtered_sentences = list(sentence_filterer.filter_sentences(all_sentences, min_threshold, max_threshold))
+                lang_id = article["lang_id"].encode("utf-8")
+                sentences = text_miner.sent_tokenize(text)
+                quoted = text_miner.extract_quoted(sentences)
+                sentences = list(set(sentences + quoted))
                 json.dump({
                     "url": url,
                     "title": title,
                     "text": text,
-                    "authors": authors,
-                    "keywords": keywords,
-                    "summary": summary,
-                    "langid": langid,
-                    "sentences": filtered_sentences,
-                }, o_fl, indent=4, ensure_ascii=False)
+                    "lang_id": lang_id,
+                    "sentences": sentences,
+                }, o_fl, indent=4)
+
+
+def step_5_filter_sentences(args):
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
+    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
+    with open(args.nlcd_conf_file, "rb") as fl:
+        nlcd_config = json.load(fl)
+    if os.path.exists(articles_filtered_dir):
+        logging.info("Cleaning previous sentences (filtered) directory %s" % articles_filtered_dir)
+        rm_cmd = "rm -rf %s" % articles_filtered_dir
+        os.system(rm_cmd)
+    logging.info("Creating directory for storing filtered sentences: %s" % articles_filtered_dir)
+    os.mkdir(articles_filtered_dir)
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
+    logging.info("Filtered sentences, saving to: %s" % articles_filtered_dir)
+    search_api = fenrir.api.create_api(nlcd_config["nlcd"]["searchApi"])
+    logging.info("Created sentence filterer %r" % search_api)
+    for i, url in enumerate(origin_urls):
+        logging.info("Loading article sentences from (%d): %s" % (i, url))
+        sentences_json_file_name = os.path.join(articles_sentences_dir, "%d.json" % i)
+        sentences_json_name = os.path.join(articles_filtered_dir, "%d.json" % i)
+        with open(sentences_json_file_name, "rb") as i_fl:
+            article = json.load(i_fl)
+            with open(sentences_json_name, "wb") as o_fl:
+                url = article["url"].encode("utf-8")
+                title = article["title"].encode("utf-8")
+                text = article["text"].encode("utf-8")
+                lang_id = article["lang_id"].encode("utf-8")
+                sentences = [s.encode("utf-8") for s in article["sentences"]]
+                logging.info("Start filtering sentences (%d)." % len(sentences))
+                filtered_sentences = search_api.filter_sentences(sentences)
+                filtered_sentences = list(filtered_sentences)
+                json.dump({
+                    "url": url,
+                    "title": title,
+                    "text": text,
+                    "lang_id": lang_id,
+                    "sentences": sentences,
+                    "filteredSentences": filtered_sentences,
+                }, o_fl, indent=4)
+
+
+def step_6_extract_search_annotations(args):
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
+    if os.path.exists(related_annotations_dir):
+        logging.info("Cleaning previous related annotations directory %s" % related_annotations_dir)
+        rm_cmd = "rm -rf %s" % related_annotations_dir
+        os.system(rm_cmd)
+    logging.info("Creating related annotations directory: %s" % related_annotations_dir)
+    os.mkdir(related_annotations_dir)
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
+    annotations_extractor = fenrir.extraction.google.CseAnnotationExtractor()
+    logging.info("Created annotations extractor: %r" % annotations_extractor)
+    for i, url in enumerate(origin_urls):
+        logging.info("Loading article sentences from (%d): %s" % (i, url))
+        filtered_sentences_json_file_name = os.path.join(articles_filtered_dir, "%d.json" % i)
+        related_annorations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
+        with open(filtered_sentences_json_file_name, "rb") as i_fl:
+            article = json.load(i_fl)
+            with open(related_annorations_json_file_name, "wb") as o_fl:
+                url = article["url"].encode("utf-8")
+                title = article["title"].encode("utf-8")
+                lang_id = article["lang_id"].encode("utf-8")
+                filtered_sentences = article["filteredSentences"]
+                annotations = []
+                for sentence_entry in filtered_sentences:
+                    sent_text = sentence_entry["text"]
+                    sent_total_results = sentence_entry["totalResults"]
+                    sent_api_response = sentence_entry["apiResponse"]
+                    related_items = []
+                    for related_item in sent_api_response["items"]:
+                        annotation = annotations_extractor.annotate(related_item)
+                        related_items.append({
+                            "url": annotation.url,
+                            "title": annotation.title,
+                            "authors": annotation.authors,
+                            "source": annotation.sources,
+                            "dates": annotation.dates,
+                            "images": annotation.images,
+                        })
+
+                    annotations.append({
+                        "sentenceText": sent_text,
+                        "sentenceFreq": sent_total_results,
+                        "relatedItems": related_items,
+                    })
+
+                json.dump({
+                    "originArticle": {
+                        "url": url,
+                        "title": title,
+                        "lang_id": lang_id,
+                    },
+                    "relatedArticlesAnnotations": annotations,
+                }, o_fl, indent=4, sort_keys=False)
 
 
 STEPS = (
@@ -165,7 +245,9 @@ STEPS = (
     (step_1_preprocessing, "Prepare data for processing."),
     (step_2_fetch_origin_articles, "Fetch origin articles."),
     (step_3_extracting_article_sentences, "Extract origin sentences."),
-    (step_4_extract_key_sentences, "Filter non important sentences/segments."),
+    (step_4_extract_sentences, "Extract sentences/segments."),
+    (step_5_filter_sentences, "Filter out non-important sentences."),
+    (step_6_extract_search_annotations, "Extract searcher annotations."),
 
 )
 
@@ -205,11 +287,6 @@ if __name__ == "__main__":
                            help="NLCD JSON configuration file containing API credentials and other information.",
                            default=None)
 
-    argparser.add_argument("--cse-thresholds",
-                           type=str,
-                           help="Google CSE result number thresholds to recognize given query as 'important'.",
-                           default=None)
-
     argparser.add_argument("--pipeline-root",
                            type=str,
                            help="Directory containing pipeline python scripts.",
@@ -221,6 +298,7 @@ if __name__ == "__main__":
                            default=1)
 
     argparser.add_argument("--last-step",
+                           type=int,
                            help="Last step of processing (all following steps will be ignored).",
                            default=10)
 

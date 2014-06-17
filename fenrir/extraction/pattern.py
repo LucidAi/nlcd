@@ -4,78 +4,32 @@
 import jsonpath_rw
 
 
-def get_extractor(api_name):
-    return EXTRACTORS[api_name]()
+class JsonPatternMatchingUtil(object):
 
+    @staticmethod
+    def compile(json_patterns, field_name):
+        patterns = json_patterns[field_name]
+        compiled = [jsonpath_rw.parse(pattern) for pattern in patterns]
+        return compiled
 
-class CseFieldExtractor(object):
-    """
-    """
+    @staticmethod
+    def match(compiled, json_dict):
+        all_matches = []
+        for matcher in compiled:
+            for matched in matcher.find(json_dict):
+                all_matches.append(matched.value)
+        return all_matches
 
-    JPATH_EXPRESSIONS_SITE = [
-        jsonpath_rw.parse("pagemap.NewsItem[*].site_name"),
-        jsonpath_rw.parse("pagemap.metatags[*].['og:site_name']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['source']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['twitter:site']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['article:publisher']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['article:publisher']"),
-        jsonpath_rw.parse("displayLink"),
-    ]
+    @staticmethod
+    def match_unique(compiled, json_dict):
+        all_matches = set()
+        for matcher in compiled:
+            for matched in matcher.find(json_dict):
+                all_matches.add(matched.value)
+        return list(all_matches)
 
-    JPATH_EXPRESSIONS_AUTHOR = [
-        jsonpath_rw.parse("pagemap.person[*].name"),
-        jsonpath_rw.parse("pagemap.hcard[*].fn"),
-        jsonpath_rw.parse("pagemap.article[*].author"),
-        jsonpath_rw.parse("pagemap.metatags[*].author"),
-        jsonpath_rw.parse("pagemap.metatags[*].['dc.creator']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['twitter:creator']"),
-        jsonpath_rw.parse("pagemap.metatags[*].['sailthru.author']"),
-    ]
-
-    JPATH_EXPRESSIONS_DATES = [
-        jsonpath_rw.parse("pagemap.NewsItem[*].datePublished"),
-        jsonpath_rw.parse("pagemap.article[*].datePublished"),
-        jsonpath_rw.parse("pagemap.metatags[*].['dc.date.issued']"),
-    ]
-
-    JPATH_EXPRESSIONS_TITLES = [
-        jsonpath_rw.parse("title"),
-        jsonpath_rw.parse("htmlTitle"),
-        jsonpath_rw.parse("pagemap.NewsItem[*].title"),
-        jsonpath_rw.parse("htmlTitle"),
-        jsonpath_rw.parse("pagemap.metatags[*].['og:title']"),
-    ]
-
-    def extract_authors(self, found_document):
-        authors = set()
-        for matcher in self.JPATH_EXPRESSIONS_AUTHOR:
-            authors.update([m.value for m in matcher.find(found_document)])
-        return list(authors)
-
-    def extract_sources(self, found_document):
-        sources = set()
-        for matcher in self.JPATH_EXPRESSIONS_SITE:
-            sources.update([m.value for m in matcher.find(found_document)])
-        return list(sources)
-
-    def extract_urls(self, found_document):
-        return [found_document.get("formattedUrl")]
-
-    def extract_titles(self, found_document):
-        titles = set()
-        for matcher in self.JPATH_EXPRESSIONS_TITLES:
-            titles.update([m.value for m in matcher.find(found_document)])
-        return list(titles)
-
-    def extract_publish_dates(self, found_document):
-        dates = set()
-        for matcher in self.JPATH_EXPRESSIONS_DATES:
-            dates.update([m.value for m in matcher.find(found_document)])
-        return list(dates)
-
-#
-EXTRACTORS = {
-
-    "api.GoogleCSE": CseFieldExtractor,
-
-}
+    @staticmethod
+    def match_first(compiled, json_dict):
+        for matcher in compiled:
+            for matched in matcher.find(json_dict):
+                return matched.value

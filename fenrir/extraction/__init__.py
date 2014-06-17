@@ -1,7 +1,6 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
-
 NLCD_TO_NLTK_LANG = {
     "en": "english",
     "ru": "russian",

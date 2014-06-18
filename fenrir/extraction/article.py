@@ -9,6 +9,10 @@ class IAnnotator(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
+    def annotate(self, data):
+        raise NotImplemented()
+
+    @abstractmethod
     def extract_url(self, item):
         raise NotImplemented()
 
@@ -32,8 +36,10 @@ class IAnnotator(object):
     def extract_images(self, data):
         raise NotImplemented()
 
+
 class Annotation(object):
-    """Class for accessing Google CSE annotation data."""
+    """Class for accessing articles annotation data.
+    """
 
     def __init__(self, data, annotator=None):
         self.data = data

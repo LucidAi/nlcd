@@ -17,8 +17,11 @@ class PageFetcher(object):
 
     @staticmethod
     def response_to_utf_8(response):
-        response.encoding = "utf-8"
-        return response.text.encode("utf-8")
+        try:
+            response.encoding = "utf-8"
+            return response.text.encode("utf-8")
+        except Exception:
+            return ""
 
     @staticmethod
     def fetch_documents(urls, max_threads=1):

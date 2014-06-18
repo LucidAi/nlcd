@@ -13,20 +13,23 @@ import argparse
 import fenrir
 import fenrir.fetcher
 import fenrir.extraction
+import fenrir.extraction.web
 import fenrir.extraction.base
 import fenrir.extraction.entity
 import fenrir.extraction.google
 import fenrir.api.google
+import fenrir.normalization.pattern
 
 
-ORIGINS_FILE                  = "1.origins.text"
-ORIGINS_HTML_DIR              = "2.origins.html"
-ORIGINS_TEXT_DIR              = "3.origins.text"
-ORIGINS_SENTENCES_DIR         = "4.origins.sents"
-ORIGINS_FILTERED_DIR          = "5.origins.fsent"
-RELATED_ANNOTATIONS_DIR       = "6.related.annot"
-RELATED_PAGES_DIR             = "7.related.html"
-RELATED_FULL_ANNOTATIONS      = "8.related.full"
+ORIGINS_FILE                    = "1.origins.text"
+ORIGINS_HTML_DIR                = "2.origins.html"
+ORIGINS_TEXT_DIR                = "3.origins.text"
+ORIGINS_SENTENCES_DIR           = "4.origins.sents"
+ORIGINS_FILTERED_DIR            = "5.origins.fsent"
+RELATED_ANNOTATIONS_DIR         = "6.related.annot"
+RELATED_PAGES_DIR               = "7.related.html"
+RELATED_FULL_ANNOTATIONS_DIR    = "8.related.full"
+NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
 
 
 def MB(number):
@@ -75,7 +78,7 @@ def step_2_fetch_origin_articles(args):
 
 
 def step_3_extracting_article_sentences(args):
-    """Reads origin articles from work directory and extract clean text from them
+    """Reads origin articles from work directory and extract clean text from them.
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_html_dir = os.path.join(args.work_dir, ORIGINS_HTML_DIR)
@@ -108,7 +111,8 @@ def step_3_extracting_article_sentences(args):
 
 
 def step_4_extract_sentences(args):
-    """"""
+    """Extract sentences and segment them.
+    """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
     articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
@@ -136,7 +140,7 @@ def step_4_extract_sentences(args):
                 lang_id = article["lang_id"].encode("utf-8")
                 sentences = text_miner.sent_tokenize(text)
                 quoted = text_miner.extract_quoted(sentences)
-                sentences = list(set(sentences + quoted))
+                sentences = [s for s in list(set(sentences + quoted)) if len(s) > 10]
                 json.dump({
                     "url": url,
                     "title": title,
@@ -147,7 +151,8 @@ def step_4_extract_sentences(args):
 
 
 def step_5_filter_sentences(args):
-    """"""
+    """Filter out non-important sentences and find related pages.
+    """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
     articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
@@ -191,7 +196,8 @@ def step_5_filter_sentences(args):
 
 
 def step_6_extract_search_annotations(args):
-    """"""
+    """Extract Google searcher annotations.
+    """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
@@ -223,6 +229,8 @@ def step_6_extract_search_annotations(args):
                     sent_total_results = sentence_entry["totalResults"]
                     sent_api_response = sentence_entry["apiResponse"]
                     related_items = []
+                    if sent_total_results == 0:
+                        continue
                     for related_item in sent_api_response["items"]:
                         annotation = annotations_extractor.annotate(related_item)
                         related_items.append({
@@ -249,7 +257,8 @@ def step_6_extract_search_annotations(args):
 
 
 def step_7_fetch_related_pages(args):
-    """"""
+    """Fetch related pages.
+    """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
     related_pages_dir = os.path.join(args.work_dir, RELATED_PAGES_DIR)
@@ -269,8 +278,7 @@ def step_7_fetch_related_pages(args):
         os.mkdir(related_htmls_database_dir)
         logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
         with open(related_annotations_json_file_name, "rb") as i_fl:
-            annotation = json.load(i_fl)
-            related_annotations = annotation["relatedArticlesAnnotations"]
+            related_annotations = json.load(i_fl)["relatedArticlesAnnotations"]
             related_htmls_ldb = plyvel.DB(related_htmls_database_dir,
                                           write_buffer_size=MB(1024),
                                           block_size=MB(512),
@@ -285,17 +293,149 @@ def step_7_fetch_related_pages(args):
             logging.info("Loaded %d urls from annotations, start fetching." % len(urls))
             async_related_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
             def save_html(j_response):
-                j, response = j_response
-                if j % 10 == 0 and j > 0:
-                    logging.info("Added %d/%d." % (len(urls), j+1))
-                html = fetcher.response_to_utf_8(response)
-                if args.use_compression == 1:
-                    html = lz4.compressHC(html)
-                related_htmls_ldb.put(response.url.encode("utf-8"), html)
+                try:
+                    j, response = j_response
+                    if j % 10 == 0 and j > 0:
+                        logging.info("Added %d/%d." % (len(urls), j+1))
+                    html = fetcher.response_to_utf_8(response)
+                    if args.use_compression == 1:
+                        html = lz4.compressHC(html)
+                    if response.history is not None and len(response.history) > 0:
+                        url = response.history[0].url.encode("utf-8")
+                    else:
+                        url = response.url.encode("utf-8")
+                except Exception:
+                    return
+                related_htmls_ldb.put(url, html)
             map(save_html, enumerate(async_related_list))
             logging.info("Added %d/%d." % (len(urls), len(urls)))
             related_htmls_ldb.close()
         logging.info("Fetching completed.")
+
+
+def step_8_extract_full_annotations(args):
+    """Extract full annotations from related pages HTML.
+    """
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
+    related_pages_dir = os.path.join(args.work_dir, RELATED_PAGES_DIR)
+    related_full_annotations_dir = os.path.join(args.work_dir, RELATED_FULL_ANNOTATIONS_DIR)
+    if os.path.exists(related_full_annotations_dir):
+        logging.info("Cleaning previous full annotations directory %s" % related_full_annotations_dir)
+        rm_cmd = "rm -rf %s" % related_full_annotations_dir
+        os.system(rm_cmd)
+    logging.info("Creating full annotations directory: %s" % related_full_annotations_dir)
+    os.mkdir(related_full_annotations_dir)
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
+    annotator = fenrir.extraction.web.HtmlAnnotationsExtractor()
+    annotations_cache = {}
+    for i, url in enumerate(origin_urls):
+        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
+        related_htmls_database_dir = os.path.join(related_pages_dir, "%d.ldb" % i)
+        related_full_annotations_json_file_name = os.path.join(related_full_annotations_dir, "%d.json" % i)
+        logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
+        with open(related_annotations_json_file_name, "rb") as i_fl:
+            annotations = json.load(i_fl)
+            related_htmls_ldb = plyvel.DB(related_htmls_database_dir, create_if_missing=False)
+            with open(related_full_annotations_json_file_name, "wb") as o_fl:
+                for annotation in annotations["relatedArticlesAnnotations"]:
+
+                    items = annotation["relatedItems"]
+
+                    for j, item in enumerate(items):
+                        logging.info("Processing %d of %d item." % (j+1, len(items)))
+                        url = item["url"].encode("utf-8")
+
+                        if url in annotations_cache:
+                            item_annotation = annotations_cache[url]
+                        else:
+                            html = related_htmls_ldb.get(url)
+                            if args.use_compression == 1:
+                                try:
+                                    html = lz4.decompress(html)
+                                except Exception:
+                                    continue
+                            try:
+                                item_annotation = annotator.annotate((url, html))
+                                annotations_cache[url] = item_annotation
+                            except Exception:
+                                import traceback
+                                traceback.print_exc()
+                                item_annotation = None
+
+                        if item_annotation is not None:
+                            item["title"] += item_annotation.title
+                            item["authors"] += item_annotation.authors
+                            item["source"] += item_annotation.sources
+                            item["dates"] += item_annotation.dates
+                            item["images"] += item_annotation.images
+
+
+                json.dump(annotations, o_fl, indent=4, sort_keys=False)
+            related_htmls_ldb.close()
+
+
+def step_9_normalize_data(args):
+    """Extract full annotations from related pages HTML.
+    """
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    related_full_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR) #TODO
+    normalized_annotations_dir = os.path.join(args.work_dir, NORMALIZED_ANNOTATIONS_DIR)
+    if os.path.exists(normalized_annotations_dir):
+        logging.info("Cleaning previous normalized annotations directory %s" % normalized_annotations_dir)
+        rm_cmd = "rm -rf %s" % normalized_annotations_dir
+        os.system(rm_cmd)
+    logging.info("Creating normalized annotations directory: %s" % normalized_annotations_dir)
+    os.mkdir(normalized_annotations_dir)
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
+    normalizer = fenrir.normalization.pattern.PatterMatchNormalizer()
+
+    dates = {}
+    authors = {}
+    normalized_titles_file_name = os.path.join(normalized_annotations_dir, "titles.csv")
+    normalized_authors_file_name = os.path.join(normalized_annotations_dir, "authors.csv")
+    normalized_sources_file_name = os.path.join(normalized_annotations_dir, "sources.csv")
+    normalized_dates_file_name = os.path.join(normalized_annotations_dir, "dates.csv")
+
+    with open(normalized_titles_file_name, "wb") as titles_fl, \
+         open(normalized_authors_file_name, "wb") as authors_fl, \
+         open(normalized_sources_file_name, "wb") as sources_fl, \
+         open(normalized_dates_file_name, "wb") as dates_fl:
+        for i, url in enumerate(origin_urls):
+            related_full_annotations_json_file_name = os.path.join(related_full_annotations_dir, "%d.json" % i)
+            normalized_annotations_json_file_name = os.path.join(normalized_annotations_dir, "%d.json" % i)
+
+            with open(related_full_annotations_json_file_name, "rb") as full_annotations_fl, \
+                 open(normalized_annotations_json_file_name, "wb") as normalized_annotations_fl:
+                annotations = json.load(full_annotations_fl)
+
+                for annotation in annotations["relatedArticlesAnnotations"]:
+                    items = annotation["relatedItems"]
+
+                    for j, item in enumerate(items):
+
+                        norm_dates = set()
+                        for date in item["dates"]:
+                            norm_date = normalizer.normalize_date(date)
+                            dates[date] = norm_date
+                            norm_dates.add(norm_date)
+
+                        norm_authors = set()
+                        for author in item["authors"]:
+                            norm_author = normalizer.normalize_persons(author)
+                            norm_authors.update(norm_author)
+                            authors[author] = normalizer.normalize_persons(author)
+
+        for date, norm_date in sorted(dates.items(), key=lambda x: x[1]):
+            dates_fl.write("%s\t%s\n" % (date.encode("utf-8"), norm_date.encode("utf-8")))
+
+        for author, norm_author in sorted(authors.items(), key=lambda x: x[1]):
+            authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
+
 
 
 STEPS = (
@@ -304,15 +444,12 @@ STEPS = (
     (step_2_fetch_origin_articles, "Fetch origin articles."),
     (step_3_extracting_article_sentences, "Extract origin sentences."),
     (step_4_extract_sentences, "Extract sentences/segments."),
-    (step_5_filter_sentences, "Filter out non-important sentences."),
-    (step_6_extract_search_annotations, "Extract searcher annotations."),
-    (step_7_fetch_related_pages, "Fetch related pages.")
+    (step_5_filter_sentences, "Filter out non-important sentences and find related pages."),
+    (step_6_extract_search_annotations, "Extract Google searcher annotations."),
+    (step_7_fetch_related_pages, "Fetch related pages."),
+    (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
+    (step_9_normalize_data, "Normalize data.")
 )
-
-
-
-
-
 
 
 if __name__ == "__main__":

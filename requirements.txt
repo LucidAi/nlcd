@@ -1,6 +1,7 @@
+parsedatetime
 readability
-newspaper
 jsonpath-rw
+newspaper
 grequests
 requests
 textblob

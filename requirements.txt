@@ -10,4 +10,5 @@ plyvel
 langid
 numpy
 scipy
+ftfy
 nltk

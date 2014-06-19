@@ -139,7 +139,7 @@ def step_4_extract_sentences(args):
                 text = article["text"].encode("utf-8")
                 lang_id = article["lang_id"].encode("utf-8")
                 sentences = text_miner.sent_tokenize(text)
-                quoted = text_miner.extract_quoted(sentences)
+                quoted = text_miner.extract_quoted(text)
                 sentences = [s for s in list(set(sentences + quoted)) if len(s) > 10]
                 json.dump({
                     "url": url,
@@ -147,6 +147,7 @@ def step_4_extract_sentences(args):
                     "text": text,
                     "lang_id": lang_id,
                     "sentences": sentences,
+                    "quoted": quoted,
                 }, o_fl, indent=4)
 
 

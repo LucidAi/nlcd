@@ -2,6 +2,7 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
+import ftfy
 import nltk
 import langid
 import newspaper
@@ -20,15 +21,10 @@ class SimpleArticle(object):
 
 class TextMiner(object):
 
-    RE_WHITESPACE = re.compile(" +")
-    RE_EMPTY_STR = re.compile("^\s*$")
-    RE_HTML_SPECIAL_CHARS = re.compile("\&#?[a-z0-9]+;")
-
-    RE_QUOTES = re.compile(u"\"“”", re.UNICODE)
-
-    RE_Q_PHRASE_PATTERN_1 = re.compile(u"\"([^\"]*)\"", re.UNICODE)
-    RE_Q_PHRASE_PATTERN_2 = re.compile(u"\'([^\']*)\'", re.UNICODE)
-    RE_Q_PHRASE_PATTERN_3 = re.compile(u"“([^”]*)”", re.UNICODE)
+    RE_WHITESPACE = re.compile(u" +", re.UNICODE)
+    RE_EMPTY_STR = re.compile(u"^\s*$", re.UNICODE)
+    RE_HTML_SPECIAL_CHARS = re.compile(u"&#?[a-z0-9]+;", re.UNICODE)
+    RE_QUOTED_PHRASE = re.compile(u"\"([^\"]*)\"", re.UNICODE)
 
     @staticmethod
     def extract_article(url, html):
@@ -42,17 +38,17 @@ class TextMiner(object):
             text = nltk.clean_html(document.summary()).replace("\n", " ")
         else:
             text = article.text
+        text = ftfy.fix_text(text,
+                             fix_entities=True,
+                             remove_terminal_escapes=True,
+                             uncurl_quotes=True,
+                             fix_line_breaks=True)
         return SimpleArticle(url,
                              article.title,
                              text,
                              lang_id)
 
-    def clean_html_junk(self, text):
-        return self.RE_HTML_SPECIAL_CHARS.sub("", text)
-
     def sent_tokenize(self, text):
-        text = text.decode("utf-8")
-        text = self.clean_html_junk(text)
         lines = text.split("\n")
         sentences = []
         for line in lines:
@@ -60,10 +56,5 @@ class TextMiner(object):
         sentences = [sent for sent in sentences if not self.RE_EMPTY_STR.match(sent)]
         return [self.RE_WHITESPACE.sub(" ", sent) for sent in sentences]
 
-    def extract_quoted(self, sentence_list):
-        quoted = []
-        for sent in sentence_list:
-            quoted.extend(self.RE_Q_PHRASE_PATTERN_1.findall(sent))
-            # quoted.extend(self.RE_Q_PHRASE_PATTERN_2.findall(sent))
-            quoted.extend(self.RE_Q_PHRASE_PATTERN_3.findall(sent))
-        return quoted
+    def extract_quoted(self, text):
+        return self.RE_QUOTED_PHRASE.findall(text)

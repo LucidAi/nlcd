@@ -38,3 +38,7 @@ class HtmlAnnotationsExtractor(IAnnotator):
 
     def __init__(self):
         pass
+
+
+
+

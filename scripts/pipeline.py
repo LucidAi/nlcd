@@ -419,24 +419,19 @@ def step_9_normalize_data(args):
 
                     for j, item in enumerate(items):
 
-                        norm_dates = set()
                         for date in item["dates"]:
-                            norm_date = normalizer.normalize_date(date)
-                            dates[date] = norm_date
-                            norm_dates.add(norm_date)
-
-                        norm_authors = set()
+                            dates[date] = normalizer.normalize_date(date)
                         for author in item["authors"]:
-                            norm_author = normalizer.normalize_persons(author)
-                            norm_authors.update(norm_author)
-                            authors[author] = normalizer.normalize_persons(author)
+                            authors[author] = normalizer.normalize_author(author)
+
+                        item["dates"] = normalizer.normalize_dates(item["dates"])
+                        item["authors"] = normalizer.normalize_authors(item["authors"])
+
 
         for date, norm_date in sorted(dates.items(), key=lambda x: x[1]):
             dates_fl.write("%s\t%s\n" % (date.encode("utf-8"), norm_date.encode("utf-8")))
-
         for author, norm_author in sorted(authors.items(), key=lambda x: x[1]):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
-
 
 
 STEPS = (

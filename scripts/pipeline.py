@@ -455,12 +455,15 @@ def step_10_compute_coverage(args):
             output_row = (input_str, true_value, pred_value, int(true_value == pred_value))
             output_values.append(output_row)
         output_values.sort(key=lambda row: row[-1])
-    accuracy, precision, recall = fenrir.util.evaluate_extraction(output_values)
+    apr = fenrir.util.evaluate_extraction(output_values)
     with open(args.eval_dates, "wb") as o_eval_dates:
-        o_eval_dates.write("\"a=%.4f;p=%.4f;r=%.4f Inp.String\",\"True Value\","
-                           "\"Extracted Value\",\"Is Correct\"\n" % (accuracy, precision, recall))
-        for row in output_values:
-            o_eval_dates.write("\"%s\",\"%s\",\"%s\",%d\n" % row)
+        csv_writer = csv.writer(o_eval_dates, delimiter=",", quotechar="\"")
+        header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,
+                  "True Value",
+                  "Extracted Value",
+                  "Is Correct")
+        rows = [header] + output_values
+        csv_writer.writerows(rows)
 
 
 STEPS = (

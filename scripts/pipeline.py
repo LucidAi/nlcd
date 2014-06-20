@@ -3,6 +3,7 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import os
+import csv
 import lz4
 import sys
 import json
@@ -11,6 +12,7 @@ import logging
 import argparse
 
 import fenrir
+import fenrir.util
 import fenrir.fetcher
 import fenrir.extraction
 import fenrir.extraction.web
@@ -30,6 +32,7 @@ RELATED_ANNOTATIONS_DIR         = "6.related.annot"
 RELATED_PAGES_DIR               = "7.related.html"
 RELATED_FULL_ANNOTATIONS_DIR    = "8.related.full"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
+COVERAGE_DIR                    = "10.coverage"
 
 
 def MB(number):
@@ -433,9 +436,34 @@ def step_9_normalize_data(args):
         for author, norm_author in sorted(authors.items(), key=lambda x: x[1]):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
 
+def step_10_compute_coverage(args):
+    coverage_temp_dir = os.path.join(args.work_dir, COVERAGE_DIR)
+    if os.path.exists(coverage_temp_dir):
+        logging.info("Cleaning previous coverage temp directory %s" % coverage_temp_dir)
+        rm_cmd = "rm -rf %s" % coverage_temp_dir
+        os.system(rm_cmd)
+    logging.info("Creating coverage temp directory: %s" % coverage_temp_dir)
+    os.mkdir(coverage_temp_dir)
+    normalizer = fenrir.normalization.pattern.PatterMatchNormalizer()
+    # Compute dates extraction accuracy and coverage.
+    output_values = []
+    with open(args.gold_dates, "rb") as i_gold_dates:
+        csv_reader = csv.reader(i_gold_dates, delimiter=",", quotechar="\"")
+        next(csv_reader, None)
+        for i, (input_str, true_value) in enumerate(csv_reader):
+            pred_value = normalizer.normalize_date(input_str)
+            output_row = (input_str, true_value, pred_value, int(true_value == pred_value))
+            output_values.append(output_row)
+        output_values.sort(key=lambda row: row[-1])
+    accuracy, precision, recall = fenrir.util.evaluate_extraction(output_values)
+    with open(args.eval_dates, "wb") as o_eval_dates:
+        o_eval_dates.write("\"a=%.4f;p=%.4f;r=%.4f Inp.String\",\"True Value\","
+                           "\"Extracted Value\",\"Is Correct\"\n" % (accuracy, precision, recall))
+        for row in output_values:
+            o_eval_dates.write("\"%s\",\"%s\",\"%s\",%d\n" % row)
+
 
 STEPS = (
-
     (step_1_preprocessing, "Prepare data for processing."),
     (step_2_fetch_origin_articles, "Fetch origin articles."),
     (step_3_extracting_article_sentences, "Extract origin sentences."),
@@ -444,7 +472,8 @@ STEPS = (
     (step_6_extract_search_annotations, "Extract Google searcher annotations."),
     (step_7_fetch_related_pages, "Fetch related pages."),
     (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
-    (step_9_normalize_data, "Normalize data.")
+    (step_9_normalize_data, "Normalize data."),
+    (step_10_compute_coverage, "Compute accuracy and coverage of extraction methods."),
 )
 
 
@@ -506,6 +535,26 @@ if __name__ == "__main__":
     argparser.add_argument("--use-compression",
                            type=int,
                            help="Pipeline will use lz4 to compress high volume temporary data (e.g. html of pages).",
+                           default=0)
+
+    argparser.add_argument("--gold-dates",
+                           type=str,
+                           help="Path to the gold standard file for dates extraction.",
+                           default=0)
+
+    argparser.add_argument("--eval-dates",
+                           type=str,
+                           help="Path to the evaluation results for dates extraction.",
+                           default=0)
+
+    argparser.add_argument("--gold-authors",
+                           type=str,
+                           help="Path to the gold standard file for authors extraction.",
+                           default=0)
+
+    argparser.add_argument("--eval-authors",
+                           type=str,
+                           help="Path to the evaluation results for authors extraction.",
                            default=0)
 
     argparser.add_argument("--list-steps",

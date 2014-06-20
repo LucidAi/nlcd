@@ -13,9 +13,13 @@ ${PYTHON} ${THISDIR}/scripts/pipeline.py        \
     --app-root ${THISDIR}/fenrir                \
     --pipeline-root ${THISDIR}/scripts/pipeline \
     --work-dir ${WORKDIR}                       \
-    --first-step 9                              \
-    --last-step 9                               \
+    --first-step 10                             \
+    --last-step 10                              \
     --n-cpus 4                                  \
     --max-threads 64                            \
-    --use-compression 1							\
+    --use-compression 1                         \
+    --gold-dates distr/gold/dates.csv           \
+    --eval-dates distr/eval/dates.csv         \
+    --gold-authors distr/gold/authors.csv       \
+    --eval-authors distr/eval/dates.csv         \
     --nlcd-conf-file ${THISDIR}/fab/dev.json

@@ -2,6 +2,7 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import re
+import abc
 import string
 import logging
 import datetime
@@ -10,9 +11,13 @@ import parsedatetime
 MAX_REASONABLE_YEAR = datetime.datetime.now().year + 10
 MIN_REASONABLE_YEAR = 1800
 
-class PatterMatchNormalizer(object):
 
-    EMPTY_RETURN = ""
+class INormalizer(object):
+    __metaclass__ = abc.ABCMeta
+    EMPTY_RETURN = "<NONE>"
+
+
+class PatterMatchNormalizer(INormalizer):
 
     DIGITS = "0123456789"
 

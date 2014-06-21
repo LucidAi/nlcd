@@ -28,9 +28,9 @@ ORIGINS_HTML_DIR                = "2.origins.html"
 ORIGINS_TEXT_DIR                = "3.origins.text"
 ORIGINS_SENTENCES_DIR           = "4.origins.sents"
 ORIGINS_FILTERED_DIR            = "5.origins.fsent"
-RELATED_ANNOTATIONS_DIR         = "6.related.annot"
-RELATED_PAGES_DIR               = "7.related.html"
-RELATED_FULL_ANNOTATIONS_DIR    = "8.related.full"
+RELATED_GSE_ANNOTATIONS_DIR     = "6.related.gse"
+RELATED_FULL_DATA_DIR           = "7.related.data"
+RELATED_FULL_ANNOTATIONS_DIR    = "8.related.annot"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
 COVERAGE_DIR                    = "10.coverage"
 
@@ -204,7 +204,7 @@ def step_6_extract_search_annotations(args):
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
-    related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     if os.path.exists(related_annotations_dir):
         logging.info("Cleaning previous related annotations directory %s" % related_annotations_dir)
         rm_cmd = "rm -rf %s" % related_annotations_dir
@@ -264,8 +264,8 @@ def step_7_fetch_related_pages(args):
     """Fetch related pages.
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
-    related_pages_dir = os.path.join(args.work_dir, RELATED_PAGES_DIR)
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
+    related_pages_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     if os.path.exists(related_annotations_dir):
         logging.info("Cleaning previous related pages directory %s" % related_pages_dir)
         rm_cmd = "rm -rf %s" % related_pages_dir
@@ -278,12 +278,12 @@ def step_7_fetch_related_pages(args):
     fetcher = fenrir.fetcher.PageFetcher()
     for i, url in enumerate(origin_urls):
         related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        related_htmls_database_dir = os.path.join(related_pages_dir, "%d.ldb" % i)
-        os.mkdir(related_htmls_database_dir)
+        full_data_dir = os.path.join(related_pages_dir, "%d.ldb" % i)
+        os.mkdir(full_data_dir)
         logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
         with open(related_annotations_json_file_name, "rb") as i_fl:
             related_annotations = json.load(i_fl)["relatedArticlesAnnotations"]
-            related_htmls_ldb = plyvel.DB(related_htmls_database_dir,
+            related_htmls_ldb = plyvel.DB(full_data_dir,
                                           write_buffer_size=MB(1024),
                                           block_size=MB(512),
                                           bloom_filter_bits=8,
@@ -292,7 +292,9 @@ def step_7_fetch_related_pages(args):
             urls = set()
             for annotation in related_annotations:
                 for related_item in annotation["relatedItems"]:
-                    urls.add(related_item["url"].encode("utf-8"))
+                    url = related_item["url"].encode("utf-8")
+                    urls.add(url)
+                    related_htmls_ldb.put("json+%s" % url, json.dumps(related_item))
             urls = list(urls)
             logging.info("Loaded %d urls from annotations, start fetching." % len(urls))
             async_related_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
@@ -310,7 +312,7 @@ def step_7_fetch_related_pages(args):
                         url = response.url.encode("utf-8")
                 except Exception:
                     return
-                related_htmls_ldb.put(url, html)
+                related_htmls_ldb.put("html+%s" % url, html)
             map(save_html, enumerate(async_related_list))
             logging.info("Added %d/%d." % (len(urls), len(urls)))
             related_htmls_ldb.close()
@@ -321,8 +323,8 @@ def step_8_extract_full_annotations(args):
     """Extract full annotations from related pages HTML.
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    related_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR)
-    related_pages_dir = os.path.join(args.work_dir, RELATED_PAGES_DIR)
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
+    related_pages_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     related_full_annotations_dir = os.path.join(args.work_dir, RELATED_FULL_ANNOTATIONS_DIR)
     if os.path.exists(related_full_annotations_dir):
         logging.info("Cleaning previous full annotations directory %s" % related_full_annotations_dir)
@@ -385,7 +387,7 @@ def step_9_normalize_data(args):
     """Extract full annotations from related pages HTML.
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    related_full_annotations_dir = os.path.join(args.work_dir, RELATED_ANNOTATIONS_DIR) #TODO
+    related_full_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR) #TODO
     normalized_annotations_dir = os.path.join(args.work_dir, NORMALIZED_ANNOTATIONS_DIR)
     if os.path.exists(normalized_annotations_dir):
         logging.info("Cleaning previous normalized annotations directory %s" % normalized_annotations_dir)
@@ -445,10 +447,11 @@ def step_10_compute_coverage(args):
     logging.info("Creating coverage temp directory: %s" % coverage_temp_dir)
     os.mkdir(coverage_temp_dir)
     normalizer = fenrir.normalization.pattern.PatterMatchNormalizer()
-    # Compute dates extraction accuracy and coverage.
+
+    # Compute dates normalization accuracy and coverage.
     output_values = []
-    with open(args.gold_dates, "rb") as i_gold_dates:
-        csv_reader = csv.reader(i_gold_dates, delimiter=",", quotechar="\"")
+    with open(args.gold_dates_norm, "rb") as i_gold:
+        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
         next(csv_reader, None)
         for i, (input_str, true_value) in enumerate(csv_reader):
             if true_value[0] == "{":
@@ -458,14 +461,27 @@ def step_10_compute_coverage(args):
             output_values.append(output_row)
         output_values.sort(key=lambda row: row[-1])
     apr = fenrir.eval.evaluate_extraction(output_values)
-    with open(args.eval_dates, "wb") as o_eval_dates:
-        csv_writer = csv.writer(o_eval_dates, delimiter=",", quotechar="\"")
+    with open(args.eval_dates_norm, "wb") as o_eval_dates_norm:
+        csv_writer = csv.writer(o_eval_dates_norm, delimiter=",", quotechar="\"")
         header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,
                   "True Value",
                   "Extracted Value",
                   "Is Correct")
         rows = [header] + output_values
         csv_writer.writerows(rows)
+
+    # Compute authors normalization
+    # TODO
+
+    # Compute dates extraction
+    # TODO
+
+    # Compute authors extraction
+    output_values = []
+    with open(args.gold_extr, "rb") as i_gold:
+        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        for row in csv_reader:
+            print row
 
 
 STEPS = (
@@ -542,25 +558,35 @@ if __name__ == "__main__":
                            help="Pipeline will use lz4 to compress high volume temporary data (e.g. html of pages).",
                            default=0)
 
-    argparser.add_argument("--gold-dates",
+    argparser.add_argument("--gold-dates-norm",
                            type=str,
-                           help="Path to the gold standard file for dates extraction.",
-                           default=0)
+                           help="Path to the gold standard file for dates normalization.",
+                           default=None)
 
-    argparser.add_argument("--eval-dates",
+    argparser.add_argument("--eval-dates-norm",
                            type=str,
-                           help="Path to the evaluation results for dates extraction.",
-                           default=0)
+                           help="Path to the evaluation results for dates normalization.",
+                           default=None)
 
-    argparser.add_argument("--gold-authors",
+    argparser.add_argument("--gold-authors-norm",
                            type=str,
-                           help="Path to the gold standard file for authors extraction.",
-                           default=0)
+                           help="Path to the gold standard file for authors normalization.",
+                           default=None)
 
-    argparser.add_argument("--eval-authors",
+    argparser.add_argument("--eval-authors-norm",
                            type=str,
-                           help="Path to the evaluation results for authors extraction.",
-                           default=0)
+                           help="Path to the evaluation results for authors normalization.",
+                           default=None)
+
+    argparser.add_argument("--gold-extr",
+                           type=str,
+                           help="Path to the gold standard file for extraction.",
+                           default=None)
+
+    argparser.add_argument("--eval-extr",
+                           type=str,
+                           help="Path to the evaluation results of extraction.",
+                           default=None)
 
     argparser.add_argument("--list-steps",
                            type=str,

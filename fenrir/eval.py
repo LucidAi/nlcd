@@ -57,8 +57,8 @@ def eval_date(expr):
 
 def evaluate_extraction(output_rows):
     # output_rows = [(input_str, true_value, pred_value, is_correct)]
-    total_values=len(output_rows)
-    correct = sum((row[-1] for row in  output_rows))
+    total_values = len(output_rows)
+    correct = sum((row[-1] for row in output_rows))
     total_found = 0
     correct_found = 0
     total_non_empty = 0

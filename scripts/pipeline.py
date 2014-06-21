@@ -143,13 +143,13 @@ def step_4_extract_sentences(args):
                 lang_id = article["lang_id"].encode("utf-8")
                 sentences = text_miner.sent_tokenize(text)
                 quoted = text_miner.extract_quoted(text)
-                sentences = [s for s in list(set(sentences + quoted)) if len(s) > 10]
+                all_sentence = text_miner.combine_sentences(sentences, quoted)
                 json.dump({
                     "url": url,
                     "title": title,
                     "text": text,
                     "lang_id": lang_id,
-                    "sentences": sentences,
+                    "sentences": all_sentence,
                     "quoted": quoted,
                 }, o_fl, indent=4)
 

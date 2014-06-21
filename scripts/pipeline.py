@@ -12,7 +12,7 @@ import logging
 import argparse
 
 import fenrir
-import fenrir.util
+import fenrir.eval
 import fenrir.fetcher
 import fenrir.extraction
 import fenrir.extraction.web
@@ -430,11 +430,11 @@ def step_9_normalize_data(args):
                         item["dates"] = normalizer.normalize_dates(item["dates"])
                         item["authors"] = normalizer.normalize_authors(item["authors"])
 
-
         for date, norm_date in sorted(dates.items(), key=lambda x: x[1]):
             dates_fl.write("%s\t%s\n" % (date.encode("utf-8"), norm_date.encode("utf-8")))
         for author, norm_author in sorted(authors.items(), key=lambda x: x[1]):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
+
 
 def step_10_compute_coverage(args):
     coverage_temp_dir = os.path.join(args.work_dir, COVERAGE_DIR)
@@ -451,11 +451,13 @@ def step_10_compute_coverage(args):
         csv_reader = csv.reader(i_gold_dates, delimiter=",", quotechar="\"")
         next(csv_reader, None)
         for i, (input_str, true_value) in enumerate(csv_reader):
+            if true_value[0] == "{":
+                true_value = fenrir.eval.eval_date(true_value)
             pred_value = normalizer.normalize_date(input_str)
             output_row = (input_str, true_value, pred_value, int(true_value == pred_value))
             output_values.append(output_row)
         output_values.sort(key=lambda row: row[-1])
-    apr = fenrir.util.evaluate_extraction(output_values)
+    apr = fenrir.eval.evaluate_extraction(output_values)
     with open(args.eval_dates, "wb") as o_eval_dates:
         csv_writer = csv.writer(o_eval_dates, delimiter=",", quotechar="\"")
         header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,

@@ -43,14 +43,14 @@ def eval_date(expr):
                 computed_date += delta
             else:
                 computed_date -= delta
-        computed_date = "%4d.%2d.%2d" % (computed_date.year, computed_date.month, computed_date.day)
+        computed_date = "%04d.%02d.%02d" % (computed_date.year, computed_date.month, computed_date.day)
         return computed_date
     else:
         today = datetime.datetime.now()
         pattern = expr[1:-1]
-        year = "%4d" % today.year
-        month = "%2d" % today.month
-        day = "%2d" % today.day
+        year = "%04d" % today.year
+        month = "%02d" % today.month
+        day = "%02d" % today.day
         computed_date = pattern.replace("YYYY", year).replace("MM", month).replace("DD", day)
         return computed_date
 

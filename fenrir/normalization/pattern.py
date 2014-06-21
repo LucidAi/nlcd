@@ -26,7 +26,6 @@ class PatterMatchNormalizer(INormalizer):
     RE_DATE_3 = re.compile("^(.*\D)?(\d{4})\-(\d{2})\-(\d{2})(\D.*)?")
     RE_DATE_4 = re.compile("^(.*\D)?(\d{4})/(\d{2})/(\d{2})(\D.*)?")
 
-
     RE_PERSONS_1 = re.compile(".* and .*")
 
     def __init__(self):

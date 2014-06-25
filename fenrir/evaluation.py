@@ -5,7 +5,7 @@ import re
 import datetime
 import dateutil.relativedelta
 
-from fenrir.normalization.pattern import INormalizer
+from fenrir.extraction import INormalizer
 
 # y - year
 # m - month

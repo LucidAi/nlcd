@@ -4,23 +4,21 @@
 
 import os
 import csv
-import lz4
 import sys
 import json
-import plyvel
 import logging
 import argparse
 
+import lz4
+import plyvel
+
 import fenrir
-import fenrir.eval
-import fenrir.fetcher
+import fenrir.entity
+import fenrir.evaluation
+import fenrir.fetchers
 import fenrir.extraction
-import fenrir.extraction.web
-import fenrir.extraction.base
-import fenrir.extraction.entity
-import fenrir.extraction.google
 import fenrir.api.google
-import fenrir.normalization.pattern
+from fenrir.extraction import TextMiner, CseAnnotationExtractor, ArticleAttrExtractor
 
 
 ORIGINS_FILE                    = "1.origins.text"
@@ -32,7 +30,8 @@ RELATED_GSE_ANNOTATIONS_DIR     = "6.related.gse"
 RELATED_FULL_DATA_DIR           = "7.related.data"
 RELATED_FULL_ANNOTATIONS_DIR    = "8.related.annot"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
-COVERAGE_DIR                    = "10.coverage"
+EVALUATION_DATA_DIR             = "10.evaluation.data"
+EVALUATION_DIR                  = "11.evaluation"
 
 
 def MB(number):
@@ -65,7 +64,7 @@ def step_2_fetch_origin_articles(args):
         os.system(rm_cmd)
     logging.info("Creating articles html directory: %s" % articles_html_dir)
     os.mkdir(articles_html_dir)
-    fetcher = fenrir.fetcher.PageFetcher()
+    fetcher = fenrir.fetchers.PageFetcher()
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
@@ -96,7 +95,7 @@ def step_3_extracting_article_sentences(args):
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
     logging.info("Extracting articles texts to: %s" % articles_text_dir)
-    text_miner = fenrir.extraction.base.TextMiner()
+    text_miner = TextMiner()
     for i, url in enumerate(origin_urls):
         logging.info("Extracting text from (%d): %s" % (i, url))
         html_file_name = os.path.join(articles_html_dir, "%d.html" % i)
@@ -133,7 +132,7 @@ def step_4_extract_sentences(args):
         logging.info("Loading article text from (%d): %s" % (i, url))
         text_json_file_name = os.path.join(articles_text_dir, "%d.json" % i)
         sentences_json_name = os.path.join(articles_sentences_dir, "%d.json" % i)
-        text_miner = fenrir.extraction.base.TextMiner()
+        text_miner = TextMiner()
         with open(text_json_file_name, "rb") as i_fl:
             article = json.load(i_fl)
             with open(sentences_json_name, "wb") as o_fl:
@@ -214,7 +213,7 @@ def step_6_extract_search_annotations(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    annotations_extractor = fenrir.extraction.google.CseAnnotationExtractor()
+    annotations_extractor = CseAnnotationExtractor()
     logging.info("Created annotations extractor: %r" % annotations_extractor)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article sentences from (%d): %s" % (i, url))
@@ -265,58 +264,55 @@ def step_7_fetch_related_pages(args):
     """
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
-    related_pages_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
+    related_pages_database_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     if os.path.exists(related_annotations_dir):
-        logging.info("Cleaning previous related pages directory %s" % related_pages_dir)
-        rm_cmd = "rm -rf %s" % related_pages_dir
+        logging.info("Cleaning previous related pages directory %s" % related_pages_database_dir)
+        rm_cmd = "rm -rf %s" % related_pages_database_dir
         os.system(rm_cmd)
-    logging.info("Creating related pages directory: %s" % related_pages_dir)
-    os.mkdir(related_pages_dir)
+    logging.info("Creating related pages directory: %s" % related_pages_database_dir)
+    os.mkdir(related_pages_database_dir)
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    fetcher = fenrir.fetcher.PageFetcher()
+    fetcher = fenrir.fetchers.PageFetcher()
+    related_data_ldb = plyvel.DB(related_pages_database_dir,
+                                 write_buffer_size=MB(1024),
+                                 block_size=MB(512),
+                                 bloom_filter_bits=8,
+                                 create_if_missing=True,
+                                 error_if_exists=True)
+    urls = set()
     for i, url in enumerate(origin_urls):
         related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        full_data_dir = os.path.join(related_pages_dir, "%d.ldb" % i)
-        os.mkdir(full_data_dir)
         logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
         with open(related_annotations_json_file_name, "rb") as i_fl:
             related_annotations = json.load(i_fl)["relatedArticlesAnnotations"]
-            related_htmls_ldb = plyvel.DB(full_data_dir,
-                                          write_buffer_size=MB(1024),
-                                          block_size=MB(512),
-                                          bloom_filter_bits=8,
-                                          create_if_missing=True,
-                                          error_if_exists=True)
-            urls = set()
             for annotation in related_annotations:
                 for related_item in annotation["relatedItems"]:
                     url = related_item["url"].encode("utf-8")
                     urls.add(url)
-                    related_htmls_ldb.put("json+%s" % url, json.dumps(related_item))
-            urls = list(urls)
-            logging.info("Loaded %d urls from annotations, start fetching." % len(urls))
-            async_related_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
-            def save_html(j_response):
-                try:
-                    j, response = j_response
-                    if j % 10 == 0 and j > 0:
-                        logging.info("Added %d/%d." % (len(urls), j+1))
-                    html = fetcher.response_to_utf_8(response)
-                    if args.use_compression == 1:
-                        html = lz4.compressHC(html)
-                    if response.history is not None and len(response.history) > 0:
-                        url = response.history[0].url.encode("utf-8")
-                    else:
-                        url = response.url.encode("utf-8")
-                except Exception:
-                    return
-                related_htmls_ldb.put("html+%s" % url, html)
-            map(save_html, enumerate(async_related_list))
-            logging.info("Added %d/%d." % (len(urls), len(urls)))
-            related_htmls_ldb.close()
-        logging.info("Fetching completed.")
+                    related_data_ldb.put("json+%s" % url, json.dumps(related_item))
+    urls = list(urls)
+    async_related_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
+    def save_html(j_response):
+        try:
+            j, response = j_response
+            if j % 10 == 0 and j > 0:
+                logging.info("Added %d/%d." % (len(urls), j+1))
+            html = fetcher.response_to_utf_8(response)
+            if args.use_compression == 1:
+                html = lz4.compressHC(html)
+            if response.history is not None and len(response.history) > 0:
+                url = response.history[0].url.encode("utf-8")
+            else:
+                url = response.url.encode("utf-8")
+        except Exception:
+            return
+        related_data_ldb.put("html+%s" % url, html)
+    map(save_html, enumerate(async_related_list))
+    related_data_ldb.close()
+    logging.info("Added %d/%d." % (len(urls), len(urls)))
+    logging.info("Fetching completed.")
 
 
 def step_8_extract_full_annotations(args):
@@ -335,7 +331,7 @@ def step_8_extract_full_annotations(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    annotator = fenrir.extraction.web.HtmlAnnotationsExtractor()
+    annotator = ArticleAttrExtractor()
     annotations_cache = {}
     for i, url in enumerate(origin_urls):
         related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
@@ -347,9 +343,7 @@ def step_8_extract_full_annotations(args):
             related_htmls_ldb = plyvel.DB(related_htmls_database_dir, create_if_missing=False)
             with open(related_full_annotations_json_file_name, "wb") as o_fl:
                 for annotation in annotations["relatedArticlesAnnotations"]:
-
                     items = annotation["relatedItems"]
-
                     for j, item in enumerate(items):
                         logging.info("Processing %d of %d item." % (j+1, len(items)))
                         url = item["url"].encode("utf-8")
@@ -390,23 +384,21 @@ def step_9_normalize_data(args):
     related_full_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR) #TODO
     normalized_annotations_dir = os.path.join(args.work_dir, NORMALIZED_ANNOTATIONS_DIR)
     if os.path.exists(normalized_annotations_dir):
-        logging.info("Cleaning previous normalized annotations directory %s" % normalized_annotations_dir)
+        logging.info("Cleaning previous set_classified_data annotations directory %s" % normalized_annotations_dir)
         rm_cmd = "rm -rf %s" % normalized_annotations_dir
         os.system(rm_cmd)
-    logging.info("Creating normalized annotations directory: %s" % normalized_annotations_dir)
+    logging.info("Creating set_classified_data annotations directory: %s" % normalized_annotations_dir)
     os.mkdir(normalized_annotations_dir)
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    normalizer = fenrir.normalization.pattern.PatterMatchNormalizer()
-
+    normalizer = fenrir.norm.pattern.ArticleNormalizer()
     dates = {}
     authors = {}
     normalized_titles_file_name = os.path.join(normalized_annotations_dir, "titles.csv")
     normalized_authors_file_name = os.path.join(normalized_annotations_dir, "authors.csv")
     normalized_sources_file_name = os.path.join(normalized_annotations_dir, "sources.csv")
     normalized_dates_file_name = os.path.join(normalized_annotations_dir, "dates.csv")
-
     with open(normalized_titles_file_name, "wb") as titles_fl, \
          open(normalized_authors_file_name, "wb") as authors_fl, \
          open(normalized_sources_file_name, "wb") as sources_fl, \
@@ -425,7 +417,7 @@ def step_9_normalize_data(args):
                     for j, item in enumerate(items):
 
                         for date in item["dates"]:
-                            dates[date] = normalizer.normalize_date(date)
+                            dates[date] = normalizer.classify_author_string(date)
                         for author in item["authors"]:
                             authors[author] = normalizer.normalize_author(author)
 
@@ -438,15 +430,79 @@ def step_9_normalize_data(args):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
 
 
-def step_10_compute_coverage(args):
-    coverage_temp_dir = os.path.join(args.work_dir, COVERAGE_DIR)
-    if os.path.exists(coverage_temp_dir):
-        logging.info("Cleaning previous coverage temp directory %s" % coverage_temp_dir)
-        rm_cmd = "rm -rf %s" % coverage_temp_dir
+def step_10_prepare_evaluation(args):
+    """
+    Prepare for evaluation: download as save pages from gold standard.
+    """
+    # Create temporary directory.
+    eval_tmp_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
+    if os.path.exists(eval_tmp_dir):
+        os.system("rm -rf %s" % eval_tmp_dir)
+    os.mkdir(eval_tmp_dir)
+
+    # Create ldb database.
+    eval_db = plyvel.DB(eval_tmp_dir,
+                        write_buffer_size=MB(1024),
+                        block_size=MB(512),
+                        bloom_filter_bits=8,
+                        create_if_missing=True,
+                        error_if_exists=True)
+    eval_html_db = eval_db.prefixed_db("html-")
+
+    # Collect urls from gold file.
+    urls = set()
+    with open(args.gold_extr, "rb") as i_gold:
+        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        next(csv_reader, None)
+        for row in csv_reader:
+            url = row[0].encode("utf-8")
+            urls.add(url)
+
+    fetcher = fenrir.fetchers.PageFetcher()
+    urls = list(urls)
+    async_eval_pages_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
+
+    def save_html(j_response):
+        try:
+            j, response = j_response
+            if j % 10 == 0 and j > 0:
+                logging.info("Added %d/%d." % (len(urls), j+1))
+            html = fetcher.response_to_utf_8(response)
+            if args.use_compression == 1:
+                html = lz4.compressHC(html)
+            if response.history is not None and len(response.history) > 0:
+                url = response.history[0].url.encode("utf-8")
+            else:
+                url = response.url.encode("utf-8")
+        except Exception:
+            logging.warn("Cannot save page.")
+            return
+        eval_html_db.put(url, html)
+
+    map(save_html, enumerate(async_eval_pages_list))
+    eval_db.close()
+    logging.info("Fetched %d pages to %s" % (len(urls), eval_tmp_dir))
+
+
+def step_11_evaluation(args):
+    """"""
+
+    eval_dir = os.path.join(args.work_dir, EVALUATION_DIR)
+    eval_data_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
+    author_rel = fenrir.entity.Entity.REL.AUTHOR
+
+    if os.path.exists(eval_dir):
+        logging.info("Cleaning previous coverage temp directory %s" % eval_dir)
+        rm_cmd = "rm -rf %s" % eval_dir
         os.system(rm_cmd)
-    logging.info("Creating coverage temp directory: %s" % coverage_temp_dir)
-    os.mkdir(coverage_temp_dir)
-    normalizer = fenrir.normalization.pattern.PatterMatchNormalizer()
+    logging.info("Creating coverage temp directory: %s" % eval_dir)
+    os.mkdir(eval_dir)
+
+    extractor = ArticleAttrExtractor()
+    normalizer = fenrir.extraction.ArticleNormalizer()
+
+    eval_db = plyvel.DB(eval_data_dir, create_if_missing=False)
+    eval_html_db = eval_db.prefixed_db("html-")
 
     # Compute dates normalization accuracy and coverage.
     output_values = []
@@ -455,33 +511,74 @@ def step_10_compute_coverage(args):
         next(csv_reader, None)
         for i, (input_str, true_value) in enumerate(csv_reader):
             if true_value[0] == "{":
-                true_value = fenrir.eval.eval_date(true_value)
+                true_value = fenrir.evaluation.eval_date(true_value)
             pred_value = normalizer.normalize_date(input_str)
             output_row = (input_str, true_value, pred_value, int(true_value == pred_value))
             output_values.append(output_row)
         output_values.sort(key=lambda row: row[-1])
-    apr = fenrir.eval.evaluate_extraction(output_values)
+
+    # Get accuracy, precision, recall
+    apr = fenrir.evaluation.evaluate_extraction(output_values)
+
+    # Save results
     with open(args.eval_dates_norm, "wb") as o_eval_dates_norm:
         csv_writer = csv.writer(o_eval_dates_norm, delimiter=",", quotechar="\"")
-        header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,
-                  "True Value",
+        header = ("True Value",
                   "Extracted Value",
-                  "Is Correct")
+                  "Url")
         rows = [header] + output_values
         csv_writer.writerows(rows)
-
-    # Compute authors normalization
-    # TODO
 
     # Compute dates extraction
     # TODO
 
+    # Compute authors normalization
+    # TODO
+
     # Compute authors extraction
+
+    def format_authors(list_of_authors):
+        if len(list_of_authors) == 0 or list_of_authors == ["<NONE>"]:
+            return "<NONE>"
+        return " & ".join((author.title() for author in sorted(list_of_authors)))
+
     output_values = []
+
     with open(args.gold_extr, "rb") as i_gold:
         csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        next(csv_reader, None)
         for row in csv_reader:
-            print row
+
+            url, true_authors, true_dates = row
+            url = url.encode("utf-8")
+            html = eval_html_db.get(url)
+            html = lz4.decompress(html) if args.use_compression == 1 else html
+
+            parsed = extractor.parse(url, html)
+            extracted_authors = extractor.extract_authors(parsed)
+            norm_authors = normalizer.normalize_authors(extracted_authors, parsed)
+
+            if len(norm_authors) == 0:
+                pred_authors = "<NONE>"
+            else:
+                pred_authors = " AND ".join(set((author.name for author in norm_authors if author.ent_rel == author_rel)))
+
+
+            output_values.append((true_authors, pred_authors, url))
+
+    arp = (0.0, 0.0, 0.0)
+    o_eval_authors_extraction = os.path.join(args.eval_extr, "authors.extr.csv")
+
+    with open(o_eval_authors_extraction, "wb") as o_eval_dates_norm:
+        csv_writer = csv.writer(o_eval_dates_norm, delimiter=",", quotechar="\"")
+
+        # header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,
+        #           "True Value",
+        #           "Extracted Value",
+        #           "Is Correct")
+        # rows = [header] + output_values
+
+        csv_writer.writerows(output_values)
 
 
 STEPS = (
@@ -494,7 +591,8 @@ STEPS = (
     (step_7_fetch_related_pages, "Fetch related pages."),
     (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
     (step_9_normalize_data, "Normalize data."),
-    (step_10_compute_coverage, "Compute accuracy and coverage of extraction methods."),
+    (step_10_prepare_evaluation, "Prepare evaluation."),
+    (step_11_evaluation, "Compute accuracy and coverage of extraction methods."),
 )
 
 

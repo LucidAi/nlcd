@@ -6,13 +6,12 @@ import json
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from fenrir.extraction import TextMiner, NerExtractor
 
-from fenrir.fetcher import PageFetcher
+from fenrir.fetchers import PageFetcher
 from fenrir.api.google import CseAPI
 
-from fenrir.extraction.entity import NerExtractor
 from fenrir.extraction.google import get_extractor
-from fenrir.extraction.base import TextMiner
 
 from client.api.decorators import nlcd_api_call
 

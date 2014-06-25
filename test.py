@@ -7,7 +7,7 @@ import unittest
 
 
 from fenrir.app import FenrirWorker
-from fenrir.fetcher import PageFetcher
+from fenrir.fetchers import PageFetcher
 from fenrir.api import CseAPI
 
 

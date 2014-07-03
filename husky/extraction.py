@@ -289,6 +289,7 @@ class DateExtractor(object):
         logging.warning("Article date extraction is not implemented.")
         return []
 
+
 class AuthorExtractor(object):
     """
     TODO(zaytsev@usc.edu):
@@ -425,9 +426,13 @@ class EntityExtractor(object):
         if article.url in self.sites_blacklist:
             logging.info("Blacklisted %r." % article.url)
             return []
-        return self.author_extractor.extract(article)
+        authors = self.author_extractor.extract(article)
+        # if annotation is not None:
+        #     print annotation["authors"]
+        return authors
 
-    def extract_dates(self, article=None, annotation=None):
+
+    def extract_dates(self, article=None, annotation=None, select_min=True):
         doc_dates = self.date_extractor.extract(article)
         ann_dates = self.date_extractor.extract_from_annotation(annotation)
         dates = set(doc_dates)

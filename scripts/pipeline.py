@@ -444,6 +444,7 @@ def step_10_evaluation(args):
                 url = related_item["url"].encode("utf-8")
                 search_annotations[url] = related_item
 
+    i = 0
     eval_entries = []
     with open(args.gold_extr, "rb") as i_gold:
         csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
@@ -495,6 +496,8 @@ def step_10_evaluation(args):
                 try:
                     raw_dates = annotation["dates"]
                     pred_dates = normalizer.normalize_dates(raw_dates)
+                    if len(pred_dates) > 1:
+                        pred_dates = [min(pred_dates)]
                     pred_dates = set((d.lower() for d in pred_dates))
                 except Exception:
                     logging.warning("Error when extracting dates. %r" % url)

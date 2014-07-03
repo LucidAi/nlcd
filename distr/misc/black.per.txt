@@ -1,0 +1,8 @@
+.*institute.*
+.*correspondent.*
+.*author.*
+.*reporter.*
+.*editor.*
+.* a .*
+.* are .*
+.* you .*

@@ -1,0 +1,22 @@
+.*latest.*
+.*episode.*
+.*rss.*
+.*subscribe.*
+.*article.*
+.*feed.*
+.*author.*
+.*email.*
+.*e\-mail.*
+.*twitter.*
+.*facebook.*
+.*google.*
+.*interview.*
+.*post.*
+.*comment.*
+.*about.*
+.*login.*
+.*register.*
+.*password.*
+.* a .*
+.* are .*
+.* you .*

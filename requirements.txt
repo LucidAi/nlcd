@@ -12,3 +12,4 @@ numpy
 scipy
 ftfy
 nltk
+lz4

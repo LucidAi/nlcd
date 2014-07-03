@@ -5,8 +5,6 @@ import re
 import datetime
 import dateutil.relativedelta
 
-from fenrir.extraction import INormalizer
-
 # y - year
 # m - month
 # w - week
@@ -55,24 +53,43 @@ def eval_date(expr):
         return computed_date
 
 
-def evaluate_extraction(output_rows):
-    # output_rows = [(input_str, true_value, pred_value, is_correct)]
-    total_values = len(output_rows)
-    correct = sum((row[-1] for row in output_rows))
-    total_found = 0
-    correct_found = 0
-    total_non_empty = 0
-    for input_str, true_value, pred_value, is_correct in output_rows:
-        if pred_value != INormalizer.EMPTY_RETURN:
-            total_found += 1
-            if pred_value == true_value:
-                correct_found += 1
-        if true_value != INormalizer.EMPTY_RETURN:
-            total_non_empty += 1
-    precision = float(correct_found) / total_found
-    recall =  float(correct_found) / total_non_empty
-    accuracy = correct / float(total_values)
-    return accuracy, precision, recall
+def compute_arp(eval_entries, eval_dates=False):
+    # eval_entries = [(true_values, pred_values)]
+
+    error_rows = []
+
+    total_true_entries = 0
+    total_found_entries = 0
+    correct_found_entries = 0
+
+    for true_values, pred_values in eval_entries:
+
+        if eval_dates:
+            e_pred_values = set()
+            for v in pred_values:
+                if v.startswith("{"):
+                    e_pred_values.add(eval_date(v))
+                else:
+                    e_pred_values.add(v)
+
+        row_errors = 0
+        total_true_entries += len(true_values)
+        total_found_entries += len(pred_values)
+        for p_val in pred_values:
+            if p_val in true_values:
+                correct_found_entries += 1
+            else:
+                row_errors += 1
+        for t_val in true_values:
+            if t_val not in pred_values:
+                row_errors += 1
+        error_rows.append(row_errors)
+
+    precision = float(correct_found_entries) / total_found_entries
+    recall = float(correct_found_entries) / total_true_entries
+
+    return (precision, recall, 100), error_rows
+
 
 
 

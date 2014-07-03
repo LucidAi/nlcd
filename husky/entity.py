@@ -72,6 +72,10 @@ class Entity(object):
         # Type of entity: person, organization, place, etc.
         self.ent_type = ent_type
 
+        # Some additional features of raw representation
+        self.raw_source_line = -1
+        self.raw_total_lines = -1
+
     @property
     def is_classified(self):
         return self.__is_classified
@@ -100,7 +104,7 @@ class Entity(object):
         self.web_names[domain] = w_name
 
     def __repr__(self):
-        if self.raw is not None:
+        if self.name is None and len(self.web_names) == 0 and len(self.synonyms) == 0:
             entity = ["raw=%r" % self.raw.encode("utf-8")]
         else:
             entity = []

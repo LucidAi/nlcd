@@ -6,9 +6,9 @@ import json
 import unittest
 
 
-from fenrir.app import FenrirWorker
-from fenrir.fetchers import PageFetcher
-from fenrir.api import CseAPI
+from husky.app import FenrirWorker
+from husky.fetchers import PageFetcher
+from husky.api import CseAPI
 
 
 TEST_URLS = open("tests/eng/links.txt").read().rstrip().split("\n")

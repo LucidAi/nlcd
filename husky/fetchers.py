@@ -11,8 +11,8 @@ class PageFetcher(object):
 
     DEFAULT_ENCODING = "utf-8"
 
-    def __init__(self, encoding):
-        self.encoding = encoding or self.DEFAULT_ENCODING
+    def __init__(self, encoding=DEFAULT_ENCODING):
+        self.encoding = encoding
 
     def fetch(self, url):
         response = requests.get(url)

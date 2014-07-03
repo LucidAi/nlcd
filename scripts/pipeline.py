@@ -3,23 +3,25 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import os
+import lz4
 import csv
 import sys
 import json
 import logging
 import argparse
 
-import lz4
-import plyvel
+import husky
+import husky.db
+import husky.dicts
+import husky.evaluation
+import husky.fetchers
+import husky.extraction
+import husky.api.google
 
-import fenrir
-import fenrir.entity
-import fenrir.evaluation
-import fenrir.fetchers
-import fenrir.extraction
-import fenrir.api.google
-from fenrir.extraction import TextMiner, CseAnnotationExtractor, ArticleAttrExtractor
-
+from husky.extraction import Entity
+from husky.extraction import TextMiner
+from husky.extraction import EntityExtractor
+from husky.extraction import EntityNormalizer
 
 ORIGINS_FILE                    = "1.origins.text"
 ORIGINS_HTML_DIR                = "2.origins.html"
@@ -32,10 +34,13 @@ RELATED_FULL_ANNOTATIONS_DIR    = "8.related.annot"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
 EVALUATION_DATA_DIR             = "10.evaluation.data"
 EVALUATION_DIR                  = "11.evaluation"
+GENDATE_DIR                     = "12.generated.data"
 
 
-def MB(number):
-    return 1024 * 1024 * number
+def clean_dir(path):
+    if os.path.exists(path):
+        os.system("rm -rf %s" % path)
+    os.mkdir(path)
 
 
 def step_1_preprocessing(args):
@@ -64,7 +69,7 @@ def step_2_fetch_origin_articles(args):
         os.system(rm_cmd)
     logging.info("Creating articles html directory: %s" % articles_html_dir)
     os.mkdir(articles_html_dir)
-    fetcher = fenrir.fetchers.PageFetcher()
+    fetcher = husky.fetchers.PageFetcher()
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
@@ -171,7 +176,7 @@ def step_5_filter_sentences(args):
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
     logging.info("Filtered sentences, saving to: %s" % articles_filtered_dir)
-    search_api = fenrir.api.create_api(nlcd_config["nlcd"]["searchApi"])
+    search_api = husky.api.create_api(nlcd_config["nlcd"]["searchApi"])
     logging.info("Created sentence filterer %r" % search_api)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article sentences from (%d): %s" % (i, url))
@@ -213,7 +218,7 @@ def step_6_extract_search_annotations(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    annotations_extractor = CseAnnotationExtractor()
+    annotations_extractor = AnnotationsExtractor()
     logging.info("Created annotations extractor: %r" % annotations_extractor)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article sentences from (%d): %s" % (i, url))
@@ -222,41 +227,29 @@ def step_6_extract_search_annotations(args):
         with open(filtered_sentences_json_file_name, "rb") as i_fl:
             article = json.load(i_fl)
             with open(related_annotations_json_file_name, "wb") as o_fl:
-                url = article["url"].encode("utf-8")
-                title = article["title"].encode("utf-8")
-                lang_id = article["lang_id"].encode("utf-8")
+                # url = article["url"].encode("utf-8")
+                # title = article["title"].encode("utf-8")
+                # lang_id = article["lang_id"].encode("utf-8")
                 filtered_sentences = article["filteredSentences"]
-                annotations = []
+                annotations = {}
                 for sentence_entry in filtered_sentences:
-                    sent_text = sentence_entry["text"]
                     sent_total_results = sentence_entry["totalResults"]
                     sent_api_response = sentence_entry["apiResponse"]
-                    related_items = []
                     if sent_total_results == 0:
                         continue
                     for related_item in sent_api_response["items"]:
                         annotation = annotations_extractor.annotate(related_item)
-                        related_items.append({
+                        if annotation.url in annotations:
+                            continue
+                        annotations[annotation.url] = {
                             "url": annotation.url,
                             "title": annotation.title,
                             "authors": annotation.authors,
                             "source": annotation.sources,
                             "dates": annotation.dates,
                             "images": annotation.images,
-                        })
-                    annotations.append({
-                        "sentenceText": sent_text,
-                        "sentenceFreq": sent_total_results,
-                        "relatedItems": related_items,
-                    })
-                json.dump({
-                    "originArticle": {
-                        "url": url,
-                        "title": title,
-                        "lang_id": lang_id,
-                    },
-                    "relatedArticlesAnnotations": annotations,
-                }, o_fl, indent=4, sort_keys=False)
+                        }
+                json.dump(annotations.values(), o_fl, indent=4, sort_keys=False)
 
 
 def step_7_fetch_related_pages(args):
@@ -274,25 +267,18 @@ def step_7_fetch_related_pages(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    fetcher = fenrir.fetchers.PageFetcher()
-    related_data_ldb = plyvel.DB(related_pages_database_dir,
-                                 write_buffer_size=MB(1024),
-                                 block_size=MB(512),
-                                 bloom_filter_bits=8,
-                                 create_if_missing=True,
-                                 error_if_exists=True)
-    urls = set()
+    fetcher = husky.fetchers.PageFetcher()
+    related_data_ldb = husky.db.create(related_pages_database_dir)
+    urls = []
     for i, url in enumerate(origin_urls):
         related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
         logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
         with open(related_annotations_json_file_name, "rb") as i_fl:
-            related_annotations = json.load(i_fl)["relatedArticlesAnnotations"]
-            for annotation in related_annotations:
-                for related_item in annotation["relatedItems"]:
-                    url = related_item["url"].encode("utf-8")
-                    urls.add(url)
-                    related_data_ldb.put("json+%s" % url, json.dumps(related_item))
-    urls = list(urls)
+            annotations = json.load(i_fl)
+            for related_item in annotations:
+                url = related_item["url"].encode("utf-8")
+                urls.append(url)
+                related_data_ldb.put("json+%s" % url, json.dumps(related_item))
     async_related_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
     def save_html(j_response):
         try:
@@ -331,7 +317,7 @@ def step_8_extract_full_annotations(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    annotator = ArticleAttrExtractor()
+    annotator = EntityExtractor()
     annotations_cache = {}
     for i, url in enumerate(origin_urls):
         related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
@@ -340,7 +326,7 @@ def step_8_extract_full_annotations(args):
         logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
         with open(related_annotations_json_file_name, "rb") as i_fl:
             annotations = json.load(i_fl)
-            related_htmls_ldb = plyvel.DB(related_htmls_database_dir, create_if_missing=False)
+            related_htmls_ldb = husky.db.open(related_htmls_database_dir)
             with open(related_full_annotations_json_file_name, "wb") as o_fl:
                 for annotation in annotations["relatedArticlesAnnotations"]:
                     items = annotation["relatedItems"]
@@ -392,7 +378,7 @@ def step_9_normalize_data(args):
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
         logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    normalizer = fenrir.norm.pattern.ArticleNormalizer()
+    normalizer = husky.norm.pattern.ArticleNormalizer()
     dates = {}
     authors = {}
     normalized_titles_file_name = os.path.join(normalized_annotations_dir, "titles.csv")
@@ -421,7 +407,7 @@ def step_9_normalize_data(args):
                         for author in item["authors"]:
                             authors[author] = normalizer.normalize_author(author)
 
-                        item["dates"] = normalizer.normalize_dates(item["dates"])
+                        item["dates"] = normalizer.normalize(item["dates"])
                         item["authors"] = normalizer.normalize_authors(item["authors"])
 
         for date, norm_date in sorted(dates.items(), key=lambda x: x[1]):
@@ -430,155 +416,204 @@ def step_9_normalize_data(args):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
 
 
-def step_10_prepare_evaluation(args):
-    """
-    Prepare for evaluation: download as save pages from gold standard.
-    """
-    # Create temporary directory.
-    eval_tmp_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
-    if os.path.exists(eval_tmp_dir):
-        os.system("rm -rf %s" % eval_tmp_dir)
-    os.mkdir(eval_tmp_dir)
+def step_10_evaluation(args):
 
-    # Create ldb database.
-    eval_db = plyvel.DB(eval_tmp_dir,
-                        write_buffer_size=MB(1024),
-                        block_size=MB(512),
-                        bloom_filter_bits=8,
-                        create_if_missing=True,
-                        error_if_exists=True)
-    eval_html_db = eval_db.prefixed_db("html-")
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
+    html_db = husky.db.open(input_documents_dir).prefixed_db("html+")
+    search_annotations = {}
+    site_blacklist = husky.dicts.WordList.load(husky.dicts.WordList.BLACK_DOM)
 
-    # Collect urls from gold file.
-    urls = set()
+    fetcher = husky.fetchers.PageFetcher()
+    extractor = EntityExtractor()
+    normalizer = EntityNormalizer()
+
+    output_eval_dates_fl = os.path.join(args.eval_extr, "eval.date.csv")
+    output_eval_authors_fl = os.path.join(args.eval_extr, "eval.author.csv")
+
+
+    # Collect Search annotations.
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+    for i, url in enumerate(origin_urls):
+        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
+        with open(related_annotations_json_file_name, "rb") as i_fl:
+            annotations = json.load(i_fl)
+            for related_item in annotations:
+                url = related_item["url"].encode("utf-8")
+                search_annotations[url] = related_item
+
+    eval_entries = []
+    with open(args.gold_extr, "rb") as i_gold:
+        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        next(csv_reader, None)
+
+        for url, true_authors, true_dates in csv_reader:
+
+            true_authors = set() if true_authors == "<NONE>" else set(true_authors.lower().strip().split(" and "))
+            true_dates = set() if true_dates == "<NONE>" else set(true_dates.lower().strip().split(" and "))
+
+            pred_authors, pred_dates = None, None
+
+            # Check if url is blacklisted
+            if url in site_blacklist:
+                pred_authors, pred_dates = [], []
+                eval_entries.append((url, true_authors, true_dates, pred_authors, pred_dates))
+                continue
+
+            # Try to get HTML of url
+            try:
+                html = html_db.get(url)
+                html = lz4.decompress(html) if args.use_compression == 1 else html
+            except TypeError:
+                logging.warning("HTML is not found. Skip %r." % url)
+                try:
+                    html = fetcher.fetch(url)
+                except Exception:
+                    logging.warning("HTML is not downloaded. Skip %r." % url)
+                    html = "<html></html>"
+
+            # Try to parse article
+            try:
+                article = extractor.parse_article(url, html)
+            except Exception:
+                logging.warning("HTML cannot be parsed. Skip %r." % url)
+                pred_authors, pred_dates = [], []
+                eval_entries.append((url, true_authors, true_dates, pred_authors, pred_dates))
+                continue
+
+            # Try find annotation
+            try:
+                annotation = search_annotations[url]
+            except Exception:
+                logging.warning("Annotation is not found. %r" % url)
+                annotation = None
+                pred_dates = []
+
+            if pred_dates is None:
+                try:
+                    raw_dates = annotation["dates"]
+                    pred_dates = normalizer.normalize_dates(raw_dates)
+                    pred_dates = set((d.lower() for d in pred_dates))
+                except Exception:
+                    logging.warning("Error when extracting dates. %r" % url)
+                    pred_dates = set()
+
+            if pred_authors is None:
+                try:
+                    raw_authors = extractor.extract_authors(article, annotation)
+                    pred_authors = normalizer.normalize_authors(raw_authors, article=article)
+                    pred_authors = set((a.name.lower() for a in pred_authors))
+                except Exception:
+                    logging.warning("Error when extracting authors. %r" % url)
+                    pred_authors = set()
+
+            eval_entries.append((url, true_authors, true_dates, pred_authors, pred_dates))
+
+    authors_arp, authors_errors = husky.evaluation.compute_arp(((e[1], e[3]) for e in eval_entries))
+    dates_arp, dates_errors = husky.evaluation.compute_arp(((e[2], e[4]) for e in eval_entries))
+
+    # Write dates eval file.
+    out_entries = [(e[0], e[2], e[4], err) for e, err in zip(eval_entries, dates_errors)]
+    out_entries.sort(key=lambda row: row[-1])
+    out_sorted = []
+    for url, true_val, pred_val, errors in out_entries:
+        true_val = "<NONE>" if len(true_val) == 0 else " AND ".join(sorted(true_val))
+        pred_val = "<NONE>" if len(pred_val) == 0 else " AND ".join(sorted(pred_val))
+        out_sorted.append((url, true_val, pred_val, errors))
+    out_sorted = [("Url (P=%4f; R=%.4f; A=%.4f)." % dates_arp, "True Value", "Extr. Value", "Errors")] + out_sorted
+    with open(output_eval_dates_fl, "wb") as fl:
+        csv_writer = csv.writer(fl, delimiter=",", quotechar="\"")
+        csv_writer.writerows(out_sorted)
+
+    # Write authors eval file.
+    out_entries = [(e[0], e[1], e[3], err) for e, err in zip(eval_entries, authors_errors)]
+    out_entries.sort(key=lambda row: row[-1])
+    out_sorted = []
+    for url, true_val, pred_val, errors in out_entries:
+        true_val = "<NONE>" if len(true_val) == 0 else " AND ".join(sorted(true_val))
+        pred_val = "<NONE>" if len(pred_val) == 0 else " AND ".join(sorted(pred_val))
+        out_sorted.append((url, true_val, pred_val, errors))
+    out_sorted = [("Url (P=%4f; R=%.4f; A=%.4f)." % authors_arp, "True Value", "Extr. Value", "Errors")] + out_sorted
+    with open(output_eval_authors_fl, "wb") as fl:
+        csv_writer = csv.writer(fl, delimiter=",", quotechar="\"")
+        csv_writer.writerows(out_sorted)
+
+
+def step_11_gen_test_data(args):
+
+    related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
+    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
+    generated_data_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
+    generated_data_file = os.path.join(generated_data_dir, "generated.csv")
+    input_db = husky.db.open(input_documents_dir)
+    input_html_db = input_db.prefixed_db("html+")
+    output_rows = []
+    search_annotations = {}
+    site_blacklist = husky.dicts.WordList.load(husky.dicts.WordList.BLACK_DOM)
+
+    extractor = EntityExtractor()
+    normalizer = EntityNormalizer()
+
+    # Collect urls, already used in gold data.
+    eval_urls = set()
     with open(args.gold_extr, "rb") as i_gold:
         csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
         next(csv_reader, None)
         for row in csv_reader:
-            url = row[0].encode("utf-8")
-            urls.add(url)
+            eval_urls.add(row[0])
 
-    fetcher = fenrir.fetchers.PageFetcher()
-    urls = list(urls)
-    async_eval_pages_list = fetcher.fetch_documents(urls, max_threads=args.max_threads)
+    # Collect Search annotations.
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+    for i, url in enumerate(origin_urls):
+        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
+        with open(related_annotations_json_file_name, "rb") as i_fl:
+            annotations = json.load(i_fl)
+            for related_item in annotations:
+                url = related_item["url"].encode("utf-8")
+                search_annotations[url] = related_item
 
-    def save_html(j_response):
+    # Extract authors and dates
+    for url, html in input_html_db:
+        if url in site_blacklist or url in eval_urls:
+            continue
         try:
-            j, response = j_response
-            if j % 10 == 0 and j > 0:
-                logging.info("Added %d/%d." % (len(urls), j+1))
-            html = fetcher.response_to_utf_8(response)
-            if args.use_compression == 1:
-                html = lz4.compressHC(html)
-            if response.history is not None and len(response.history) > 0:
-                url = response.history[0].url.encode("utf-8")
-            else:
-                url = response.url.encode("utf-8")
-        except Exception:
-            logging.warn("Cannot save page.")
-            return
-        eval_html_db.put(url, html)
-
-    map(save_html, enumerate(async_eval_pages_list))
-    eval_db.close()
-    logging.info("Fetched %d pages to %s" % (len(urls), eval_tmp_dir))
-
-
-def step_11_evaluation(args):
-    """"""
-
-    eval_dir = os.path.join(args.work_dir, EVALUATION_DIR)
-    eval_data_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
-    author_rel = fenrir.entity.Entity.REL.AUTHOR
-
-    if os.path.exists(eval_dir):
-        logging.info("Cleaning previous coverage temp directory %s" % eval_dir)
-        rm_cmd = "rm -rf %s" % eval_dir
-        os.system(rm_cmd)
-    logging.info("Creating coverage temp directory: %s" % eval_dir)
-    os.mkdir(eval_dir)
-
-    extractor = ArticleAttrExtractor()
-    normalizer = fenrir.extraction.ArticleNormalizer()
-
-    eval_db = plyvel.DB(eval_data_dir, create_if_missing=False)
-    eval_html_db = eval_db.prefixed_db("html-")
-
-    # Compute dates normalization accuracy and coverage.
-    output_values = []
-    with open(args.gold_dates_norm, "rb") as i_gold:
-        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
-        next(csv_reader, None)
-        for i, (input_str, true_value) in enumerate(csv_reader):
-            if true_value[0] == "{":
-                true_value = fenrir.evaluation.eval_date(true_value)
-            pred_value = normalizer.normalize_date(input_str)
-            output_row = (input_str, true_value, pred_value, int(true_value == pred_value))
-            output_values.append(output_row)
-        output_values.sort(key=lambda row: row[-1])
-
-    # Get accuracy, precision, recall
-    apr = fenrir.evaluation.evaluate_extraction(output_values)
-
-    # Save results
-    with open(args.eval_dates_norm, "wb") as o_eval_dates_norm:
-        csv_writer = csv.writer(o_eval_dates_norm, delimiter=",", quotechar="\"")
-        header = ("True Value",
-                  "Extracted Value",
-                  "Url")
-        rows = [header] + output_values
-        csv_writer.writerows(rows)
-
-    # Compute dates extraction
-    # TODO
-
-    # Compute authors normalization
-    # TODO
-
-    # Compute authors extraction
-
-    def format_authors(list_of_authors):
-        if len(list_of_authors) == 0 or list_of_authors == ["<NONE>"]:
-            return "<NONE>"
-        return " & ".join((author.title() for author in sorted(list_of_authors)))
-
-    output_values = []
-
-    with open(args.gold_extr, "rb") as i_gold:
-        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
-        next(csv_reader, None)
-        for row in csv_reader:
-
-            url, true_authors, true_dates = row
-            url = url.encode("utf-8")
-            html = eval_html_db.get(url)
             html = lz4.decompress(html) if args.use_compression == 1 else html
+        except ValueError:
+            continue
 
-            parsed = extractor.parse(url, html)
-            extracted_authors = extractor.extract_authors(parsed)
-            norm_authors = normalizer.normalize_authors(extracted_authors, parsed)
+        # Extract Dates
+        try:
+            search_item = search_annotations[url]
+            dates_raw = search_item["dates"]
+            dates_norm = normalizer.normalize_dates(dates_raw)
+            dates = "<NONE>" if len(dates_norm) == 0 else " AND ".join(dates_norm)
+        except Exception:
+            dates = "ERROR_OCCURRED"
 
-            if len(norm_authors) == 0:
-                pred_authors = "<NONE>"
-            else:
-                pred_authors = " AND ".join(set((author.name for author in norm_authors if author.ent_rel == author_rel)))
+        # Extract Authors
+        try:
+            article = extractor.parse_article(url, html)
+            entities_raw = extractor.extract_authors(article)
+            entities_norm = normalizer.normalize_authors(entities_raw, article=article)
+            authors = set([e.name for e in entities_norm if e.ent_rel == Entity.REL.AUTHOR])
+            authors = "<NONE>" if len(authors) == 0 else " AND ".join(authors)
+        except Exception:
+            authors = "ERROR_OCCURRED"
 
+        output_rows.append((url, authors, dates))
 
-            output_values.append((true_authors, pred_authors, url))
+    # Sort by url
+    output_rows.sort(key=lambda row: row[0])
+    output_rows = [(str(i), r[0], r[1], r[2]) for i, r in enumerate(output_rows)]
+    output_rows = [("#", "Url", "Authors", "Dates")] + output_rows
+    with open(generated_data_file, "wb") as fl:
+        csv_writer = csv.writer(fl, delimiter=",", quotechar="\"")
+        csv_writer.writerows(output_rows)
 
-    arp = (0.0, 0.0, 0.0)
-    o_eval_authors_extraction = os.path.join(args.eval_extr, "authors.extr.csv")
-
-    with open(o_eval_authors_extraction, "wb") as o_eval_dates_norm:
-        csv_writer = csv.writer(o_eval_dates_norm, delimiter=",", quotechar="\"")
-
-        # header = ("a=%.4f;p=%.4f;r=%.4f Inp.String" % apr,
-        #           "True Value",
-        #           "Extracted Value",
-        #           "Is Correct")
-        # rows = [header] + output_values
-
-        csv_writer.writerows(output_values)
 
 
 STEPS = (
@@ -591,8 +626,8 @@ STEPS = (
     (step_7_fetch_related_pages, "Fetch related pages."),
     (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
     (step_9_normalize_data, "Normalize data."),
-    (step_10_prepare_evaluation, "Prepare evaluation."),
-    (step_11_evaluation, "Compute accuracy and coverage of extraction methods."),
+    (step_10_evaluation, "Compute accuracy and coverage of extraction methods."),
+    (step_11_gen_test_data, "Generate test data.")
 )
 
 
@@ -693,6 +728,8 @@ if __name__ == "__main__":
 
     args = argparser.parse_args()
 
+    if args.verbosity_level == 0:
+        logging.basicConfig(level=logging.NOTSET)
     if args.verbosity_level == 1:
         logging.basicConfig(level=logging.INFO, format="%(message)s")
     if args.verbosity_level == 2:

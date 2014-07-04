@@ -4,7 +4,7 @@
 import re
 
 
-class WordList(object):
+class Blacklist(object):
     """
     """
     BLACK_DOM = "./distr/misc/black.dom.txt"
@@ -32,4 +32,4 @@ class WordList(object):
     def load(file_path):
         with open(file_path, "rb") as i_file:
             patterns = i_file.read().strip().split("\n")
-            return WordList(patterns)
+            return Blacklist(patterns)

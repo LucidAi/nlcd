@@ -423,7 +423,7 @@ def step_10_evaluation(args):
     input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     html_db = husky.db.open(input_documents_dir).prefixed_db("html+")
     search_annotations = {}
-    site_blacklist = husky.dicts.WordList.load(husky.dicts.WordList.BLACK_DOM)
+    site_blacklist = husky.dicts.Blacklist.load(husky.dicts.Blacklist.BLACK_DOM)
 
     fetcher = husky.fetchers.PageFetcher()
     extractor = EntityExtractor()
@@ -555,7 +555,7 @@ def step_11_gen_test_data(args):
     input_html_db = input_db.prefixed_db("html+")
     output_rows = []
     search_annotations = {}
-    site_blacklist = husky.dicts.WordList.load(husky.dicts.WordList.BLACK_DOM)
+    site_blacklist = husky.dicts.Blacklist.load(husky.dicts.Blacklist.BLACK_DOM)
 
     extractor = EntityExtractor()
     normalizer = EntityNormalizer()

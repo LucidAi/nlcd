@@ -16,7 +16,7 @@ import parsedatetime
 import textblob.tokenizers
 
 from husky.entity import Entity
-from husky.dicts import WordList
+from husky.dicts import Blacklist
 from husky.parsers import ArticleParser
 
 
@@ -309,7 +309,7 @@ class AuthorExtractor(object):
 
     def __init__(self, parser):
         self.parser = parser
-        self.black_attr = WordList.load(WordList.BLACK_AUTHOR_ATTR)
+        self.black_attr = Blacklist.load(Blacklist.BLACK_AUTHOR_ATTR)
 
     def extract(self, article):
         """
@@ -387,7 +387,7 @@ class EntityExtractor(object):
     """
 
     def __init__(self, config=None):
-        self.sites_blacklist = WordList.load(WordList.BLACK_DOM)
+        self.sites_blacklist = Blacklist.load(Blacklist.BLACK_DOM)
         self.parser = ArticleParser()
 
         self.date_extractor = DateExtractor()
@@ -458,14 +458,14 @@ class AuthorNormalizer(object):
 
         # Black and white lists
 
-        self.white_org = WordList.load(WordList.WHITE_ORG)
+        self.white_org = Blacklist.load(Blacklist.WHITE_ORG)
         # self.black_org = WordList.load(WordList.BLACK_ORG)
 
         # self.white_per = WordList.load(WordList.WHITE_PER)
-        self.black_per = WordList.load(WordList.BLACK_PER)
+        self.black_per = Blacklist.load(Blacklist.BLACK_PER)
 
         # self.white_ner = WordList.load(WordList.WHITE_NER)
-        self.black_ner = WordList.load(WordList.BLACK_NER)
+        self.black_ner = Blacklist.load(Blacklist.BLACK_NER)
 
     def canonical(self, name_string, title=True):
         name_string = self.RE_MULTIPLE_SPACES.sub(" ", name_string).lstrip().rstrip()

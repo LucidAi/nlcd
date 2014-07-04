@@ -63,15 +63,6 @@ def compute_arp(eval_entries, eval_dates=False):
     correct_found_entries = 0
 
     for true_values, pred_values in eval_entries:
-
-        if eval_dates:
-            e_pred_values = set()
-            for v in pred_values:
-                if v.startswith("{"):
-                    e_pred_values.add(eval_date(v))
-                else:
-                    e_pred_values.add(v)
-
         row_errors = 0
         total_true_entries += len(true_values)
         total_found_entries += len(pred_values)

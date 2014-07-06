@@ -3,6 +3,7 @@
 
 import re
 import json
+import string
 import logging
 import datetime
 
@@ -94,15 +95,24 @@ class TextMiner(object):
         sentence = self.RE_RQ.sub("", sentence)
         return sentence
 
-    def combine_sentences(self, sentences, quoted, min_length=10):
+    def combine_sentences(self, sentences, quoted, min_length=10, min_size=5):
         sentences = map(self.remove_lr_quotes, map(self.norm_sentence, sentences))
         quoted = map(self.remove_lr_quotes, map(self.norm_sentence, quoted))
         all_sentences = set((s for s in quoted if len(s) >= min_length))
         for sentence in sentences:
+
             if len(sentence) < min_length:
                 continue
+
             if sentence in all_sentences:
                 continue
+
+            sentence_no_punct = sentence.encode("utf-8").translate(None, string.punctuation)
+            tokens = nltk.word_tokenize(sentence_no_punct)
+
+            if len(tokens) < min_size:
+                continue
+
             all_sentences.add(sentence.replace("\"", ""))
         return list(all_sentences)
 
@@ -206,7 +216,7 @@ class TextMiner(object):
 #     def extract_url(self, item):
 #         return self.util.match_first(self.url_pattern, item)
 #
-#     def extract_title(self, item):
+#     def extract_titles(self, item):
 #         titles = self.util.match(self.title_pattern, item)
 #         titles = list(set([nltk.clean_html(t) for t in titles]))
 #         titles.sort(key=lambda title: len(title))
@@ -269,12 +279,7 @@ class DateExtractor(object):
         with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
             self.patterns = json.load(i_fl)
         self.util = JsonPatternMatchingUtil()
-        self.url_pattern = self.util.compile(self.patterns, "url")
-        self.title_pattern = self.util.compile(self.patterns, "title")
-        self.authors_pattern = self.util.compile(self.patterns, "authors")
-        self.sources_pattern = self.util.compile(self.patterns, "sources")
         self.dates_pattern = self.util.compile(self.patterns, "dates")
-        self.images_pattern = self.util.compile(self.patterns, "images")
         self.snippet_pattern = self.util.compile(self.patterns, "snippet")
 
     def extract_from_annotation(self, annotation):
@@ -288,6 +293,20 @@ class DateExtractor(object):
     def extract(self, article):
         logging.warning("Article date extraction is not implemented.")
         return []
+
+
+class SourcesExtractor(object):
+
+    DEFAULT_CONFIGURATION_PATH = "./distr/patterns/google.cse.json"
+
+    def __init__(self):
+        with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
+            self.patterns = json.load(i_fl)
+        self.util = JsonPatternMatchingUtil()
+        self.source_pattern = self.util.compile(self.patterns, "sources")
+
+    def extract_from_json(self, annotation):
+        return self.util.match_unique(self.source_pattern, annotation)
 
 
 class AuthorExtractor(object):
@@ -391,6 +410,7 @@ class EntityExtractor(object):
         self.parser = ArticleParser()
 
         self.date_extractor = DateExtractor()
+        self.source_extractor = SourcesExtractor()
         self.author_extractor = AuthorExtractor(self.parser)
 
         if config is None:
@@ -417,10 +437,13 @@ class EntityExtractor(object):
         return [article.top_image]
 
     def extract_sources(self, article=None, annotation=None):
-        return []
+        return self.source_extractor.extract_from_json(annotation)
 
-    def extract_title(self, article=None, annotation=None):
-        return []
+    def extract_titles(self, article=None, annotation=None):
+        titles = set()
+        if len(article.title) > 0:
+            titles.add(article.title)
+        return titles
 
     def extract_authors(self, article=None, annotation=None):
         if article.url in self.sites_blacklist:

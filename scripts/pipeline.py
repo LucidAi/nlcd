@@ -18,7 +18,8 @@ import husky.fetchers
 import husky.extraction
 import husky.api.google
 
-from husky.extraction import Entity
+from husky.fetchers import PageFetcher
+
 from husky.extraction import TextMiner
 from husky.extraction import EntityExtractor
 from husky.extraction import EntityNormalizer
@@ -33,8 +34,7 @@ RELATED_FULL_DATA_DIR           = "7.related.data"
 RELATED_FULL_ANNOTATIONS_DIR    = "8.related.annot"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
 EVALUATION_DATA_DIR             = "10.evaluation.data"
-EVALUATION_DIR                  = "11.evaluation"
-GENDATE_DIR                     = "12.generated.data"
+CROSS_REF_DIR                   = "11.crosref.data"
 
 
 def clean_dir(path):
@@ -416,7 +416,7 @@ def step_9_normalize_data(args):
             authors_fl.write("%s\t\t\t%r\n" % (author.encode("utf-8"), ""))
 
 
-def step_10_evaluation(args):
+def step_10_evalualte_ner(args):
 
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
@@ -444,7 +444,6 @@ def step_10_evaluation(args):
                 url = related_item["url"].encode("utf-8")
                 search_annotations[url] = related_item
 
-    i = 0
     eval_entries = []
     with open(args.gold_extr, "rb") as i_gold:
         csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
@@ -544,78 +543,141 @@ def step_10_evaluation(args):
         csv_writer.writerows(out_sorted)
 
 
-def step_11_gen_test_data(args):
+def step_11_gen_cr_data(args):
 
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
     input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
-    generated_data_dir = os.path.join(args.work_dir, EVALUATION_DATA_DIR)
-    generated_data_file = os.path.join(generated_data_dir, "generated.csv")
-    input_db = husky.db.open(input_documents_dir)
-    input_html_db = input_db.prefixed_db("html+")
-    output_rows = []
-    search_annotations = {}
+    output_documents_dir = os.path.join(args.work_dir, CROSS_REF_DIR)
+    html_db = husky.db.open(input_documents_dir).prefixed_db("html+")
     site_blacklist = husky.dicts.Blacklist.load(husky.dicts.Blacklist.BLACK_DOM)
 
+    fetcher = PageFetcher()
+    text_miner = TextMiner()
     extractor = EntityExtractor()
     normalizer = EntityNormalizer()
 
-    # Collect urls, already used in gold data.
-    eval_urls = set()
-    with open(args.gold_extr, "rb") as i_gold:
-        csv_reader = csv.reader(i_gold, delimiter=",", quotechar="\"")
-        next(csv_reader, None)
-        for row in csv_reader:
-            eval_urls.add(row[0])
+    clean_dir(output_documents_dir)
 
-    # Collect Search annotations.
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
-    for i, url in enumerate(origin_urls):
-        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        with open(related_annotations_json_file_name, "rb") as i_fl:
-            annotations = json.load(i_fl)
-            for related_item in annotations:
-                url = related_item["url"].encode("utf-8")
-                search_annotations[url] = related_item
 
-    # Extract authors and dates
-    for url, html in input_html_db:
-        if url in site_blacklist or url in eval_urls:
-            continue
-        try:
-            html = lz4.decompress(html) if args.use_compression == 1 else html
-        except ValueError:
-            continue
+    # Extract data for cress-reference detection.
+    # Data to extract:
+    #   0. url
+    #   1. html?
+    #   2. text
+    #   3. sentences
+    #   4. title
+    #   5. sources
+    #   6. pub date
+    #   7. authors
+    for i, origin_url in enumerate(origin_urls):
 
-        # Extract Dates
-        try:
-            search_item = search_annotations[url]
-            dates_raw = search_item["dates"]
-            dates_norm = normalizer.normalize_dates(dates_raw)
-            dates = "<NONE>" if len(dates_norm) == 0 else " AND ".join(dates_norm)
-        except Exception:
-            dates = "ERROR_OCCURRED"
+        if i > 1:
+            break
 
-        # Extract Authors
-        try:
-            article = extractor.parse_article(url, html)
-            entities_raw = extractor.extract_authors(article)
-            entities_norm = normalizer.normalize_authors(entities_raw, article=article)
-            authors = set([e.name for e in entities_norm if e.ent_rel == Entity.REL.AUTHOR])
-            authors = "<NONE>" if len(authors) == 0 else " AND ".join(authors)
-        except Exception:
-            authors = "ERROR_OCCURRED"
+        # File with related annotations for given origin.
+        rel_data_file = os.path.join(related_annotations_dir, "%d.json" % i)
+        annotation_id = 1
+        output_data = []
+        with open(rel_data_file, "rb") as i_fl:
 
-        output_rows.append((url, authors, dates))
+            for annotation in json.load(i_fl):
 
-    # Sort by url
-    output_rows.sort(key=lambda row: row[0])
-    output_rows = [(str(i), r[0], r[1], r[2]) for i, r in enumerate(output_rows)]
-    output_rows = [("#", "Url", "Authors", "Dates")] + output_rows
-    with open(generated_data_file, "wb") as fl:
-        csv_writer = csv.writer(fl, delimiter=",", quotechar="\"")
-        csv_writer.writerows(output_rows)
+                url = annotation["url"].encode("utf-8")
+                html = None
+                title = None
+                text = None
+                sentences = None
+                sources = None
+                pub_date = None
+                authors = None
+
+                # Check if url is Blacklisted
+                if url in site_blacklist:
+                    continue
+
+                # 1. Get html from local database or Web.
+                try:
+                    html = html_db.get(url)
+                    html = lz4.decompress(html) if args.use_compression == 1 else html
+                except TypeError:
+                    logging.warning("HTML is not found. Skip %r." % url)
+                    try:
+                        html = fetcher.fetch(url)
+                    except Exception:
+                        logging.warning("HTML is not downloaded. Skip %r." % url)
+                        continue
+
+                # Parse article.
+                try:
+                    article = extractor.parse_article(url, html)
+                except Exception:
+                    logging.warning("HTML cannot be parsed. Skip %r." % url)
+                    continue
+
+                # 2. Get text
+                text = article.text
+
+                # 3. Extract sentences
+                sentences_original = text_miner.sent_tokenize(text)
+                sentences_quoted = text_miner.extract_quoted(text)
+                sentences = text_miner.combine_sentences(sentences_original,
+                                                         sentences_quoted,
+                                                         min_size=5)
+
+                # 4. Extract title
+                titles = extractor.extract_titles(article)
+                if len(titles) == 0:
+                    logging.warning("Strange document. Skip")
+                    continue
+                else:
+                    title = list(titles)[0]
+
+                # 5. Extract sources
+                sources = annotation["source"]
+
+                # 6.
+                try:
+                    raw_dates = annotation["dates"]
+                    dates = normalizer.normalize_dates(raw_dates)
+                    if len(dates) > 0:
+                        pub_date = min(dates)
+                    else:
+                        pub_date = None
+                except Exception:
+                    logging.warning("Error when extracting dates. %r" % url)
+                    pub_date = None
+
+                try:
+                    raw_authors = extractor.extract_authors(article, annotation)
+                    authors = normalizer.normalize_authors(raw_authors, article=article)
+                    authors = list(set((a.name.lower() for a in authors)))
+                except Exception:
+                    logging.warning("Error when extracting authors. %r" % url)
+                    authors = []
+
+                rel_id = annotation_id
+                annotation_id += 1
+
+                output_data.append({
+
+                    "id": rel_id,
+                    "url": url,
+                    "text": text,
+                    "sentences": sentences,
+                    "title": title,
+                    "sources": sources,
+                    "pub_date": pub_date,
+                    "authors": authors,
+                })
+
+        with open(os.path.join(output_documents_dir, "%d.json" % i), "wb") as o_fl:
+
+            json.dump(output_data, o_fl)
+
+
 
 
 
@@ -629,8 +691,8 @@ STEPS = (
     (step_7_fetch_related_pages, "Fetch related pages."),
     (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
     (step_9_normalize_data, "Normalize data."),
-    (step_10_evaluation, "Compute accuracy and coverage of extraction methods."),
-    (step_11_gen_test_data, "Generate test data.")
+    (step_10_evalualte_ner, "Evaluate named entity recognition."),
+    (step_11_gen_cr_data, "Generate data for cross-reference detection.")
 )
 
 

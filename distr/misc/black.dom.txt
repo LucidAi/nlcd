@@ -4,3 +4,4 @@
 .*\.wn\.com.*
 .*reference\.com.*
 .*wikipedia\.org.*
+.*\.pdf

@@ -13,8 +13,8 @@ ${PYTHON} ${THISDIR}/scripts/pipeline.py            \
     --app-root ${THISDIR}/fenrir                    \
     --pipeline-root ${THISDIR}/scripts/pipeline     \
     --work-dir ${WORKDIR}                           \
-    --first-step 10                                 \
-    --last-step 10                                  \
+    --first-step 11                                 \
+    --last-step 11                                  \
     --n-cpus 4                                      \
     --max-threads 8                                 \
     --use-compression 1                             \

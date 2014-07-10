@@ -13,8 +13,8 @@ ${PYTHON} ${THISDIR}/scripts/pipeline.py            \
     --app-root ${THISDIR}/fenrir                    \
     --pipeline-root ${THISDIR}/scripts/pipeline     \
     --work-dir ${WORKDIR}                           \
-    --first-step 11                                 \
-    --last-step 11                                  \
+    --first-step 5                                  \
+    --last-step 5                                   \
     --n-cpus 4                                      \
     --max-threads 8                                 \
     --use-compression 1                             \
@@ -23,4 +23,7 @@ ${PYTHON} ${THISDIR}/scripts/pipeline.py            \
     --gold-extr distr/gold/dates.authors.extr.csv   \
 	--eval-extr distr/eval/                         \
     --nlcd-conf-file ${THISDIR}/fab/dev.json        \
+    --gse-bottom-threshold 100						\
+    --gse-upper-threshold 1000                      \
+    --gse-query-size-heuristic 10                   \
     --verbosity-level 0

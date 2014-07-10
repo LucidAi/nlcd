@@ -3,18 +3,15 @@
 
 import re
 import json
-import string
 import logging
 import datetime
 
 import nltk
-import ftfy
 import langid
 import newspaper
 import jsonpath_rw
 import readability
 import parsedatetime
-import textblob.tokenizers
 
 from husky.entity import Entity
 from husky.dicts import Blacklist
@@ -28,217 +25,11 @@ NLCD2NLTK_LANG = {
     "it": "italian",
 }
 
+
 NLTK2NLCD_LANG = {
     nltk: nlcd for nlcd, nltk
     in NLCD2NLTK_LANG.iteritems()
 }
-
-
-class SimpleArticle(object):
-    def __init__(self, url, title, text, lang_id):
-        self.url = url
-        self.title = title
-        self.text = text
-        self.lang_id = lang_id
-
-
-class TextMiner(object):
-    RE_WHITESPACE = re.compile(u" +", re.UNICODE)
-    RE_EMPTY_STR = re.compile(u"^\s*$", re.UNICODE)
-    RE_HTML_SPECIAL_CHARS = re.compile(u"&#?[a-z0-9]+;", re.UNICODE)
-    RE_QUOTED_PHRASE = re.compile(u"\"([^\"]*)\"", re.UNICODE)
-    RE_L_SPACE = re.compile(u"^\s+", re.UNICODE)
-    RE_R_SPACE = re.compile(u"\s+$", re.UNICODE)
-    RE_LQ = re.compile(u"^\s*\"\s*", re.UNICODE)
-    RE_RQ = re.compile(u"\s*\"\s*$", re.UNICODE)
-
-    @staticmethod
-    def extract_article(url, html):
-        document = readability.Document(html)
-        summary = document.summary()
-        lang_id, _ = langid.classify(summary)
-        article = newspaper.Article(url, language=lang_id)
-        article.set_html(html)
-        article.parse()
-        if len(article.text) == 0:
-            text = nltk.clean_html(document.summary()).replace("\n", " ")
-        else:
-            text = article.text
-        text = ftfy.fix_text(text,
-                             fix_entities=True,
-                             remove_terminal_escapes=True,
-                             uncurl_quotes=True,
-                             fix_line_breaks=True)
-        return SimpleArticle(url,
-                             article.title,
-                             text,
-                             lang_id)
-
-    def sent_tokenize(self, text):
-        lines = text.split("\n")
-        sentences = []
-        for line in lines:
-            sentences.extend(textblob.tokenizers.sent_tokenize(line))
-        sentences = [sent for sent in sentences if not self.RE_EMPTY_STR.match(sent)]
-        return [self.RE_WHITESPACE.sub(" ", sent) for sent in sentences]
-
-    def extract_quoted(self, text):
-        return self.RE_QUOTED_PHRASE.findall(text)
-
-    def norm_sentence(self, sentence):
-        sentence = self.RE_L_SPACE.sub("", sentence)
-        sentence = self.RE_R_SPACE.sub("", sentence)
-        return sentence
-
-    def remove_lr_quotes(self, sentence):
-        sentence = self.RE_LQ.sub("", sentence)
-        sentence = self.RE_RQ.sub("", sentence)
-        return sentence
-
-    def combine_sentences(self, sentences, quoted, min_length=10, min_size=5):
-        sentences = map(self.remove_lr_quotes, map(self.norm_sentence, sentences))
-        quoted = map(self.remove_lr_quotes, map(self.norm_sentence, quoted))
-        all_sentences = set((s for s in quoted if len(s) >= min_length))
-        for sentence in sentences:
-
-            if len(sentence) < min_length:
-                continue
-
-            if sentence in all_sentences:
-                continue
-
-            sentence_no_punct = sentence.encode("utf-8").translate(None, string.punctuation)
-            tokens = nltk.word_tokenize(sentence_no_punct)
-
-            if len(tokens) < min_size:
-                continue
-
-            all_sentences.add(sentence.replace("\"", ""))
-        return list(all_sentences)
-
-
-# class NerExtractor(object):
-#     def __init__(self):
-#         # self.st = NERTagger("vendor/stanford-ner-models/english.all.3class.distsim.crf.ser.gz",
-#         # "vendor/stanford-ner/stanford-ner-2014-01-04.jar")
-#         self.st = ner.SocketNER(host="127.0.0.1", port=8000)
-#
-#
-#     def apply_truecase(self, tokens):
-#         tokens = tokens[:]
-#         for i in xrange(len(tokens)):
-#             if len(tokens[i]) <= 3 or tokens[i][0] == "@":
-#                 continue
-#             elif tokens[i].isupper():
-#                 tokens[i] = tokens[i].title()
-#         return tokens
-#
-#     def extract_entities(self, texts, truecase=True, set_label=None):
-#         """Extracts named entites from set of strings.
-#
-#         Args:
-#             texts (list): Collection of input strings.
-#
-#         Kwargs:
-#             truecase (bool): If True, method applies heuristic to match true cases of words
-#                              in texts (improves quality on short strings).
-#             set_label (str): If not None, then method uses binary classification and label
-#                              found entities with provided label value. Otherwise uses
-#                              multiclass classification with default NLTK NE labels.
-#
-#         Returns:
-#             (set): Set of pairs (entity, label).
-#         """
-#         entities = []
-#
-#         for text in texts:
-#             sentences = nltk.sent_tokenize(text)
-#             # sentences = [nltk.word_tokenize(sent) for sent in sentences]
-#             # if truecase:
-#             # for i, sent in enumerate(sentences):
-#             #         sentences[i] = self.apply_truecase(sent)
-#             for sent in sentences:
-#                 print sent
-#                 tree = self.st.get_entities(sent)
-#                 print tree
-#                 print
-#                 print
-#                 prev_tag = None
-#         exit(0)
-#         # for w, tag in tree:
-#         # if tag is not "O":
-#         #         if tag != prev_tag:
-#         #             entities.append((tag, []))
-#         #         entities[-1][1].append(w)
-#         #     prev_tag = tag
-#
-#         # ner_tree = nltk.ne_chunk(sent, binary=set_label is not None)
-#         # for ne in ner_tree:
-#         #     if hasattr(ne, "node"):
-#         #         entities.add((ne.node, " ".join(l[0] for l in ne.leaves())))
-#         # if set_label is not None:
-#         #     entities = [{"label":set_label, "entity": entity} for label,entity in entities]
-#         # else:
-#         #     entities = [{"label":label, "entity": entity} for label,entity in entities]
-#
-#         if set_label is not None:
-#             entities = [{"label": set_label, "entity": " ".join(entity)} for label, entity in entities]
-#         else:
-#             entities = [{"label": label, "entity": " ".join(entity)} for label, entity in entities]
-#
-#         print entities
-#
-#         return entities
-
-
-# class AnnotationsExtractor(IAnnotator):
-#     """
-#     Annotations extractor for google CSE result items.
-#     """
-#     DEFAULT_CONFIGURATION_PATH = "./distr/patterns/google.cse.json"
-#
-#     def __init__(self):
-#         with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
-#             self.patterns = json.load(i_fl)
-#
-#         self.util = JsonPatternMatchingUtil()
-#         self.url_pattern = self.util.compile(self.patterns, "url")
-#         self.title_pattern = self.util.compile(self.patterns, "title")
-#         self.authors_pattern = self.util.compile(self.patterns, "authors")
-#         self.sources_pattern = self.util.compile(self.patterns, "sources")
-#         self.dates_pattern = self.util.compile(self.patterns, "dates")
-#         self.images_pattern = self.util.compile(self.patterns, "images")
-#         self.snippet_pattern = self.util.compile(self.patterns, "snippet")
-#
-#     def annotate(self, item):
-#         return Annotation(item, annotator=self)
-#
-#     def extract_url(self, item):
-#         return self.util.match_first(self.url_pattern, item)
-#
-#     def extract_titles(self, item):
-#         titles = self.util.match(self.title_pattern, item)
-#         titles = list(set([nltk.clean_html(t) for t in titles]))
-#         titles.sort(key=lambda title: len(title))
-#         return titles
-#
-#     def extract_authors(self, item):
-#         return self.util.match_unique(self.authors_pattern, item)
-#
-#     def extract_sources(self, item):
-#         return self.util.match_unique(self.sources_pattern, item)
-#
-#     def extract_dates(self, item):
-#         dates = self.util.match(self.dates_pattern, item)
-#         s_date = self.util.match_first(self.snippet_pattern, item)[:12].rstrip()
-#         dates.append(s_date)
-#         return list(set(dates))
-#
-#     def extract_images(self, item):
-#         return self.util.match_unique(self.images_pattern, item)
-#
-#     def __repr__(self):
-#         return "<CseAnnotationExtractor()>"
 
 
 class JsonPatternMatchingUtil(object):

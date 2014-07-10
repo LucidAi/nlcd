@@ -7,6 +7,7 @@ import logging
 import requests
 import traceback
 
+from husky.textutil import TextUtil
 
 class CseError(Exception):
     pass
@@ -27,6 +28,7 @@ class CseAPI(object):
         self.key = key
         self.engine_id = engine_id
         self.config = None
+        self.text_util = TextUtil()
 
     @staticmethod
     def from_config(api_config):
@@ -78,64 +80,59 @@ class CseAPI(object):
         params = urllib.urlencode(query)
         return self.BASE_URL + params
 
-    def find_results(self, query, number=10):
-        for start_index in self.make_query_pages(number):
+    def find_results(self, query,
+                     max_results=1000,
+                     upper_threshold=1000,
+                     bottom_threshold=100,
+                     query_size_heuristic=10):
+
+        result_urls = []
+        found_results = []
+        total_results = None
+
+        query_size = self.text_util.words_count(query["exactTerms"])
+
+        for start_index in self.make_query_pages(max_results):
+
+            if total_results is not None and start_index > total_results:
+                break
+
             query["start"] = start_index
             url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
-            logging.info("Querying URL: '%s'." % url)
-            try:
-                logging.info("Calling %s" % url)
-                items = requests.get(url).json()["items"]
-                for item in items:
-                    yield item
-            except Exception:
-                formatted = traceback.format_exc()
-                logging.error("Error while calling '%s':%s" % (url, formatted))
 
-    def filter_sentences(self, sentences, min_threshold=0, max_threshold=500):
-        for sentence in sentences:
-            query = self.make_query(
-                query_string=sentence,
-                exact_terms=sentence
-            )
-            url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
             try:
                 api_response = requests.get(url).json()
             except Exception:
+                logging.error("Error while calling '%s':%s" % (url,  traceback.format_exc()))
                 api_response = None
-            if api_response is not None and "searchInformation" in api_response:
-                total_results = int(api_response["searchInformation"]["totalResults"])
-                if min_threshold <= total_results <= max_threshold:
-                    yield {
-                        "isKey": True,
-                        "totalResults": total_results,
-                        "minThreshold": min_threshold,
-                        "maxThreshold": max_threshold,
-                        "text": sentence,
-                        "apiUrl": url,
-                        "apiResponse": api_response,
-                    }
-                else:
-                    yield {
-                        "isKey": False,
-                        "totalResults": total_results,
-                        "minThreshold": min_threshold,
-                        "maxThreshold": max_threshold,
-                        "text": sentence,
-                        "apiUrl": url,
-                        "apiResponse": api_response,
-                    }
-            else:
-                yield {
-                    "isKey": False,
-                    "totalResults": "n/a",
-                    "minThreshold": min_threshold,
-                    "maxThreshold": max_threshold,
-                    "text": sentence,
-                    "apiUrl": url,
-                    "apiResponse": api_response,
-                }
 
+            if api_response is None:
+                logging.warn("API response is None")
+                break
+
+            if "searchInformation" not in api_response:
+                logging.warn("Search information not found")
+                break
+
+            if total_results is None:
+                total_results = int(api_response["searchInformation"]["totalResults"])
+
+            if total_results > upper_threshold:
+                logging.warn("Total results it too large %d" % total_results)
+                break
+
+            if total_results > bottom_threshold and query_size < query_size_heuristic:
+                logging.warn("Too many results for too short query %d" % total_results)
+                break
+
+            if "items" not in api_response or len(api_response["items"]) == 0:
+                logging.warn("Items not found.")
+                break
+
+            found_results.extend(api_response["items"])
+            result_urls.append(url)
+
+        return found_results, result_urls, 0 if total_results is None else total_results
 
     def __repr__(self):
         return "<CseAPI(key='%s', engine='%s')>" % (self.key[:8]+"..", self.engine_id[:8]+"..")

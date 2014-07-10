@@ -9,205 +9,270 @@ import sys
 import json
 import logging
 import argparse
+import datetime
+import collections
 
-import husky
 import husky.db
 import husky.dicts
 import husky.evaluation
-import husky.fetchers
-import husky.extraction
 import husky.api.google
 
 from husky.fetchers import PageFetcher
 
-from husky.extraction import TextMiner
 from husky.extraction import EntityExtractor
 from husky.extraction import EntityNormalizer
 
-ORIGINS_FILE                    = "1.origins.text"
-ORIGINS_HTML_DIR                = "2.origins.html"
-ORIGINS_TEXT_DIR                = "3.origins.text"
-ORIGINS_SENTENCES_DIR           = "4.origins.sents"
-ORIGINS_FILTERED_DIR            = "5.origins.fsent"
+from husky.rd import ReferenceEntry
+from husky.rd import ReferenceIndex
+
+
+from husky.textutil import TextUtil
+
+
+ORIGIN_URL_FILE                 = "1.origin_url"
+ORIGIN_HTML_DIR                 = "2.origin_html"
+ORIGIN_BODY_DIR                 = "3.origin_body"
+ORIGIN_SEGMENT_DIR              = "4.origin_segm"
+ORIGIN_GSE_DIR                  = "5.origin_gse"
 RELATED_GSE_ANNOTATIONS_DIR     = "6.related.gse"
 RELATED_FULL_DATA_DIR           = "7.related.data"
 RELATED_FULL_ANNOTATIONS_DIR    = "8.related.annot"
 NORMALIZED_ANNOTATIONS_DIR      = "9.norm.annot"
 EVALUATION_DATA_DIR             = "10.evaluation.data"
 CROSS_REF_DIR                   = "11.crosref.data"
+CROSS_REF_OUT_DIR               = "12.crosref.out"
 
 
-def clean_dir(path):
+def clean_directory(path):
+    """
+    Create path if not exist otherwise recreates it.
+    """
     if os.path.exists(path):
         os.system("rm -rf %s" % path)
     os.mkdir(path)
 
 
-def step_1_preprocessing(args):
-    """Creates work directory if not exists and copy origins file there.
+def to_utf_8_dict(data):
     """
-    if not os.path.exists(args.work_dir):
-        logging.info("Creating work directory: %s" % args.work_dir)
-        os.mkdir(args.work_dir)
+    Encode dict into 'JSON-friendly' utf-8 format.
+    """
+    if isinstance(data, basestring):
+        return data.encode("utf-8")
+    elif isinstance(data, collections.Mapping):
+        return dict(map(to_utf_8_dict, data.iteritems()))
+    elif isinstance(data, collections.Iterable):
+        return type(data)(map(to_utf_8_dict, data))
     else:
-        logging.info("Work directory already exists: %s" % args.work_dir)
-    logging.info("Creating work directory: %s" % args.work_dir)
-    cp_cmd = "cp -f %s %s" % (args.origins_file_path, os.path.join(args.work_dir, ORIGINS_FILE))
-    logging.info("Calling command: %s" % cp_cmd)
-    os.system(cp_cmd)
-    return 0
+        return data
+
+
+def read_origins(args):
+    """
+    Read origins file and return list of origins urls.
+    """
+    with open(os.path.join(args.work_dir, ORIGIN_URL_FILE), "rb") as i_fl:
+        return i_fl.read().strip("\n").split("\n")
+
+
+def json_dump(obj, fp, encode=True):
+    """
+    Write object in JSON format to file stream fp.
+    """
+    fp.write(json.dumps(to_utf_8_dict(obj) if encode else obj, indent=4, ensure_ascii=not encode))
+
+
+def step_1_init_work_dir(args):
+    """
+    Create work directory if not exists and copy origins file there.
+    """
+    clean_directory(args.work_dir)
+    origins_new_fp = os.path.join(args.work_dir, ORIGIN_URL_FILE)
+
+    with open(args.origins_file_path, "rb") as i_fl, open(origins_new_fp, "wb") as o_fl:
+        origins = i_fl.read().strip("\n").split("\n")
+        o_fl.write("\n".join(origins))
+
+    logging.info("Initialized %d origins." % len(origins))
 
 
 def step_2_fetch_origin_articles(args):
-    """Fetches origin articles HTML and saves them in work directory.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    articles_html_dir = os.path.join(args.work_dir, ORIGINS_HTML_DIR)
-    if os.path.exists(articles_html_dir):
-        logging.info("Cleaning previous articles directory %s" % articles_html_dir)
-        rm_cmd = "rm -rf %s" % articles_html_dir
-        os.system(rm_cmd)
-    logging.info("Creating articles html directory: %s" % articles_html_dir)
-    os.mkdir(articles_html_dir)
-    fetcher = husky.fetchers.PageFetcher()
-    with open(origins_fl, "rb") as fl:
-        origin_urls = fl.read().rstrip().split("\n")
-        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    logging.info("Fetching origins to using %s threads: %s" % (args.max_threads, articles_html_dir))
-    async_articles_list = fetcher.fetch_documents(origin_urls, max_threads=args.max_threads)
-    def save_html(j_response):
-        j, response = j_response
-        file_name = os.path.join(articles_html_dir, "%d.html" % j)
-        with open(file_name, "wb") as fl:
+    Fetch origin articles HTML and save them in work directory.
+    """
+    origin_html_dir = os.path.join(args.work_dir, ORIGIN_HTML_DIR)
+    fetcher = PageFetcher()
+
+    clean_directory(origin_html_dir)
+
+    origins = read_origins(args)
+    origin_responses = fetcher.fetch_documents(origins, max_threads=args.max_threads)
+
+    def write_html_to_disk(i_response):
+
+        i, response = i_response
+        o_html_fp = os.path.join(origin_html_dir, "%d.html" % i)
+
+        with open(o_html_fp, "wb") as fl:
             fl.write(fetcher.response_to_utf_8(response))
-    map(save_html, enumerate(async_articles_list))
-    return 0
+
+    map(write_html_to_disk, enumerate(origin_responses))
+
+    logging.info("Fetched %d origins." % len(origins))
 
 
 def step_3_extracting_article_sentences(args):
-    """Reads origin articles from work directory and extract clean text from them.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    articles_html_dir = os.path.join(args.work_dir, ORIGINS_HTML_DIR)
-    articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
-    if os.path.exists(articles_text_dir):
-        logging.info("Cleaning previous articles texts directory %s" % articles_text_dir)
-        rm_cmd = "rm -rf %s" % articles_text_dir
-        os.system(rm_cmd)
-    logging.info("Creating articles text directory: %s" % articles_text_dir)
-    os.mkdir(articles_text_dir)
-    with open(origins_fl, "rb") as fl:
-        origin_urls = fl.read().rstrip().split("\n")
-        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    logging.info("Extracting articles texts to: %s" % articles_text_dir)
-    text_miner = TextMiner()
-    for i, url in enumerate(origin_urls):
-        logging.info("Extracting text from (%d): %s" % (i, url))
-        html_file_name = os.path.join(articles_html_dir, "%d.html" % i)
-        text_file_name = os.path.join(articles_text_dir, "%d.json" % i)
-        with open(html_file_name, "rb") as i_fl:
+    Read origin articles from work directory and extract clean text from them.
+    """
+    origin_html_dir = os.path.join(args.work_dir, ORIGIN_HTML_DIR)
+    origin_body_dir = os.path.join(args.work_dir, ORIGIN_BODY_DIR)
+
+    text_util = TextUtil()
+    origins = read_origins(args)
+
+    clean_directory(origin_body_dir)
+
+    for i, url in enumerate(origins):
+
+        i_html_fp = os.path.join(origin_html_dir, "%d.html" % i)
+        o_body_fp = os.path.join(origin_body_dir, "%d.json" % i)
+
+        with open(i_html_fp, "rb") as i_fl:
+
             html = i_fl.read()
-            article = text_miner.extract_article(url, html)
-            with open(text_file_name, "wb") as o_fl:
-                json.dump({
-                    "url":      article.url,
-                    "title":    article.title.encode("utf-8"),
-                    "text":     article.text.encode("utf-8"),
-                    "lang_id":  article.lang_id,
-                }, o_fl, indent=4, ensure_ascii=False)
+            body, lang_id = text_util.extract_body(url, html)
+
+            with open(o_body_fp, "wb") as o_fl:
+                json_dump({
+                    "body": body,
+                    "lang_id": lang_id,
+                }, o_fl)
+
+    logging.info("Extracted %d bodies." % len(origins))
 
 
 def step_4_extract_sentences(args):
-    """Extract sentences and segment them.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    articles_text_dir = os.path.join(args.work_dir, ORIGINS_TEXT_DIR)
-    articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
-    if os.path.exists(articles_sentences_dir):
-        logging.info("Cleaning previous articles (raw) directory %s" % articles_sentences_dir)
-        rm_cmd = "rm -rf %s" % articles_sentences_dir
-        os.system(rm_cmd)
-    logging.info("Creating articles text directory: %s" % articles_text_dir)
-    os.mkdir(articles_sentences_dir)
-    with open(origins_fl, "rb") as fl:
-        origin_urls = fl.read().rstrip().split("\n")
-        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    logging.info("Sentences, saving to: %s" % articles_sentences_dir)
-    for i, url in enumerate(origin_urls):
-        logging.info("Loading article text from (%d): %s" % (i, url))
-        text_json_file_name = os.path.join(articles_text_dir, "%d.json" % i)
-        sentences_json_name = os.path.join(articles_sentences_dir, "%d.json" % i)
-        text_miner = TextMiner()
-        with open(text_json_file_name, "rb") as i_fl:
-            article = json.load(i_fl)
-            with open(sentences_json_name, "wb") as o_fl:
-                url = article["url"].encode("utf-8")
-                title = article["title"].encode("utf-8")
-                text = article["text"].encode("utf-8")
-                lang_id = article["lang_id"].encode("utf-8")
-                sentences = text_miner.sent_tokenize(text)
-                quoted = text_miner.extract_quoted(text)
-                all_sentence = text_miner.combine_sentences(sentences, quoted)
-                json.dump({
-                    "url": url,
-                    "title": title,
-                    "text": text,
-                    "lang_id": lang_id,
-                    "sentences": all_sentence,
-                    "quoted": quoted,
-                }, o_fl, indent=4)
-
-
-def step_5_filter_sentences(args):
-    """Filter out non-important sentences and find related pages.
+    Extract sentences and quotes and segment them.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    articles_sentences_dir = os.path.join(args.work_dir, ORIGINS_SENTENCES_DIR)
-    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
-    with open(args.nlcd_conf_file, "rb") as fl:
-        nlcd_config = json.load(fl)
-    if os.path.exists(articles_filtered_dir):
-        logging.info("Cleaning previous sentences (filtered) directory %s" % articles_filtered_dir)
-        rm_cmd = "rm -rf %s" % articles_filtered_dir
-        os.system(rm_cmd)
-    logging.info("Creating directory for storing filtered sentences: %s" % articles_filtered_dir)
-    os.mkdir(articles_filtered_dir)
-    with open(origins_fl, "rb") as fl:
-        origin_urls = fl.read().rstrip().split("\n")
-        logging.info("Loaded %d urls from %s." % (len(origin_urls), origins_fl))
-    logging.info("Filtered sentences, saving to: %s" % articles_filtered_dir)
-    search_api = husky.api.create_api(nlcd_config["nlcd"]["searchApi"])
-    logging.info("Created sentence filterer %r" % search_api)
-    for i, url in enumerate(origin_urls):
-        logging.info("Loading article sentences from (%d): %s" % (i, url))
-        sentences_json_file_name = os.path.join(articles_sentences_dir, "%d.json" % i)
-        sentences_json_name = os.path.join(articles_filtered_dir, "%d.json" % i)
-        with open(sentences_json_file_name, "rb") as i_fl:
-            article = json.load(i_fl)
-            with open(sentences_json_name, "wb") as o_fl:
-                url = article["url"].encode("utf-8")
-                title = article["title"].encode("utf-8")
-                text = article["text"].encode("utf-8")
-                lang_id = article["lang_id"].encode("utf-8")
-                sentences = [s.encode("utf-8") for s in article["sentences"]]
-                logging.info("Start filtering sentences (%d)." % len(sentences))
-                filtered_sentences = search_api.filter_sentences(sentences)
-                filtered_sentences = list(filtered_sentences)
-                json.dump({
+    origin_body_dir = os.path.join(args.work_dir, ORIGIN_BODY_DIR)
+    origin_sentence_dir = os.path.join(args.work_dir, ORIGIN_SEGMENT_DIR)
+    origins = read_origins(args)
+
+    text_util = TextUtil()
+
+    clean_directory(origin_sentence_dir)
+
+    for i, url in enumerate(origins):
+
+        i_body_fp = os.path.join(origin_body_dir, "%d.json" % i)
+        o_segment_fp = os.path.join(origin_sentence_dir, "%d.json" % i)
+
+        with open(i_body_fp, "rb") as i_fl:
+
+            body_obj = json.load(i_fl)
+
+            with open(o_segment_fp, "wb") as o_fl:
+
+                body = body_obj["body"]
+                lang_id = body_obj["lang_id"].encode("utf-8")
+
+                sentences = text_util.sent_tokenize(body)
+                quoted = text_util.extract_quoted(body)
+                segments = text_util.select_segments(sentences, quoted)
+
+                json_dump({
                     "url": url,
-                    "title": title,
-                    "text": text,
+                    "text": body,
                     "lang_id": lang_id,
                     "sentences": sentences,
-                    "filteredSentences": filtered_sentences,
-                }, o_fl, indent=4)
+                    "quoted": quoted,
+                    "segments": segments,
+                }, o_fl)
+
+                logging.info(("Extracted:    %02d sent    %02d quot    %02d segm." % (
+                    len(sentences),
+                    len(quoted),
+                    len(segments)
+                )).encode("utf-8"))
+
+
+def step_5_request_gse(args):
+
+    """
+    Filter out non-important sentences and find related pages.
+    """
+
+    origin_segment_dir = os.path.join(args.work_dir, ORIGIN_SEGMENT_DIR)
+    origin_gse_dir = os.path.join(args.work_dir, ORIGIN_GSE_DIR)
+    upper_threshold = args.gse_upper_threshold
+    bottom_threshold = args.gse_bottom_threshold
+    query_size_heuristic = args.gse_query_size_heuristic
+
+    with open(args.nlcd_conf_file, "rb") as fl:
+        nlcd_config = json.load(fl)
+
+    origins = read_origins(args)
+    gse_api = husky.api.create_api(nlcd_config["nlcd"]["searchApi"])
+
+    clean_directory(origin_gse_dir)
+
+    for i, url in enumerate(origins):
+
+        i_segment_fp = os.path.join(origin_segment_dir, "%d.json" % i)
+        o_gse_fp = os.path.join(origin_gse_dir, "%d.json" % i)
+        unique_links = set()
+
+        with open(i_segment_fp, "rb") as i_fl:
+
+            segments = [s.encode("utf-8") for s in json.load(i_fl)["segments"]]
+            origin_gse = []
+
+            with open(o_gse_fp, "wb") as o_fl:
+
+                for segment in segments:
+
+                    query = gse_api.make_query(query_string=segment, exact_terms=segment)
+                    found, urls, total = gse_api.find_results(query,
+                                                              query_size_heuristic=query_size_heuristic,
+                                                              upper_threshold=upper_threshold,
+                                                              bottom_threshold=bottom_threshold,
+                                                              max_results=upper_threshold)
+
+                    for item in found:
+                        unique_links.add(item["link"])
+
+                    origin_gse.append({
+                        "segment": segment,
+                        "totalResults": total,
+                        "foundUrls": urls,
+                        "foundItems": found
+                    })
+
+                    segment_fragment = segment if len(segment) < 16 else segment[:16]
+                    logging.info("Found %d items using segment '%s...'" % (total, segment_fragment))
+
+                    # text = segment.replace("\t", " ")
+                    # count = total
+                    # is_more = int(total > 10)
+                    # test_file.write("%s\t%d\t%d\n" % (text, count, is_more))
+
+                logging.info("Saving GSE with %d unique links." % len(unique_links))
+                json_dump(origin_gse, o_fl, encode=False)
+
+
+def step_6_filter_out_unrelated(args):
+    """
+    Filter not related documents found by Google.
+    """
 
 
 def step_6_extract_search_annotations(args):
-    """Extract Google searcher annotations.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
-    articles_filtered_dir = os.path.join(args.work_dir, ORIGINS_FILTERED_DIR)
+    Extract Google searcher annotations.
+    """
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
+    articles_filtered_dir = os.path.join(args.work_dir, ORIGIN_GSE_DIR)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     if os.path.exists(related_annotations_dir):
         logging.info("Cleaning previous related annotations directory %s" % related_annotations_dir)
@@ -222,11 +287,11 @@ def step_6_extract_search_annotations(args):
     logging.info("Created annotations extractor: %r" % annotations_extractor)
     for i, url in enumerate(origin_urls):
         logging.info("Loading article sentences from (%d): %s" % (i, url))
-        filtered_sentences_json_file_name = os.path.join(articles_filtered_dir, "%d.json" % i)
-        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        with open(filtered_sentences_json_file_name, "rb") as i_fl:
+        filtered_sentences_json_fp = os.path.join(articles_filtered_dir, "%d.json" % i)
+        related_annotations_json_fp = os.path.join(related_annotations_dir, "%d.json" % i)
+        with open(filtered_sentences_json_fp, "rb") as i_fl:
             article = json.load(i_fl)
-            with open(related_annotations_json_file_name, "wb") as o_fl:
+            with open(related_annotations_json_fp, "wb") as o_fl:
                 # url = article["url"].encode("utf-8")
                 # title = article["title"].encode("utf-8")
                 # lang_id = article["lang_id"].encode("utf-8")
@@ -255,7 +320,7 @@ def step_6_extract_search_annotations(args):
 def step_7_fetch_related_pages(args):
     """Fetch related pages.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     related_pages_database_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     if os.path.exists(related_annotations_dir):
@@ -271,9 +336,9 @@ def step_7_fetch_related_pages(args):
     related_data_ldb = husky.db.create(related_pages_database_dir)
     urls = []
     for i, url in enumerate(origin_urls):
-        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
-        with open(related_annotations_json_file_name, "rb") as i_fl:
+        related_annotations_json_fp = os.path.join(related_annotations_dir, "%d.json" % i)
+        logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_fp))
+        with open(related_annotations_json_fp, "rb") as i_fl:
             annotations = json.load(i_fl)
             for related_item in annotations:
                 url = related_item["url"].encode("utf-8")
@@ -304,7 +369,7 @@ def step_7_fetch_related_pages(args):
 def step_8_extract_full_annotations(args):
     """Extract full annotations from related pages HTML.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
     related_pages_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     related_full_annotations_dir = os.path.join(args.work_dir, RELATED_FULL_ANNOTATIONS_DIR)
@@ -320,14 +385,14 @@ def step_8_extract_full_annotations(args):
     annotator = EntityExtractor()
     annotations_cache = {}
     for i, url in enumerate(origin_urls):
-        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
+        related_annotations_json_fp = os.path.join(related_annotations_dir, "%d.json" % i)
         related_htmls_database_dir = os.path.join(related_pages_dir, "%d.ldb" % i)
-        related_full_annotations_json_file_name = os.path.join(related_full_annotations_dir, "%d.json" % i)
-        logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_file_name))
-        with open(related_annotations_json_file_name, "rb") as i_fl:
+        related_full_annotations_json_fp = os.path.join(related_full_annotations_dir, "%d.json" % i)
+        logging.info("Loading related annotation from from (%d): %s" % (i, related_annotations_json_fp))
+        with open(related_annotations_json_fp, "rb") as i_fl:
             annotations = json.load(i_fl)
             related_htmls_ldb = husky.db.open(related_htmls_database_dir)
-            with open(related_full_annotations_json_file_name, "wb") as o_fl:
+            with open(related_full_annotations_json_fp, "wb") as o_fl:
                 for annotation in annotations["relatedArticlesAnnotations"]:
                     items = annotation["relatedItems"]
                     for j, item in enumerate(items):
@@ -366,7 +431,7 @@ def step_8_extract_full_annotations(args):
 def step_9_normalize_data(args):
     """Extract full annotations from related pages HTML.
     """
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
     related_full_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR) #TODO
     normalized_annotations_dir = os.path.join(args.work_dir, NORMALIZED_ANNOTATIONS_DIR)
     if os.path.exists(normalized_annotations_dir):
@@ -381,20 +446,20 @@ def step_9_normalize_data(args):
     normalizer = husky.norm.pattern.ArticleNormalizer()
     dates = {}
     authors = {}
-    normalized_titles_file_name = os.path.join(normalized_annotations_dir, "titles.csv")
-    normalized_authors_file_name = os.path.join(normalized_annotations_dir, "authors.csv")
-    normalized_sources_file_name = os.path.join(normalized_annotations_dir, "sources.csv")
-    normalized_dates_file_name = os.path.join(normalized_annotations_dir, "dates.csv")
-    with open(normalized_titles_file_name, "wb") as titles_fl, \
-         open(normalized_authors_file_name, "wb") as authors_fl, \
-         open(normalized_sources_file_name, "wb") as sources_fl, \
-         open(normalized_dates_file_name, "wb") as dates_fl:
+    normalized_titles_fp = os.path.join(normalized_annotations_dir, "titles.csv")
+    normalized_authors_fp = os.path.join(normalized_annotations_dir, "authors.csv")
+    normalized_sources_fp = os.path.join(normalized_annotations_dir, "sources.csv")
+    normalized_dates_fp = os.path.join(normalized_annotations_dir, "dates.csv")
+    with open(normalized_titles_fp, "wb") as titles_fl, \
+         open(normalized_authors_fp, "wb") as authors_fl, \
+         open(normalized_sources_fp, "wb") as sources_fl, \
+         open(normalized_dates_fp, "wb") as dates_fl:
         for i, url in enumerate(origin_urls):
-            related_full_annotations_json_file_name = os.path.join(related_full_annotations_dir, "%d.json" % i)
-            normalized_annotations_json_file_name = os.path.join(normalized_annotations_dir, "%d.json" % i)
+            related_full_annotations_json_fp = os.path.join(related_full_annotations_dir, "%d.json" % i)
+            normalized_annotations_json_fp = os.path.join(normalized_annotations_dir, "%d.json" % i)
 
-            with open(related_full_annotations_json_file_name, "rb") as full_annotations_fl, \
-                 open(normalized_annotations_json_file_name, "wb") as normalized_annotations_fl:
+            with open(related_full_annotations_json_fp, "rb") as full_annotations_fl, \
+                 open(normalized_annotations_json_fp, "wb") as normalized_annotations_fl:
                 annotations = json.load(full_annotations_fl)
 
                 for annotation in annotations["relatedArticlesAnnotations"]:
@@ -419,7 +484,7 @@ def step_9_normalize_data(args):
 def step_10_evalualte_ner(args):
 
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
     input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     html_db = husky.db.open(input_documents_dir).prefixed_db("html+")
     search_annotations = {}
@@ -432,13 +497,12 @@ def step_10_evalualte_ner(args):
     output_eval_dates_fl = os.path.join(args.eval_extr, "eval.date.csv")
     output_eval_authors_fl = os.path.join(args.eval_extr, "eval.author.csv")
 
-
     # Collect Search annotations.
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
     for i, url in enumerate(origin_urls):
-        related_annotations_json_file_name = os.path.join(related_annotations_dir, "%d.json" % i)
-        with open(related_annotations_json_file_name, "rb") as i_fl:
+        related_annotations_json_fp = os.path.join(related_annotations_dir, "%d.json" % i)
+        with open(related_annotations_json_fp, "rb") as i_fl:
             annotations = json.load(i_fl)
             for related_item in annotations:
                 url = related_item["url"].encode("utf-8")
@@ -546,18 +610,18 @@ def step_10_evalualte_ner(args):
 def step_11_gen_cr_data(args):
 
     related_annotations_dir = os.path.join(args.work_dir, RELATED_GSE_ANNOTATIONS_DIR)
-    origins_fl = os.path.join(args.work_dir, ORIGINS_FILE)
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
     input_documents_dir = os.path.join(args.work_dir, RELATED_FULL_DATA_DIR)
     output_documents_dir = os.path.join(args.work_dir, CROSS_REF_DIR)
     html_db = husky.db.open(input_documents_dir).prefixed_db("html+")
     site_blacklist = husky.dicts.Blacklist.load(husky.dicts.Blacklist.BLACK_DOM)
 
     fetcher = PageFetcher()
-    text_miner = TextMiner()
+    text_util = TextUtil()
     extractor = EntityExtractor()
     normalizer = EntityNormalizer()
 
-    clean_dir(output_documents_dir)
+    clean_directory(output_documents_dir)
 
     with open(origins_fl, "rb") as fl:
         origin_urls = fl.read().rstrip().split("\n")
@@ -567,15 +631,12 @@ def step_11_gen_cr_data(args):
     #   0. url
     #   1. html?
     #   2. text
-    #   3. sentences
-    #   4. title
-    #   5. sources
-    #   6. pub date
-    #   7. authors
+    #   3. title
+    #   4. sources
+    #   5. pub date
+    #   6. authors
     for i, origin_url in enumerate(origin_urls):
 
-        if i > 1:
-            break
 
         # File with related annotations for given origin.
         rel_data_file = os.path.join(related_annotations_dir, "%d.json" % i)
@@ -589,7 +650,6 @@ def step_11_gen_cr_data(args):
                 html = None
                 title = None
                 text = None
-                sentences = None
                 sources = None
                 pub_date = None
                 authors = None
@@ -620,14 +680,7 @@ def step_11_gen_cr_data(args):
                 # 2. Get text
                 text = article.text
 
-                # 3. Extract sentences
-                sentences_original = text_miner.sent_tokenize(text)
-                sentences_quoted = text_miner.extract_quoted(text)
-                sentences = text_miner.combine_sentences(sentences_original,
-                                                         sentences_quoted,
-                                                         min_size=5)
-
-                # 4. Extract title
+                # 3. Extract title
                 titles = extractor.extract_titles(article)
                 if len(titles) == 0:
                     logging.warning("Strange document. Skip")
@@ -635,10 +688,10 @@ def step_11_gen_cr_data(args):
                 else:
                     title = list(titles)[0]
 
-                # 5. Extract sources
+                # 4. Extract sources
                 sources = annotation["source"]
 
-                # 6.
+                # 5. Extract publication dates
                 try:
                     raw_dates = annotation["dates"]
                     dates = normalizer.normalize_dates(raw_dates)
@@ -650,6 +703,7 @@ def step_11_gen_cr_data(args):
                     logging.warning("Error when extracting dates. %r" % url)
                     pub_date = None
 
+                # 6. Extract authors
                 try:
                     raw_authors = extractor.extract_authors(article, annotation)
                     authors = normalizer.normalize_authors(raw_authors, article=article)
@@ -666,7 +720,6 @@ def step_11_gen_cr_data(args):
                     "id": rel_id,
                     "url": url,
                     "text": text,
-                    "sentences": sentences,
                     "title": title,
                     "sources": sources,
                     "pub_date": pub_date,
@@ -675,24 +728,72 @@ def step_11_gen_cr_data(args):
 
         with open(os.path.join(output_documents_dir, "%d.json" % i), "wb") as o_fl:
 
-            json.dump(output_data, o_fl)
+            json.dump(output_data, o_fl, indent=4)
+
+
+def step_12_find_cross_references(args):
+    """
+    """
+
+    origins_fl = os.path.join(args.work_dir, ORIGIN_URL_FILE)
+    input_documents_dir = os.path.join(args.work_dir, CROSS_REF_DIR)
+    output_documents_dir = os.path.join(args.work_dir, CROSS_REF_OUT_DIR)
+
+    clean_directory(output_documents_dir)
+
+    with open(origins_fl, "rb") as fl:
+        origin_urls = fl.read().rstrip().split("\n")
+
+    for i, origin_url in enumerate(origin_urls):
+
+        articles_fl = os.path.join(input_documents_dir, "%d.json" % i)
+        with open(articles_fl, "rb") as i_fl:
+            articles = json.load(i_fl)
+
+        def read_ref_entry(article_data):
+            date_str = article_data.get("pub_date")
+            return ReferenceEntry(
+                ref_id=article_data.get("id"),
+                url=article_data.get("url"),
+                html=article_data.get("html"),
+                text=article_data.get("text"),
+                title=article_data.get("title"),
+                sources=article_data.get("sources"),
+                pub_date=datetime.datetime.strptime(date_str, "%Y.%m.%d") if date_str else None,
+                authors=article_data.get("authors"),
+            )
+
+        ref_index = ReferenceIndex((read_ref_entry(article) for article in articles))
+
+        ref_index.print_titles()
+        ref_index.index()
+
+        print i, ref_index
+
+        ref_index.find_cross_references(sent_window_size=3)
+
+        if i > 0:
+            break
+
+
 
 
 
 
 
 STEPS = (
-    (step_1_preprocessing, "Prepare data for processing."),
+    (step_1_init_work_dir, "Prepare data for processing."),
     (step_2_fetch_origin_articles, "Fetch origin articles."),
-    (step_3_extracting_article_sentences, "Extract origin sentences."),
+    (step_3_extracting_article_sentences, "Extract origin bodies."),
     (step_4_extract_sentences, "Extract sentences/segments."),
-    (step_5_filter_sentences, "Filter out non-important sentences and find related pages."),
+    (step_5_request_gse, "Filter out non-important sentences and find related pages."),
     (step_6_extract_search_annotations, "Extract Google searcher annotations."),
     (step_7_fetch_related_pages, "Fetch related pages."),
     (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
     (step_9_normalize_data, "Normalize data."),
     (step_10_evalualte_ner, "Evaluate named entity recognition."),
-    (step_11_gen_cr_data, "Generate data for cross-reference detection.")
+    (step_11_gen_cr_data, "Generate data for cross-reference detection."),
+    (step_12_find_cross_references, "Find references between related articles.",)
 )
 
 
@@ -784,6 +885,18 @@ if __name__ == "__main__":
     argparser.add_argument("--eval-extr",
                            type=str,
                            help="Path to the evaluation results of extraction.",
+                           default=None)
+
+    argparser.add_argument("--gse-bottom-threshold",
+                           type=int,
+                           default=None)
+
+    argparser.add_argument("--gse-upper-threshold",
+                           type=int,
+                           default=None)
+
+    argparser.add_argument("--gse-query-size-heuristic",
+                           type=int,
                            default=None)
 
     argparser.add_argument("--list-steps",

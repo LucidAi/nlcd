@@ -6,7 +6,7 @@ import json
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from husky.extraction import TextMiner, NerExtractor
+from husky.extraction import NerExtractor
 
 from husky.fetchers import PageFetcher
 from husky.api.google import CseAPI
@@ -14,6 +14,7 @@ from husky.api.google import CseAPI
 from husky.extraction.google import get_extractor
 
 from client.api.decorators import nlcd_api_call
+from husky.textutil import TextUtil
 
 
 @csrf_exempt
@@ -21,7 +22,7 @@ from client.api.decorators import nlcd_api_call
 def get_article(request):
     url = request.GET.get("url")
     text = PageFetcher().fetch_document_text(url)
-    preproc = TextMiner()
+    preproc = TextUtil()
     text = "\n".join([str(s) for s in preproc.sent_tokenize(text)])
     return {
         "url": url,
@@ -33,7 +34,7 @@ def get_article(request):
 @nlcd_api_call
 def get_segments(request):
     text = request.GET.get("text")
-    preproc = TextMiner()
+    preproc = TextUtil()
     sentences = list(set(preproc.sent_tokenize(text)))
     quoted = list(set(preproc.extract_quoted(sentences)))
     all_segments = sentences + quoted
@@ -59,7 +60,7 @@ def find_related(request):
     for entry in related:
         text = entry["text"].encode("utf-8")
         entry_query = cse.make_query(query_string=text, exact_terms=text)
-        found_documents = list(cse.find_results(entry_query, number=100))
+        found_documents = list(cse.find_results(entry_query, max_results=100))
         rel_sets.append((
             {
                 "id": entry["id"],

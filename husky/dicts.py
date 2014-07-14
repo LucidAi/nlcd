@@ -11,10 +11,14 @@ class Blacklist(object):
 
     WHITE_NER = "./distr/misc/white.ner.txt"
     BLACK_NER = "./distr/misc/black.ner.txt"
+
     WHITE_ORG = "./distr/misc/white.org.txt"
     BLACK_ORG = "./distr/misc/black.org.txt"
+
     WHITE_PER = "./distr/misc/white.per.txt"
     BLACK_PER = "./distr/misc/black.per.txt"
+
+    BLACK_SRC = "./distr/misc/black.src.txt"
 
     BLACK_AUTHOR_ATTR = "./distr/misc/black.author.attr.txt"
 

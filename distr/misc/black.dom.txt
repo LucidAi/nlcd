@@ -1,7 +1,9 @@
 .*articles\.wn\.com.*
+.*article\.wn\.com.*
 .*archive\.wn\.com.*
 .*amazon\.com.*
 .*\.wn\.com.*
 .*reference\.com.*
 .*wikipedia\.org.*
 .*\.pdf
+.*google\.com.*

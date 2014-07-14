@@ -82,7 +82,7 @@ class DateExtractor(object):
         return list(set(dates))
 
     def extract(self, article):
-        logging.warning("Article date extraction is not implemented.")
+        # logging.warning("Article date extraction is not implemented.")
         return []
 
 
@@ -93,11 +93,14 @@ class SourcesExtractor(object):
     def __init__(self):
         with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
             self.patterns = json.load(i_fl)
+        self.blacklist = Blacklist.load(Blacklist.BLACK_SRC)
         self.util = JsonPatternMatchingUtil()
         self.source_pattern = self.util.compile(self.patterns, "sources")
 
     def extract_from_json(self, annotation):
-        return self.util.match_unique(self.source_pattern, annotation)
+        sources = self.util.match_unique(self.source_pattern, annotation)
+        sources = [s for s in sources if s not in self.blacklist]
+        return sources
 
 
 class AuthorExtractor(object):
@@ -241,10 +244,7 @@ class EntityExtractor(object):
             logging.info("Blacklisted %r." % article.url)
             return []
         authors = self.author_extractor.extract(article)
-        # if annotation is not None:
-        #     print annotation["authors"]
         return authors
-
 
     def extract_dates(self, article=None, annotation=None, select_min=True):
         doc_dates = self.date_extractor.extract(article)

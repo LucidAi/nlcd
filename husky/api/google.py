@@ -98,7 +98,9 @@ class CseAPI(object):
                 break
 
             query["start"] = start_index
+
             url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
+            result_urls.append(url)
 
             try:
                 api_response = requests.get(url).json()
@@ -112,7 +114,8 @@ class CseAPI(object):
 
             if "searchInformation" not in api_response:
                 logging.warn("Search information not found")
-                break
+                if total_results is None:
+                    break
 
             if total_results is None:
                 total_results = int(api_response["searchInformation"]["totalResults"])
@@ -126,11 +129,14 @@ class CseAPI(object):
                 break
 
             if "items" not in api_response or len(api_response["items"]) == 0:
-                logging.warn("Items not found.")
-                break
+                if total_results is None:
+                    logging.warn("Items not found. Stop.")
+                    break
+                else:
+                    logging.warn("Item not found. Skip.")
+                    continue
 
             found_results.extend(api_response["items"])
-            result_urls.append(url)
 
         return found_results, result_urls, 0 if total_results is None else total_results
 

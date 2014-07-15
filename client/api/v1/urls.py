@@ -9,8 +9,6 @@ from django.shortcuts import redirect
 from django.views.generic.base import RedirectView
 
 
-urlpatterns = patterns("client.views",
-    url(r"^$",      RedirectView.as_view(url="/app/", permanent=False)),
-    url(r"^app/",   include("client.urls")),
-    url(r"^api/v1/",include("client.api.v1.urls")),
+urlpatterns = patterns("client.api.v1.views",
+    url(r"get_test_graph/$", "get_test_graph", name="get_test_graph"),
 )

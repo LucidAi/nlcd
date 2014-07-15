@@ -550,6 +550,58 @@ def step_8_find_cross_references(args):
             json_dump(graph, o_fl)
 
 
+def step_9_render_reference_graph(args):
+
+    origins = read_origins(args)
+
+    graph_dir = os.path.join(args.work_dir, CROSSREF_OUT_DATA_DIR)
+
+    for i, url in enumerate(origins):
+
+        i_graph_fp = os.path.join(graph_dir, "%d.json" % i)
+
+        with open(i_graph_fp, "rb") as i_fl:
+            graph = json.load(i_fl)
+
+
+        nodes = graph["nodes"]
+        edges = graph["edges"]
+
+        node_ids = set()
+        for a,b in edges:
+            node_ids.add(a)
+            node_ids.add(b)
+
+        print len(nodes)
+        print len(node_ids)
+        print len(edges)
+
+        import networkx as nx
+        import matplotlib.pyplot as plt
+
+        dg = nx.Graph()
+        dg.add_nodes_from(node_ids)
+        dg.add_edges_from(edges)
+
+        center_id = 53
+
+        p = nx.single_source_shortest_path_length(dg, center_id)
+
+        pos = nx.spring_layout(dg, iterations=100)
+
+        labels = {int(ref_id): node["sources"][0] for ref_id, node in nodes.iteritems() if int(ref_id) in node_ids}
+
+        print nodes.keys()
+
+        nx.draw_networkx_edges(dg, pos=pos, alpha=0.1)
+        nx.draw_networkx_nodes(dg, pos,
+                                   node_size=60,
+                                   cmap=plt.cm.Reds_r)
+        # nx.draw_networkx_labels(dg, pos, labels)
+        plt.show()
+
+
+
 STEPS = (
     (step_1_init_work_dir, "Prepare data for processing."),
     (step_2_fetch_origin_articles, "Fetch origin articles."),
@@ -557,18 +609,9 @@ STEPS = (
     (step_4_extract_sentences, "Extract sentences/segments."),
     (step_5_request_gse, "Fetch related links from Google Search."),
     (step_6_filter_out_unrelated, "Filter unrelated links."),
-
     (step_7_gen_cr_data, "Generate data for cross-reference detection."),
-    (step_8_find_cross_references, "Find references between related articles.",)
-
-    # Move these steps to evalutation pipeline
-    # (step_6_extract_related_gse_annotations, "Extract Google searcher annotations."),
-    # (step_7_fetch_related_pages, "Fetch related pages."),
-    # (step_8_extract_full_annotations, "Extract full annotations from related pages HTML."),
-    # (step_9_normalize_data, "Normalize data."),
-    # (step_10_evalualte_ner, "Evaluate named entity recognition."),
-
-
+    (step_8_find_cross_references, "Find references between related articles."),
+    (step_9_render_reference_graph, "Render reference graph"),
 )
 
 

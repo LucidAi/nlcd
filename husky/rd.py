@@ -175,36 +175,8 @@ class ReferenceIndex(object):
 
     def find_cross_references(self, sent_window_size=3):
 
-        # sentence2id = {}
-        #
-        # for entry in self.
-        #
-        #
-        # fuzzy_patterns = {}
-        #
 
         found_links = self.fuzzy_extract_references(self.iterentries())
-        all_ids = [entry.ref_id for entry in self.iterentries()]
-
-        import networkx as nx
-        import matplotlib.pyplot as plt
-
-        dg = nx.DiGraph()
-        # dg.add_nodes_from(found_links)
-        dg.add_edges_from(found_links)
-
-
-        nodes = set(dg.nodes_iter())
-        pos = nx.spring_layout(dg, iterations=20)
-
-        labels = {entry.ref_id: entry.title for entry in self.iterentries() if entry.ref_id in nodes}
-
-        nx.draw(dg, pos=pos)
-        nx.draw_networkx_labels(dg, pos, labels)
-        plt.show()
-
-        print "Total", len(all_ids)
-        print "Found", len(found_links)
 
         return found_links
 

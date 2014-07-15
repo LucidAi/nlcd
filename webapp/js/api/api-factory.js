@@ -1,3 +1,6 @@
+/*
+ * Author: Vova Zaytsev <zaytsev@usc.edu>
+ */
 "use strict";
 
 app.factory("NcldApiFactory", ["$http", "$location",
@@ -5,29 +8,10 @@ app.factory("NcldApiFactory", ["$http", "$location",
 
         return {
 
-
-            getArticle: function(url) {
+            getTestGraph: function() {
                 return $http({
-                    url:    "/api/get_article/",
-                    method: "GET",
-                    params: {url: url}
-                });
-            },
-
-
-            getSegments: function(text) {
-                return $http({
-                    url:    "/api/get_segments/",
-                    method: "GET",
-                    params: {text: text}
-                });
-            },
-
-            findRelated: function(filteredSegments) {
-                return $http({
-                    url:    "/api/find_related/",
-                    method: "GET",
-                    params: {segments: JSON.stringify(filteredSegments) }
+                    url:    "/api/v1/get_test_graph/",
+                    method: "GET"
                 });
             }
 

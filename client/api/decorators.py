@@ -10,7 +10,6 @@ from django.http import HttpResponse
 from client.api import common
 
 
-
 def nlcd_api_call(request_function):
 
     def wrapped_api_call(request):

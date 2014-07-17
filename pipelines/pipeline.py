@@ -534,12 +534,12 @@ def step_8_find_cross_references(args):
 
         for entry in ref_index.iterentries():
             graph_nodes[entry.ref_id] = {
-                "ref_id": entry.ref_id,
+                "refId": entry.ref_id,
                 "url": entry.url,
                 "text": entry.text,
                 "title": entry.title,
                 "sources": entry.sources,
-                "pub_date": entry.pub_date.strftime("%Y.%m.%d") if entry.pub_date is not None else None,
+                "pubDate": entry.pub_date.strftime("%Y.%m.%d") if entry.pub_date is not None else None,
                 "authors": entry.authors,
                 "body": entry.body,
             }
@@ -563,12 +563,11 @@ def step_9_render_reference_graph(args):
         with open(i_graph_fp, "rb") as i_fl:
             graph = json.load(i_fl)
 
-
         nodes = graph["nodes"]
         edges = graph["edges"]
 
         node_ids = set()
-        for a,b in edges:
+        for a, b in edges:
             node_ids.add(a)
             node_ids.add(b)
 

@@ -21,27 +21,58 @@ text.label {
     font-weight: normal;
 }
 
-.area {
-    fill: steelblue;
+.line {
+    fill: none;
+    stroke: #0266C8;
+    stroke-width: 2px;
 }
 
+.pikeTip {
+    cursor: pointer;
+}
+
+.pikeTip circle {
+    fill: none;
+    stroke: #333;
+}
+
+.pikeTip text {
+    fill: black;
+}
+
+.pikeTip.selected circle {
+    fill: black;
+}
+
+.pikeTip.selected text {
+    fill: white;
+}
 
 </style>
 
 <div class="container">
   <div class="page-header" id="StoryGraphHeader">
     <h1>
-    Story Life
+    Story Lifespan
     </h1>
   </div>
 </div>
 
 <div class="container">
-  <div class="row">
 
+  <div class="row">
     <div id="StoryLifespanGraph" class="md-12">
 
     </div>
-
   </div>
+
+  <div class="row">
+      <div class="md-6">
+        <h6>Point: {{selectedDateData.pointLabel}}</h6>
+        <ul>
+            <li ng-repeat="node in selectedDateData.nodes"><a href="{{node.url}}">{{node.title}}</a></li>
+        </ul>
+      </div>
+  </div>
+
 </div>

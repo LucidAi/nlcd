@@ -16,16 +16,14 @@ app.controller("NlcdClientController", ["$scope", "$location", "NcldApiFactory",
         };
 
         $scope.related              = [];
-        $scope.graph                = null;
-
+        $scope.selectedDateData     = null;
 
         NcldApiFactory.getTestGraph().success(function(data){
 
             var width = document.getElementById("StoryGraphHeader").offsetWidth;
 
-            $scope.graph = new StoryGraph(data.data);
-            $scope.graph.renderDistribution("#StoryLifespanGraph", width, 300);
-
+            graph = new StoryGraph(data.data, $scope);
+            graph.renderDistribution("#StoryLifespanGraph", width, 300);
 
         });
 

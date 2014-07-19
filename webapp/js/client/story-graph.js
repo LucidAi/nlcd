@@ -3,11 +3,12 @@
  */
 
 
-function StoryGraph(graphData) {
+function StoryGraph(graphData, scope) {
 
     this.parseDate = d3.time.format("%Y.%m.%d").parse;
     this.graphData = graphData;
     this.edges = graphData.edges;
+    this.scope = scope;
 
     this.nodes = [];
     this.dates = [];
@@ -45,37 +46,23 @@ function StoryGraph(graphData) {
     this.firstDate = d3.min(this.dates);
     this.lastDate = d3.max(this.dates);
 
-    this.pikes = {};
-    this.pikes[this.firstDate] = {
-        count: this.distrib[this.firstDate],
-        nodes: this.dateNodes[this.firstDate],
-        date: this.firstDate
-    };
-    this.pikes[this.lastDate] = {
-        count: this.distrib[this.lastDate],
-        nodes: this.dateNodes[this.lastDate],
-        date: this.lastDate
-    };
-
-    for (var i in this.distrib) {
-        if (!this.pikes[this.distrib]) {
-            if (this.distrib[i] >= this.average) {
-                this.pikes[i] = {
-                    count: this.distrib[i],
-                    nodes: this.dateNodes[i],
-                    date: i
-                }
-            }
-        }
-    }
-
-    var dates = this.dateRange(this.firstDate, this.lastDate);
+    this.f = new Date(this.firstDate);
+    this.l = new Date(this.lastDate);
+    this.f.setDate(this.f.getDate() - 7);
+    this.l.setDate(this.l.getDate() + 7);
+    var dates = this.dateRange(this.f, this.l);
     for (var i in dates) {
         if (!this.distrib[dates[i]]) {
             this.distrib[dates[i]] = 0;
         }
     }
 
+}
+
+StoryGraph.prototype.showDate = function(date, disrtItem) {
+    console.log(disrtItem);
+    this.scope.selectedDateData = disrtItem;
+    this.scope.$apply();
 }
 
 
@@ -95,35 +82,50 @@ StoryGraph.prototype.dateRange = function(startDate, stopDate) {
 }
 
 
+StoryGraph.prototype.findYatX = function (x, line) {
+    function getXY(len) {
+        var point = line.getPointAtLength(len);
+        return [point.x, point.y];
+    }
+    var curlen = 0;
+    while (getXY(curlen)[0] < x) { curlen += 1; }
+    return getXY(curlen);
+}
+
+
 StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
 
-    var margin = {top: 20, right: 20, bottom: 120, left: 60},
+    // Pre-process data
+    var sg = this;
+    var data = d3.entries(this.distrib);
+    var chars = ["A", "B", "C", "D", "C", "E", "F"];
+    data.sort(function(a, b){ return d3.ascending(new Date(a.key), new Date(b.key)); });
+
+
+    // Set canvas margins
+    var margin = {top: 20, right: 20, bottom: 48, left: 60},
         width =  width - margin.left - margin.right,
         height = height - margin.top - margin.bottom;
+    var radius = 10;
 
-    var xScale = d3.time.scale().domain([this.firstDate, this.lastDate]).range([0, width]);
+    // Set scales
+    var xScale = d3.time.scale().domain([this.f, this.l]).range([0, width]);
     var yScale = d3.scale.linear().range([height, 0]);
-    var color = d3.scale.category10();
-    var data = d3.entries(this.distrib);
-    var pikes = d3.values(this.pikes);
+    var yMax = d3.max(data, function(d) { return d.value; });
+    yScale.domain([0, yMax * 1.2]);
 
-    data.sort(function(a, b){ return d3.ascending(new Date(a.key), new Date(b.key)); });
-    pikes.sort(function(a, b){ return d3.ascending(new Date(a.date), new Date(b.date)); });
-
-    yScale.domain([0, d3.max(data, function(d) { return d.value; })]);
-
-    var area = d3.svg.area()
-        .interpolate("linear")
+    // Interpolate counts
+    var line = d3.svg.line()
+        .interpolate("cardinal")
         .x(function(d) { return xScale(new Date(d.key)); })
-        .y0(height)
-        .y1(function(d) { return yScale(d.value); });
+        .y(function(d) { return yScale(d.value); });
 
+    // Generate axises
     var xAxis = d3.svg.axis()
         .scale(xScale)
         .orient("bottom")
         .ticks(12)
         .tickFormat(d3.time.format("%m.%d"));
-
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var svg = d3.select(locationId).append("svg")
@@ -146,6 +148,14 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
             "stroke-width": "1px"
         });
 
+    svg.append("line")
+        .attr("x1", xScale(this.f))
+        .attr("x2", xScale(this.l))
+        .attr("y1", yScale(this.average))
+        .attr("y2", yScale(this.average))
+        .attr("stroke-width", 1)
+        .attr("stroke", "#EEE");
+
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -164,39 +174,108 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("Publications");
+        .text("News Volume");
 
     svg.append("path")
         .datum(data)
-        .attr("class", "area")
-        .attr("d", area);
-
-    svg.append("line")
-        .attr("x1", xScale(this.firstDate))
-        .attr("x2", xScale(this.lastDate))
-        .attr("y1", yScale(this.average))
-        .attr("y2", yScale(this.average))
-        .attr("stroke-width", 1)
-        .attr("stroke", "#EEE");
+        .attr("class", "line")
+        .attr("d", line)
+        .attr("id", "VolumeDistribution")
 
     data.sort(function(a, b){ return d3.ascending(new Date(a.key), new Date(b.key)); });
     yScale.domain([0, d3.max(data, function(d) { return d.value; })]);
 
-     svg.append("g")
+    svg.append("g")
         .datum(data)
-        .attr("class", "area")
-        .attr("d", area);
+        .attr("class", "line")
+        .attr("d", line);
 
 
-    svg.selectAll(".dot").data(pikes)
-        .enter()
-        .append("rect")
-        .attr("x", function(d) { return xScale(new Date(d.date)); })
-        .attr("y", function(d) { return yScale(d.count); })
-        .attr("width", 30)
-        .attr("height", 20)
-        .attr("stroke-width", 1)
-        .attr("stroke", "#000")
-        .attr("fill", "none");
+    // Draw pikes
+
+
+    var pikes = {};
+
+    pikes[this.firstDate] = {
+        count: this.distrib[this.firstDate],
+        nodes: this.dateNodes[this.firstDate],
+        date: this.firstDate
+    };
+    pikes[this.lastDate] = {
+        count: this.distrib[this.lastDate],
+        nodes: this.dateNodes[this.lastDate],
+        date: this.lastDate
+    };
+
+    var i_prev = this.firstDate;
+    var was_incr = true; // is monotonically increasing
+    var dates = this.dateRange(this.firstDate, this.lastDate);
+
+
+    var lineElem = document.getElementById("VolumeDistribution");
+    var getY = function(x) {return sg.findYatX(x, lineElem)[1];}
+
+    for (var i in dates) {
+        i = dates[i];
+
+        var is_used = Boolean(pikes[i]); // already iterated
+        var above_verage = this.distrib[i_prev] >= this.average;
+        var is_decr = this.distrib[i] < this.distrib[i_prev];
+
+        if (!is_used && is_decr && was_incr && above_verage) {
+            pikes[i] = {
+                count: this.distrib[i_prev],
+                nodes: this.dateNodes[i_prev],
+                date: i_prev
+            }
+
+        }
+
+        was_incr = this.distrib[i] >= this.distrib[i_prev];
+        i_prev = i;
+
+    }
+
+    pikes = d3.values(pikes);
+    var k = 0;
+
+    var elemEnter = svg.selectAll("node")
+        .data(pikes)
+        .enter().append("g")
+        .attr("class", function(d) {
+            d.nodeId = k++;
+            d.pointLabel = chars[d.nodeId];
+            if (d.nodeId == 0) {
+                sg.showDate(d.date, d);
+                return "pikeTip selected";
+            }
+            return "pikeTip"
+        });
+
+    elemEnter.append("svg:circle")
+        .attr("cx", function(d) { return xScale(new Date(d.date)); })
+        .attr("cy", function(d) {
+            var x = xScale(d.date);
+            d.x = x;
+            d.y = getY(x);
+            return d.y - 16;
+        })
+        .attr("r", "10px");
+
+    elemEnter.append("text")
+        .attr("x", function(d) { return d.x - 5; })
+        .attr("y", function(d) { return d.y - 11; })
+        .text( function (d) {
+            return d.pointLabel;
+        })
+        .attr("font-size", "15px");
+
+    elemEnter.on("click", function(d) {
+        elemEnter.attr("class", "pikeTip");
+        d3.select(this).attr("class", "pikeTip selected");
+        sg.showDate(d.date, d);
+    });
+
+
 
 };

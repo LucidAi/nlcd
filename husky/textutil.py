@@ -7,9 +7,14 @@ import ftfy
 import string
 import langid
 import difflib
+import logging
 import newspaper
 import readability
 import textblob.tokenizers
+
+
+from lxml.etree import ParserError
+from readability.readability import Unparseable
 
 
 class TextUtil(object):
@@ -42,17 +47,34 @@ class TextUtil(object):
 
     def extract_body(self, url, html):
 
-        document = readability.Document(html)
-        summary = document.summary()
-        lang_id, _ = langid.classify(summary)
         try:
-            doc_title = document.title()
-        except TypeError:
+            document = readability.Document(html)
+            summary = document.summary()
+            lang_id, _ = langid.classify(summary)
+            try:
+                doc_title = document.title()
+            except TypeError:
+                doc_title = None
+        except ParserError:
+            lang_id = "en"
+            document = None
+            summary = ""
+            doc_title = None
+        except Unparseable:
+            lang_id = "en"
+            document = None
+            summary = ""
             doc_title = None
 
-        article = newspaper.Article(url, language=lang_id, config=self.np_config)
-        article.set_html(html)
-        article.parse()
+        try:
+            article = newspaper.Article(url, language=lang_id, config=self.np_config)
+            article.set_html(html)
+            article.parse()
+        except IOError:
+            # If language is not found, try to use English parser.
+            article = newspaper.Article(url, language="en", config=self.np_config)
+            article.set_html(html)
+            article.parse()
 
         a_text = "" if article.text is None or len(article.text) == 0 else article.text
         r_text = "" if summary is None or len(summary) == 0 else summary
@@ -79,11 +101,16 @@ class TextUtil(object):
             text = title + "\n" + text
 
         text = text.replace(".\n", " ")
-        text = ftfy.fix_text(text,
-                             fix_entities=True,
-                             remove_terminal_escapes=True,
-                             uncurl_quotes=True,
-                             fix_line_breaks=True)
+
+        try:
+            text = ftfy.fix_text(text,
+                                 fix_entities=True,
+                                 remove_terminal_escapes=True,
+                                 uncurl_quotes=True,
+                                 fix_line_breaks=True)
+        except UnicodeError:
+            logging.error("Error while parsing HTML from %r" % url)
+            return "", "en"
 
         return text, lang_id
 

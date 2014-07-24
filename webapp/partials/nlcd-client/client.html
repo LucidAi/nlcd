@@ -8,71 +8,92 @@
 }
 
 .dot {
-    stroke: #999;
+  stroke: #999;
 }
+
 .tick text {
-    fill: #666;
-    font-family: "Helvetica Neue";
-    font-weight: lighter;
+  fill: #666;
+  font-family: "Helvetica Neue";
+  font-weight: lighter;
 }
+
 text.label {
-    fill: #333;
-    font-family: "Helvetica Neue";
-    font-weight: normal;
+  fill: #333;
+  font-family: "Helvetica Neue";
+  font-weight: normal;
 }
 
 .line {
-    fill: none;
-    stroke: #0266C8;
-    stroke-width: 2px;
+  fill: none;
+  stroke: #0266C8;
+  stroke-width: 2px;
 }
 
 .pikeTip {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .pikeTip circle {
-    fill: none;
-    stroke: #333;
+  fill: none;
+  stroke: #333;
 }
 
 .pikeTip text {
-    fill: black;
+  fill: black;
 }
 
 .pikeTip.selected circle {
-    fill: black;
+  fill: black;
 }
 
 .pikeTip.selected text {
-    fill: white;
+  fill: white;
+}
+
+
+rect {
+  fill: none;
+  pointer-events: none;
+}
+
+.node {
+  fill: #0266C8;
+  stroke: black;
+}
+
+.link {
+  stroke: #AAA;
+  opacity: 1;
+  stroke-width: 1px;
 }
 
 </style>
 
 <div class="container">
   <div class="page-header" id="StoryGraphHeader">
-    <h1>
-    Story Lifespan
-    </h1>
+    <h1>Story Lifespan</h1>
   </div>
 </div>
 
 <div class="container">
 
   <div class="row">
-    <div id="StoryLifespanGraph" class="md-12">
+    <div id="StoryLifespanGraph" class="md-12"></div>
+  </div>
 
+  <div class="row">
+    <div class="md-6">
+      <h6>Point: {{selectedDateData.pointLabel}}</h6>
+      <ul>
+        <li ng-repeat="node in selectedDateData.nodes">
+          <a href="{{node.url}}">{{node.title}}</a>
+        </li>
+      </ul>
     </div>
   </div>
 
   <div class="row">
-      <div class="md-6">
-        <h6>Point: {{selectedDateData.pointLabel}}</h6>
-        <ul>
-            <li ng-repeat="node in selectedDateData.nodes"><a href="{{node.url}}">{{node.title}}</a></li>
-        </ul>
-      </div>
+    <div id="StoryNetwork" class="md-12"></div>
   </div>
 
 </div>

@@ -100,6 +100,9 @@ class CseAPI(object):
             query["start"] = start_index
 
             url = self.make_cse_url(query) + "&cx=%s&key=%s" % (self.engine_id, self.key)
+
+            logging.debug(url)
+
             result_urls.append(url)
 
             try:

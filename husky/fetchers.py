@@ -1,8 +1,8 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
+import urllib
 import logging
-
 import requests
 import grequests
 
@@ -11,6 +11,8 @@ class PageFetcher(object):
 
     DEFAULT_ENCODING = "utf-8"
     DEFAULT_TIMEOUT = 60
+    FB_URL_BASE = "http://graph.facebook.com?"
+    TW_URL_BASE = "http://urls.api.twitter.com/1/urls/count.json?"
 
     def __init__(self, encoding=DEFAULT_ENCODING):
         self.encoding = encoding
@@ -38,6 +40,18 @@ class PageFetcher(object):
             if v is None:
                 del url2html_dict[k]
         return responses
+
+    def get_facebool_counts(self, urls, max_threads=8, timeout=DEFAULT_TIMEOUT):
+        fb_urls = (self.FB_URL_BASE + urllib.urlencode({"id": url}) for url in urls)
+        responses = self.fetch_documents(fb_urls, max_threads, timeout)
+        counts = [r.json() if r else None for r in responses]
+        return counts
+
+    def get_twitter_counts(self, urls, max_threads=8, timeout=DEFAULT_TIMEOUT):
+        tw_urls = (self.TW_URL_BASE + urllib.urlencode({"url": url}) for url in urls)
+        responses = self.fetch_documents(tw_urls, max_threads, timeout)
+        counts = [r.json() if r else None for r in responses]
+        return counts
 
     def response_to_utf_8(self, response):
         try:

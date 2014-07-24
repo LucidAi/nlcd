@@ -32,8 +32,9 @@ ORIGIN_BODY_DIR                 = "3.origin_body"
 ORIGIN_SEGMENT_DIR              = "4.origin_segm"
 ORIGIN_GSE_DIR                  = "5.origin_gse"
 RELATED_LINKS_DIR               = "6.related_links"
-CROSSREF_IN_DATA_DIR            = "7.crossref.in"
-CROSSREF_OUT_DATA_DIR           = "8.crossref.out"
+CROSSREF_IN_DATA_DIR            = "7.crossref_in"
+CROSSREF_OUT_DATA_DIR           = "8.crossref_out"
+STORY_GRAPH_DIR                 = "9.story_graph"
 
 
 def clean_directory(path):
@@ -379,16 +380,6 @@ def step_7_gen_cr_data(args):
 
     clean_directory(crossref_data_in_dir)
 
-    # Extract data for cress-reference detection.
-    # Data to extract:
-    #   0. url
-    #   1. html?
-    #   2. text
-    #   3. title
-    #   4. sources
-    #   5. pub date
-    #   6. authors
-
     for i, _ in enumerate(origins):
 
         # File with related annotations for given origin.
@@ -466,7 +457,6 @@ def step_7_gen_cr_data(args):
             annotation_id += 1
 
             output_data.append({
-
                 "id": rel_id,
                 "url": url,
                 "text": text,
@@ -550,55 +540,110 @@ def step_8_find_cross_references(args):
             json_dump(graph, o_fl)
 
 
-def step_9_render_reference_graph(args):
+def step_9_enrich_story_graphs(args):
 
     origins = read_origins(args)
 
     graph_dir = os.path.join(args.work_dir, CROSSREF_OUT_DATA_DIR)
+    story_dir = os.path.join(args.work_dir, STORY_GRAPH_DIR)
 
-    for i, url in enumerate(origins):
+    clean_directory(story_dir)
 
-        i_graph_fp = os.path.join(graph_dir, "%d.json" % i)
+    fetcher = PageFetcher()
 
-        with open(i_graph_fp, "rb") as i_fl:
-            graph = json.load(i_fl)
+    for i, origin_url in enumerate(origins):
 
-        nodes = graph["nodes"]
-        edges = graph["edges"]
+        graph_fp = os.path.join(graph_dir, "%d.json" % i)
+        story_fp = os.path.join(story_dir, "%d.json" % i)
 
-        node_ids = set()
+        with open(graph_fp, "rb") as graph_fl:
+            graph = json.load(graph_fl)
+
+        # Pre-process edges
+        edges = set()
+        for a, b in graph["edges"]:
+            edges.add((min(a, b), max(a, b)))
+        ref_counter = collections.Counter()
         for a, b in edges:
-            node_ids.add(a)
-            node_ids.add(b)
+            ref_counter[a] += 1
+            ref_counter[b] += 1
 
-        print len(nodes)
-        print len(node_ids)
-        print len(edges)
+        # Find central reference, also index by url
+        central_ref_id = None
+        url_index = {}
+        for node in graph["nodes"].itervalues():
+            node_url = node["url"]
+            url_index[node_url] = node
+            if node_url == origin_url:
+                central_ref_id = node["refId"]
 
-        import networkx as nx
-        import matplotlib.pyplot as plt
+        if central_ref_id is None:
+            logging.warn("Central reference not found. Selecting the most referenced.")
+            central_ref_id = ref_counter.most_common(1)[0][0]
+            logging.info(central_ref_id)
 
-        dg = nx.Graph()
-        dg.add_nodes_from(node_ids)
-        dg.add_edges_from(edges)
+        urls = [node["url"] for node in graph["nodes"].itervalues()]
 
-        center_id = 53
+        # Download FB reactions
+        fb_counts = fetcher.get_facebool_counts(urls)
+        fb_comments = {}
+        fb_shares = {}
+        for fb_entry in fb_counts:
+            n_comments = fb_entry.get("comments", 0)
+            n_shares = fb_entry.get("shares", 0)
+            ref_id = url_index[fb_entry["id"]]["refId"]
+            fb_comments[ref_id] = n_comments
+            fb_shares[ref_id] = n_shares
 
-        p = nx.single_source_shortest_path_length(dg, center_id)
+        # Download TW reactions
+        tw_counts = fetcher.get_twitter_counts(urls)
+        tw_shares = {}
+        for tw_entry in tw_counts:
+            n_shares = tw_entry.get("count", 0)
+            tw_url = tw_entry["url"]
+            node = url_index.get(tw_url)
+            if node is None:
+                node = url_index.get(tw_url[:-1])
+                if node is None:
+                    continue
+            ref_id = node["refId"]
+            tw_shares[ref_id] = n_shares
 
-        pos = nx.spring_layout(dg, iterations=100)
+        # Generate date distribution
 
-        labels = {int(ref_id): node["sources"][0] for ref_id, node in nodes.iteritems() if int(ref_id) in node_ids}
+        # Find additional connection features
 
-        print nodes.keys()
+        # Find by Date distribution
 
-        nx.draw_networkx_edges(dg, pos=pos, alpha=0.1)
-        nx.draw_networkx_nodes(dg, pos,
-                                   node_size=60,
-                                   cmap=plt.cm.Reds_r)
-        # nx.draw_networkx_labels(dg, pos, labels)
-        plt.show()
+        # Find sources
 
+        # Find by author distribution
+
+        nodes = []
+        for node in graph["nodes"].itervalues():
+            node["twitterShares"] = tw_shares.get(node["refId"], 0)
+            node["facebookShares"] = fb_shares.get(node["refId"], 0)
+            node["facebookComments"] = fb_comments.get(node["refId"], 0)
+            node["referenceCount"] = ref_counter.get(node["refId"], 0)
+            node["citationCount"] = 0
+            nodes.append(node)
+
+        edges = list(edges)
+
+        story_graph = {
+
+            "edges": edges,
+            "nodes": nodes,
+            "meta": {
+                "centralNode": central_ref_id,
+            }
+
+        }
+
+        story_fp = os.path.join(story_dir, "%d.json" % i)
+
+        with open(story_fp, "wb") as o_fl:
+            json_dump(story_graph, o_fl)
 
 
 STEPS = (
@@ -610,7 +655,7 @@ STEPS = (
     (step_6_filter_out_unrelated, "Filter unrelated links."),
     (step_7_gen_cr_data, "Generate data for cross-reference detection."),
     (step_8_find_cross_references, "Find references between related articles."),
-    (step_9_render_reference_graph, "Render reference graph"),
+    (step_9_enrich_story_graphs, "Enrich story graphs"),
 )
 
 

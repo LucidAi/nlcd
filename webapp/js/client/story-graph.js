@@ -1,5 +1,7 @@
 /*
+ *
  * Author: Vova Zaytsev <zaytsev@usc.edu>
+ *
  */
 
 
@@ -43,6 +45,7 @@ function StoryGraph(graphData, scope) {
         this.average += this.distrib[i];
     }
     this.average /= this.datesCount;
+    this.average *= 1.666;
     this.firstDate = d3.min(this.dates);
     this.lastDate = d3.max(this.dates);
 
@@ -57,12 +60,23 @@ function StoryGraph(graphData, scope) {
         }
     }
 
+    this.graphics = {
+        xScale: null,
+        yScale: null
+    }
+
 }
 
-StoryGraph.prototype.showDate = function(date, disrtItem) {
-    console.log(disrtItem);
+
+StoryGraph.prototype.showDate = function(date, disrtItem, apply) {
     this.scope.selectedDateData = disrtItem;
-    this.scope.$apply();
+    try {
+        if (apply) {
+            this.scope.$apply();
+        }
+    } catch(err) {
+        console.log(err.message);
+    }
 }
 
 
@@ -93,12 +107,169 @@ StoryGraph.prototype.findYatX = function (x, line) {
 }
 
 
+StoryGraph.prototype.renderNetwork = function(locationId, width, height) {
+
+    var fill = d3.scale.category20();
+    var sg = this;
+
+    var force = d3.layout.force()
+        .size([width, height])
+        .nodes([])
+        .linkDistance(100)
+        .charge(-400);
+
+    var svg = d3.select(locationId).append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height);
+
+    var nodes = force.nodes();
+    var links = force.links();
+    var node = svg.selectAll(".node");
+    var link = svg.selectAll(".link");
+
+    function restart() {
+
+      link = link.data(links);
+      link.enter().insert("line", ".node").attr("class", "link");
+      node = node.data(nodes);
+
+      node = node.enter().insert("circle", ".cursor")
+          .attr("class", "node")
+          .attr("r", function(d) {
+            return d.radius;
+          })
+          .call(force.drag); // TODO
+
+      force.start();
+    }
+
+    var nodeIndex = {};
+    var nodeCitIndex = {};
+
+    for (var i in this.graphData.nodes) {
+        var nodeData = this.graphData.nodes[i];
+        var newNode = {
+            index: nodeData.refId,
+            fixed: false,
+            radius: 3,
+            data: nodeData,
+        };
+        nodeIndex[nodeData.refId] = newNode;
+    }
+
+
+    var dates = this.dateRange(this.firstDate, this.lastDate);
+
+
+    for (var i in this.graphData.edges) {
+        var newEdge = this.graphData.edges[i];
+        var source = nodeIndex[newEdge[0]];
+        var target = nodeIndex[newEdge[1]];
+        if (nodeCitIndex[newEdge[0]]) {
+            nodeCitIndex[newEdge[0]] += 1;
+        } else {
+            nodeCitIndex[newEdge[0]] = 1;
+        }
+        if (nodeCitIndex[newEdge[1]]) {
+            nodeCitIndex[newEdge[1]] += 1;
+        } else {
+            nodeCitIndex[newEdge[1]] = 1;
+        }
+        links.push({"source": source, "target": target});
+    }
+
+    for (var i in dates) {
+        var date = dates[i];
+
+        var dNodes = this.dateNodes[date];
+
+        if (dNodes) {
+
+            var primeScore = 0.0;
+            var primeNodeId = dNodes[0].refId;
+
+            for (var j in dNodes) {
+                var refId = dNodes[j].refId;
+                var score = nodeCitIndex[refId];
+                if (score > primeScore) {
+                    primeScore = score;
+                    primeNodeId = refId;
+                }
+            }
+
+            // console.log([date, primeNodeId, score]);
+
+            for (var j in dNodes) {
+
+                var refId = dNodes[j].refId;
+                var visNode = nodeIndex[refId];
+                var citIndex = nodeCitIndex[refId]
+                visNode.x = this.graphics.xScale(date) + 60;
+                visNode.y = height / 2;
+                visNode.isFixed = refId == primeNodeId;
+
+                if (citIndex) {
+                    visNode.radius = Math.sqrt(citIndex) + 1;
+                } else {
+                    visNode.radius = 1;
+                }
+
+            }
+        }
+
+    }
+
+    for (var i in nodeIndex) {
+        nodes.push(nodeIndex[i]);
+    }
+
+    var xScale = this.graphics.xScale;
+
+    force.on("tick", function() {
+
+      node.each(function(d) {
+        var cX = xScale(d.data.pubDate);
+        var cY = height / 2;
+        if (d.isFixed) {
+            d.x = d.px = Math.min(cX + 50, Math.max(cX - 50, d.px));
+            d.y = d.py = Math.min(cY + 50, Math.max(cY - 50, d.py));
+        }
+      });
+
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+
+    });
+
+    /*
+    selection.on("click", function(d) {
+      if (d3.event.defaultPrevented) return; // ignore drag
+      otherwiseDoAwesomeThing();
+    });
+    */
+
+    restart();
+
+}
+
+
 StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
 
     // Pre-process data
     var sg = this;
     var data = d3.entries(this.distrib);
-    var chars = ["A", "B", "C", "D", "C", "E", "F"];
+    var chars = ["A", "B", "C", "D", "E", "F", "G",
+                 "H", "I", "J", "K", "L", "M", "N"];
     data.sort(function(a, b){ return d3.ascending(new Date(a.key), new Date(b.key)); });
 
 
@@ -116,7 +287,7 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
 
     // Interpolate counts
     var line = d3.svg.line()
-        .interpolate("cardinal")
+        .interpolate("basis")
         .x(function(d) { return xScale(new Date(d.key)); })
         .y(function(d) { return yScale(d.value); });
 
@@ -125,7 +296,7 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
         .scale(xScale)
         .orient("bottom")
         .ticks(12)
-        .tickFormat(d3.time.format("%m.%d"));
+        .tickFormat(d3.time.format("%y.%m.%d"));
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var svg = d3.select(locationId).append("svg")
@@ -161,9 +332,9 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
         .selectAll("text")
-        .attr("dy", ".15em")
+        .attr("dy", ".25em")
         .attr("dx", "-2em")
-        .attr("transform", "rotate(-35)");
+        .attr("transform", "rotate(-45)");
 
     svg.append("g")
         .attr("class", "y axis")
@@ -246,7 +417,7 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
             d.nodeId = k++;
             d.pointLabel = chars[d.nodeId];
             if (d.nodeId == 0) {
-                sg.showDate(d.date, d);
+                sg.showDate(d.date, d, false);
                 return "pikeTip selected";
             }
             return "pikeTip"
@@ -273,9 +444,11 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
     elemEnter.on("click", function(d) {
         elemEnter.attr("class", "pikeTip");
         d3.select(this).attr("class", "pikeTip selected");
-        sg.showDate(d.date, d);
+        sg.showDate(d.date, d, true);
     });
 
 
+    this.graphics.xScale = xScale;
+    this.graphics.yScale = yScale;
 
 };

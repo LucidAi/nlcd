@@ -23,7 +23,9 @@ app.controller("NlcdClientController", ["$scope", "$location", "NcldApiFactory",
             var width = document.getElementById("StoryGraphHeader").offsetWidth;
 
             graph = new StoryGraph(data.data, $scope);
+
             graph.renderDistribution("#StoryLifespanGraph", width, 300);
+            graph.renderNetwork("#StoryNetwork", width, 500);
 
         });
 

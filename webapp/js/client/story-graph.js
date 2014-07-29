@@ -45,7 +45,7 @@ function StoryGraph(graphData, scope) {
         this.average += this.distrib[i];
     }
     this.average /= this.datesCount;
-    this.average *= 1.666;
+    this.average *= 0.1;
     this.firstDate = d3.min(this.dates);
     this.lastDate = d3.max(this.dates);
 
@@ -142,7 +142,11 @@ StoryGraph.prototype.renderNetwork = function(locationId, width, height) {
           .attr("r", function(d) {
             return d.radius;
           })
-          .call(force.drag); // TODO
+          .on("click", function() {
+
+
+          })
+          // .call(force.drag); // TODO
 
       force.start();
     }
@@ -248,15 +252,8 @@ StoryGraph.prototype.renderNetwork = function(locationId, width, height) {
           .attr("x2", function(d) { return d.target.x; })
           .attr("y2", function(d) { return d.target.y; });
 
-
     });
 
-    /*
-    selection.on("click", function(d) {
-      if (d3.event.defaultPrevented) return; // ignore drag
-      otherwiseDoAwesomeThing();
-    });
-    */
 
     restart();
 
@@ -295,7 +292,7 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
     var xAxis = d3.svg.axis()
         .scale(xScale)
         .orient("bottom")
-        .ticks(12)
+        .ticks(3)
         .tickFormat(d3.time.format("%y.%m.%d"));
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
@@ -305,7 +302,7 @@ StoryGraph.prototype.renderDistribution = function(locationId, width, height) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.selectAll("line.verticalGrid").data(xScale.ticks(12)).enter()
+    svg.selectAll("line.verticalGrid").data(xScale.ticks(3)).enter()
         .append("line")
         .attr({
             "class":"verticalGrid",

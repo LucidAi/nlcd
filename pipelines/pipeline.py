@@ -553,6 +553,9 @@ def step_9_enrich_story_graphs(args):
 
     for i, origin_url in enumerate(origins):
 
+        if i != 6:
+            continue
+
         graph_fp = os.path.join(graph_dir, "%d.json" % i)
         story_fp = os.path.join(story_dir, "%d.json" % i)
 

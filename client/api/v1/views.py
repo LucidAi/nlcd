@@ -14,7 +14,7 @@ from client.api.decorators import nlcd_api_call
 @nlcd_api_call
 def get_test_graph(request):
 
-    with open("webapp/json/graph_3.json", "rb") as i_fl:
+    with open("webapp/json/graph_0.json", "rb") as i_fl:
         graph = json.load(i_fl)
 
     return graph

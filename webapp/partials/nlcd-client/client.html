@@ -53,7 +53,7 @@ text.label {
 
 rect {
   fill: none;
-  pointer-events: none;
+  pointer-events: all;
 }
 
 .node {
@@ -78,22 +78,49 @@ rect {
 <div class="container">
 
   <div class="row">
+    <div id="StoryNetwork" class="md-12"></div>
+  </div>
+
+  <div class="row">
     <div id="StoryLifespanGraph" class="md-12"></div>
   </div>
 
   <div class="row">
     <div class="md-6">
-      <h6>Point: {{selectedDateData.pointLabel}}</h6>
-      <ul>
-        <li ng-repeat="node in selectedDateData.nodes">
-          <a href="{{node.url}}">{{node.title}}</a>
-        </li>
-      </ul>
-    </div>
-  </div>
 
-  <div class="row">
-    <div id="StoryNetwork" class="md-12"></div>
+      <table class="table table-condensed table-bordered table-striped">
+        <thead>
+          <tr>
+            <td>Article</td>
+            <td>Sources</td>
+            <td>Authors</td>
+            <td>Refs</td>
+            <td>Shares</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="node in selectedDateData.nodes">
+            <td>
+              <a href="{{node.url}}">{{node.title|cut:true:85:' ...'}}</a>
+            </td>
+            <td>
+                {{node.sources.join(", ")}}
+            </td>
+            <td>
+                {{node.authors.join(", ").toTitleCase()}}
+            </td>
+            <td>
+                {{node.referenceCount}}
+            </td>
+            <td>
+                {{node.facebookShares+node.twitterShares}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    </div>
   </div>
 
 </div>

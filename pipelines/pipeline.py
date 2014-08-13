@@ -620,7 +620,7 @@ def step_9_enrich_story_graphs(args):
 
         # Find additional connection features
 
-        nodes   = {}
+        nodes = {}
 
         author2refs = {}
         author2sources = {}

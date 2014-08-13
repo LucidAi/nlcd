@@ -18,4 +18,9 @@ def create(db_path):
 
 
 def open(path):
-    return plyvel.DB(path, create_if_missing=False)
+    return plyvel.DB(path,
+                     write_buffer_size=MB(1024),
+                     block_size=MB(512),
+                     bloom_filter_bits=8,
+                     create_if_missing=False,
+                     error_if_exists=False)

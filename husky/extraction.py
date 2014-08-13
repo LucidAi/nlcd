@@ -233,11 +233,20 @@ class EntityExtractor(object):
     def extract_sources(self, article=None, annotation=None):
         return self.source_extractor.extract_from_json(annotation)
 
-    def extract_titles(self, article=None, annotation=None):
+    def extract_titles(self, article=None, annotation=None, select_best=True):
+        """
+        If select_best is True - returns shortest found title.
+        """
         titles = set()
         if len(article.title) > 0:
             titles.add(article.title)
-        return titles
+        if select_best:
+            if len(titles) == 0:
+                return None
+            else:
+                return min(titles, key=len)
+        else:
+            return titles
 
     def extract_authors(self, article=None, annotation=None):
         if article.url in self.sites_blacklist:

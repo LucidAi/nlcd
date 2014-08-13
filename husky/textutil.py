@@ -42,6 +42,8 @@ class TextUtil(object):
         self.seq_matcher = difflib.SequenceMatcher(None)
 
     def simplified_text(self, text):
+        if text is None:
+            return None
         text = text.lower()
         if isinstance(text, unicode):
             text = text.encode("utf-8")

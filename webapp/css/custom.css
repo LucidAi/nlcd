@@ -1,0 +1,29 @@
+.container {
+    margin-right: 50px;
+    margin-left:  50px;
+    width: auto;
+    min-width: 0;
+}
+
+
+.taggedTextPassive {
+    cursor: normal;
+}
+
+.taggedTextSelected {
+    cursor: pointer;
+    background: #ffb7b7;
+}
+
+.taggedTextActive {
+    cursor: pointer;
+    background: #fff2a8;
+}
+
+.table > tbody > tr.warning > td {
+    background: #fff2a8;
+}
+
+.table > tbody > tr.danger > td {
+    background: #ffb7b7;
+}

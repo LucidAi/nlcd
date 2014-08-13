@@ -1,7 +1,9 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
+
 import re
+import lxml
 import nltk
 import ftfy
 import string
@@ -12,9 +14,12 @@ import newspaper
 import readability
 import textblob.tokenizers
 
-
 from lxml.etree import ParserError
 from readability.readability import Unparseable
+
+from husky.markup import Markup
+from husky.markup import MarkupChunk
+from husky.markup import EntityReference
 
 
 class TextUtil(object):
@@ -44,6 +49,11 @@ class TextUtil(object):
         text = self.RE_MULTIPLE_SPACE.sub(" ", text)
         text = " ".join(nltk.word_tokenize(text))
         return text
+
+    def get_pretty_markup(self, html):
+        clean_html = document = readability.Document(html).summary()
+        paragraphs = lxml.html.fromstring(clean_html).xpath("//p")
+        return [p.text_content() for p in paragraphs]
 
     def extract_body(self, url, html):
 
@@ -184,17 +194,17 @@ class TextUtil(object):
         for i in xrange(1, len(query_tokens)):
             re_token = "(?: %s)?" % re.escape(query_tokens[i])
             query_re_tokens.append(re_token)
-        query_re = ".*?".join(query_re_tokens)
+        query_re = "(%s)" % ".*?".join(query_re_tokens)
         query_re = re.compile(query_re, re.UNICODE | re.IGNORECASE)
         return query_re
 
-    def ffs(self, text, query_text, fuzzy_pattern, min_ratio=0.5):
+    def ffs(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5, min_ratio=0.5):
 
         if query_text in text:
             return True
 
-        max_len = len(query_text) + len(query_text) / 2
-        min_len = len(query_text) / 2
+        max_len = len(query_text) * max_threshold
+        min_len = max(len(query_text) * min_threshold, min_m_size)
 
         matches = [m for m in fuzzy_pattern.findall(text) if min_len < len(m) < max_len]
 
@@ -213,10 +223,10 @@ class TextUtil(object):
 
         return False
 
-    def fuzzy_search(self, text, query_text, fuzzy_pattern):
+    def fuzzy_search(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5):
 
-        max_len = len(query_text) + len(query_text) / 2
-        min_len = len(query_text) / 2
+        max_len = len(query_text) * max_threshold
+        min_len = max(len(query_text) * min_threshold, min_m_size)
 
         matches = [m for m in fuzzy_pattern.findall(text) if min_len < len(m) < max_len]
 
@@ -238,3 +248,88 @@ class TextUtil(object):
                 best_match = m
 
         return best_ratio, best_match
+
+
+    def fuzzy_group_search(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5):
+
+        max_len = len(query_text) * max_threshold
+        min_len = max(len(query_text) * min_threshold, min_m_size)
+
+        match_groups = [m for m in fuzzy_pattern.finditer(text)]
+        matches = []
+        for m_g in match_groups:
+            if min_len < len(m_g.group()) < max_len:
+                matches.append(m_g)
+
+        if len(match_groups) == 0:
+            return 0.0, None
+
+        best_ratio = 0.0
+        best_match = None
+
+        self.seq_matcher.set_seq1(query_text)
+
+        for m in matches:
+
+            self.seq_matcher.set_seq2(m.group())
+            ratio = self.seq_matcher.ratio()
+
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_match = m
+
+        return best_ratio, best_match
+
+
+    def generate_markup(self, title, text, paragraphs, bodies, trim=32, min_ratio=0.00):
+
+        paragraphs = [title] + paragraphs
+
+        markup = Markup.blank()
+
+        for i, paragraph in enumerate(paragraphs):
+
+            paragraph_markup = MarkupChunk(text=paragraph)
+            if i == 0:
+                markup.set_title(paragraph_markup)
+            else:
+                markup.add_body_element(paragraph_markup)
+
+            sentences = self.sent_tokenize(paragraph)
+            quotes = self.extract_quoted(paragraph)
+            segments = self.select_segments(sentences, quotes, min_size=5)
+            segments = [self.simplified_text(s) for s in segments]
+
+            if trim is not None and trim > 0:
+                for i in xrange(len(segments)):
+                    segments[i] = " ".join(segments[i].split()[:trim])
+
+            triggered_regexes = []
+
+            for segment in segments:
+                fuzzy_pattern = self.compile_fuzzy_pattern(segment)
+                found_refs = []
+                for body, body_id in bodies:
+                    if self.ffs(body, segment, fuzzy_pattern, min_ratio=0.3):
+                        found_refs.append(body_id)
+                if len(found_refs) > 0:
+                    triggered_regexes.append((segment, fuzzy_pattern, found_refs))
+
+            for segment, fuzzy_pattern, found_refs in triggered_regexes:
+
+                ratio, match = self.fuzzy_group_search(paragraph,
+                                                       segment,
+                                                       fuzzy_pattern,
+                                                       min_threshold=0,
+                                                       max_threshold=10)
+
+                if ratio >= min_ratio:
+
+                    ref_object = EntityReference(span=match.span(),
+                                                 match=match.group(),
+                                                 references=found_refs,
+                                                 extra_attr={"ratio": ratio})
+                    paragraph_markup.add_ref(ref_object)
+
+
+        return markup

@@ -512,8 +512,6 @@ def step_8_find_cross_references(args):
         ref_index.print_titles()
         ref_index.index()
 
-        print i, ref_index
-
         found_links = ref_index.find_cross_references(sent_window_size=3)
 
         graph_edges = []
@@ -550,11 +548,14 @@ def step_9_enrich_story_graphs(args):
     clean_directory(story_dir)
 
     fetcher = PageFetcher()
+    textutil = TextUtil()
 
     for i, origin_url in enumerate(origins):
 
-        if i != 6:
-            continue
+        # if i != 4:
+        #     continue
+
+        logging.info("Processing graph #%d" % i)
 
         graph_fp = os.path.join(graph_dir, "%d.json" % i)
         story_fp = os.path.join(story_dir, "%d.json" % i)
@@ -573,6 +574,7 @@ def step_9_enrich_story_graphs(args):
 
         # Find central reference, also index by url
         central_ref_id = None
+
         url_index = {}
         for node in graph["nodes"].itervalues():
             node_url = node["url"]
@@ -589,9 +591,10 @@ def step_9_enrich_story_graphs(args):
 
         # Download FB reactions
         fb_counts = fetcher.get_facebool_counts(urls)
+        logging.info("Fetched %d FB reactions" % len([fc for fc in fb_counts if fc is not None]))
         fb_comments = {}
         fb_shares = {}
-        for fb_entry in fb_counts:
+        for fb_entry in (fc for fc in fb_counts if fc is not None):
             n_comments = fb_entry.get("comments", 0)
             n_shares = fb_entry.get("shares", 0)
             ref_id = url_index[fb_entry["id"]]["refId"]
@@ -600,8 +603,9 @@ def step_9_enrich_story_graphs(args):
 
         # Download TW reactions
         tw_counts = fetcher.get_twitter_counts(urls)
+        logging.info("Fetched %d TW reactions" % len([te for te in tw_counts if te is not None]))
         tw_shares = {}
-        for tw_entry in tw_counts:
+        for tw_entry in (te for te in tw_counts if te is not None):
             n_shares = tw_entry.get("count", 0)
             tw_url = tw_entry["url"]
             node = url_index.get(tw_url)
@@ -616,22 +620,90 @@ def step_9_enrich_story_graphs(args):
 
         # Find additional connection features
 
-        # Find by Date distribution
+        nodes   = {}
 
-        # Find sources
+        author2refs = {}
+        author2sources = {}
 
-        # Find by author distribution
+        source2refs = {}
+        source2authors = {}
 
-        nodes = []
         for node in graph["nodes"].itervalues():
-            node["twitterShares"] = tw_shares.get(node["refId"], 0)
-            node["facebookShares"] = fb_shares.get(node["refId"], 0)
-            node["facebookComments"] = fb_comments.get(node["refId"], 0)
-            node["referenceCount"] = ref_counter.get(node["refId"], 0)
+
+            ref_id = node["refId"]
+
+            node["twitterShares"] = tw_shares.get(ref_id, 0)
+            node["facebookShares"] = fb_shares.get(ref_id, 0)
+            node["facebookComments"] = fb_comments.get(ref_id, 0)
+            node["referenceCount"] = ref_counter.get(ref_id, 0)
             node["citationCount"] = 0
-            nodes.append(node)
+            node["shareCount"] = node["twitterShares"] + node["facebookShares"]
+
+            nodes[node["refId"]] = node
+
+            node["authors"] = sorted(node["authors"])
+            node["sources"] = list(reversed(sorted(node["sources"])))
+
+            source = None
+            if len(node["sources"]) > 0:
+                source = node["sources"][0]
+
+            for author in node["authors"]:
+                if author not in author2refs:
+                    author2refs[author] = {ref_id}
+                else:
+                    author2refs[author].add(ref_id)
+                if source is not None:
+                    if author not in author2sources:
+                        author2sources[author] = {source}
+                    else:
+                        author2sources[author].add(source)
+
+            if source is not None:
+
+                if source not in source2refs:
+                    source2refs[source] = {ref_id}
+                else:
+                    source2refs[source].add(ref_id)
+
+                if source not in source2authors:
+                    source2authors[source] = set(node["authors"])
+                else:
+                    source2authors[source].update(node["authors"])
+
+        authors = []
+        sources = []
+
+        for author, references in author2refs.iteritems():
+            authors.append({
+                "name": author,
+                "referenceCount": len(references),
+                "references": list(references),
+                "authors": list(author2sources.get(author, []))
+            })
+
+        for source, references in source2refs.iteritems():
+            sources.append({
+                "name": source,
+                "referenceCount": len(references),
+                "references": list(references),
+                "authors": list(source2authors.get(source, []))
+            })
 
         edges = list(edges)
+
+        html = fetcher.fetch(nodes[central_ref_id]["url"])
+        paragraphs = textutil.get_pretty_markup(html)
+        paragraphs = [p.encode("utf-8") for p in paragraphs]
+
+        bodies = [(node["body"].encode("utf-8"), node["refId"])
+                   for node in nodes.itervalues()
+                   if node["refId"] != central_ref_id]
+
+        # text_markup = [textutil.generate_markup(p_text, bodies)  for p_text in paragraphs]
+        text = nodes[central_ref_id]["text"].encode("utf-8")
+        title = nodes[central_ref_id]["title"].encode("utf-8")
+        markup = textutil.generate_markup(title, text, paragraphs, bodies)
 
         story_graph = {
 
@@ -639,6 +711,10 @@ def step_9_enrich_story_graphs(args):
             "nodes": nodes,
             "meta": {
                 "centralNode": central_ref_id,
+                "citations": [],
+                "markup": markup.json(),
+                "authors": authors,
+                "sources": sources,
             }
 
         }
@@ -777,6 +853,9 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO, format="%(message)s")
     if args.verbosity_level == 2:
         logging.basicConfig(level=logging.DEBUG, format="%(message)s")
+
+    # Turn-off third party loggers
+    logging.getLogger("requests").setLevel(logging.WARNING)
 
     if args.list_steps is not None:
         sys.stdout.write("\nAvailable pipeline steps:\n")

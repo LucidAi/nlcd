@@ -4,7 +4,7 @@ Author: Vova Zaytsev <zaytsev@usc.edu>
 
 "use strict";
 
-var app = angular.module("NlcdClient", ["ngRoute"])
+var app = angular.module("NlcdClient", ["ngRoute", "ngSanitize"])
     .config(["$routeProvider", "$locationProvider",
 
     function($routeProvider, $locationProvider) {
@@ -36,6 +36,14 @@ angular.module("ng").filter("cut", function () {
         return value + (tail || " ...");
     };
 });
+
+angular.module("ng")
+    .filter("to_trusted", ["$sce", function($sce){
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+    }]);
+
 
 String.prototype.toTitleCase = function () {
     return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});

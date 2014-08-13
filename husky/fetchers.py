@@ -41,13 +41,13 @@ class PageFetcher(object):
                 del url2html_dict[k]
         return responses
 
-    def get_facebool_counts(self, urls, max_threads=8, timeout=DEFAULT_TIMEOUT):
+    def get_facebool_counts(self, urls, max_threads=1, timeout=DEFAULT_TIMEOUT):
         fb_urls = (self.FB_URL_BASE + urllib.urlencode({"id": url}) for url in urls)
         responses = self.fetch_documents(fb_urls, max_threads, timeout)
         counts = [r.json() if r else None for r in responses]
         return counts
 
-    def get_twitter_counts(self, urls, max_threads=8, timeout=DEFAULT_TIMEOUT):
+    def get_twitter_counts(self, urls, max_threads=1, timeout=DEFAULT_TIMEOUT):
         tw_urls = (self.TW_URL_BASE + urllib.urlencode({"url": url}) for url in urls)
         responses = self.fetch_documents(tw_urls, max_threads, timeout)
         counts = [r.json() if r else None for r in responses]

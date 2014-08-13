@@ -12,9 +12,9 @@
 }
 
 .tick text {
-  fill: #666;
+  fill: #444;
   font-family: "Helvetica Neue";
-  font-weight: lighter;
+  font-weight: light;
 }
 
 text.label {
@@ -57,70 +57,406 @@ rect {
 }
 
 .node {
-  fill: #0266C8;
-  stroke: black;
+  stroke-width: 1.5px;
+  fill: rgb(107, 174, 214);
+  stroke: rgb(74, 121, 149);
 }
 
 .link {
-  stroke: #AAA;
+  stroke: rgba(32,32,32,.3);
   opacity: 1;
   stroke-width: 1px;
 }
 
+#CentralDocumentText {
+  -webkit-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  -moz-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  border-radius: 3px;
+
+  margin-top:8px;
+  padding:0;
+  height:360px;
+  border:1px #DEDEDE solid;
+  overflow:scroll;
+  overflow-y:auto;
+  overflow-y: scroll;
+
+}
+
+#relatedTabsContainer {
+  
+  margin-top:17px;
+
+  -webkit-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  -moz-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  border-radius: 3px;
+
+  padding:0;
+  height:360px;
+  border:1px #DEDEDE solid;
+  overflow:scroll;
+  overflow-y:auto;
+  overflow-y: scroll;
+
+}
+
+.DistrSelectionBar {
+  fill:#ffb7b7;
+  opacity: 1;
+}
+
+
+#storyDistribution {
+
+  border: 1px #EAEAEA solid;
+  border-radius: 3px;
+  height: 300px;
+  
+}
+
+#storyNetwork {
+
+  border: 1px #EAEAEA solid;
+  border-radius: 3px;
+  height: 300px;
+  margin-bottom: 10px;
+
+}
+
 </style>
 
+
 <div class="container">
-  <div class="page-header" id="StoryGraphHeader">
-    <h1>Story Lifespan</h1>
+  <div class="row">
+    <div class="col-md-12">
+      <br/>
+    </div>
   </div>
 </div>
 
+
 <div class="container">
 
   <div class="row">
-    <div id="StoryNetwork" class="md-12"></div>
-  </div>
 
-  <div class="row">
-    <div id="StoryLifespanGraph" class="md-12"></div>
-  </div>
+    <div class="col-md-6">
 
-  <div class="row">
-    <div class="md-6">
 
-      <table class="table table-condensed table-bordered table-striped">
-        <thead>
-          <tr>
-            <td>Article</td>
-            <td>Sources</td>
-            <td>Authors</td>
-            <td>Refs</td>
-            <td>Shares</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="node in selectedDateData.nodes">
-            <td>
-              <a href="{{node.url}}">{{node.title|cut:true:85:' ...'}}</a>
-            </td>
-            <td>
-                {{node.sources.join(", ")}}
-            </td>
-            <td>
-                {{node.authors.join(", ").toTitleCase()}}
-            </td>
-            <td>
-                {{node.referenceCount}}
-            </td>
-            <td>
-                {{node.facebookShares+node.twitterShares}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Distribution -->
+      <div class="row" style="padding-right:15px;">
+        <div style="height:300px;" id="storyDistribution"></div>
+      </div>
+
+      <!-- Document Content -->
+      <h4>
+        <span style="font-size:12px;font-weight:normal;" class="text-muted text-uppercase">title:</span>
+
+        <span ng-repeat="chunk in meta.markup.title.taggedText"
+              ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
+              ng-click="TextSelection(chunk, chunk.references)">{{chunk.text}}</span>
+
+        <a href="{{central.url}}" style="font-size:18px;">
+          <span class="glyphicon glyphicon-link"></span>
+        </a>
+
+      </h4>
+
+
+      <span style="font-size:12px;" class="text-muted text-uppercase">by:</span>
+      <span>{{central.authors.join(", ").toTitleCase()}}</span>
+      <br/>
+      <span style="font-size:12px;" class="text-muted text-uppercase">source:</span>
+      <span>{{central.sources[0]}}</span>
+
+      <br/>
+      <div id="CentralDocumentText">
+        <p ng-repeat="paragraphMarkup in meta.markup.body">
+          <span ng-repeat="chunk in paragraphMarkup.taggedText"
+                ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
+                ng-click="TextSelection(chunk, chunk.references)">{{chunk.text}} <span ng-show="chunk.tagged" class="label label-warning">{{chunk.references.length}}</span></span>
+        </p>
+      </div>
 
 
     </div>
+
+
+
+    <div class="col-md-6">
+
+
+      <div class="row"  style="padding-left:15px;">
+
+        <div id="storyNetwork"></div>
+
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <!-- <h3 class="text-uppercase" style="font-weight:normal;">related documents</h3> -->
+
+
+            <!-- Related Tabs -->
+            <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
+
+              <li style="cursor:pointer;" class="active">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabAll">all {{related.length}}</a>
+              </li>
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabFilter">search</a>
+              </li>
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabCit">cit.</a>
+              </li>
+
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabAuthors">authors</a>
+              </li>
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabSources">src.</a>
+              </li>
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabDates">dates</a>
+              </li>
+
+              <li style="cursor:pointer;">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabSelection">selection {{selection.length}}</a>
+              </li>
+
+
+            </ul>
+            <!-- END:Related Tabs -->
+
+            <br/>
+
+            <!-- Related panes -->
+            <div class="tab-content" id="relatedTabsContainer">
+
+              <!-- PANE:ALL -->
+              <div class="tab-pane fade in active" id="relatedTabAll">
+
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+
+                      <td class="text-muted text-uppercase">
+                        <a ng-click="RelatedAllTabOrderBy('inSelection');">
+                          by selection
+                          <span ng-show="display.relatedTabAllPredicate=='inSelection'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabAllReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabAllReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedAllTabOrderBy('referenceCount');">
+                          ref
+                          <span ng-show="display.relatedTabAllPredicate=='referenceCount'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabAllReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabAllReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedAllTabOrderBy('shareCount');">
+                          shr
+                          <span ng-show="display.relatedTabAllPredicate=='shareCount'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabAllReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabAllReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedAllTabOrderBy('pubDate');">
+                          pub
+                          <span ng-show="display.relatedTabAllPredicate=='pubDate'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabAllReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabAllReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr ng-repeat="node in related | orderBy : display.relatedTabAllPredicate : display.relatedTabAllReversed"
+                        ng-class="{danger: node.inSelection}">
+                      <td>
+                        <span class="glyphicon glyphicon-star" ng-show="node.refId==central.refId"></span>
+                        <a href="{{node.url}}">{{node.title|cut:true:40:' ...'}}</a>
+                        <!-- <a style="cursor:pointer;">focus</a> -->
+                        <!-- <a style="cursor:pointer;" class="glyphicon glyphicon-info-sign"></a> -->
+                      </td>
+                      <td>
+                        {{node.referenceCount}}
+                      </td>
+                      <td>
+                        {{node.shareCount}}
+                      </td>
+                      <td>
+                        <span ng-show="node.pubDate == null">n/a</span>
+                        <span ng-show="node.pubDate != null">{{node.pubDate}}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+              </div>
+              <!-- END:ALL -->
+
+
+              <!-- PANE:CIT -->
+              <div class="tab-pane fade" id="relatedTabCit">
+              </div>
+              <!-- END:CIT -->
+
+
+              <!-- PANE:FILTER -->
+              <div class="tab-pane fade" id="relatedTabFilter">
+              </div>
+              <!-- END:FILTER -->
+
+
+              <!-- PANE:AUTHORS -->
+              <div class="tab-pane fade" id="relatedTabAuthors">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td>ref</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="author in meta.authors">
+                      <td>
+                        {{author.name.toTitleCase()}}
+                      </td>
+                      <td>
+                        {{author.referenceCount}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- END:AUTHORS -->
+
+
+              <!-- PANE:SOURCES -->
+              <div class="tab-pane fade" id="relatedTabSources">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td>ref</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="source in meta.sources">
+                      <td>
+                        {{source.name}}
+                      </td>
+                      <td>
+                        {{source.referenceCount}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- END:SOURCES -->
+
+
+              <!-- PANE:DATES -->
+              <div class="tab-pane fade" id="relatedTabDates">
+              </div>
+              <!-- END:DATES -->
+
+
+              <!-- PANE:SELECTION -->
+              <div class="tab-pane fade" id="relatedTabSelection">
+                <table class="table table-condensed table-striped">
+                  <thead>
+                    <tr>
+
+                      <td></td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedSelectionTabOrderBy('referenceCount');">
+                          ref
+                          <span ng-show="display.relatedTabSelectionPredicate=='referenceCount'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedSelectionTabOrderBy('shareCount');">
+                          shr
+                          <span ng-show="display.relatedTabSelectionPredicate=='shareCount'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                      <td class="text-muted text-uppercase" style="width:60px;">
+                        <a ng-click="RelatedSelectionTabOrderBy('pubDate');">
+                          pub
+                          <span ng-show="display.relatedTabSelectionPredicate=='pubDate'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
+                          </span>
+                        </a>
+                      </td>
+
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr ng-repeat="node in selection | orderBy : display.relatedTabSelectionPredicate : display.relatedTabSelectionReversed">
+                      <td>
+                        <span class="glyphicon glyphicon-star" ng-show="node.refId==central.refId"></span>
+                        <a href="{{node.url}}">{{node.title|cut:true:40:' ...'}}</a>
+                      </td>
+                      <td>
+                        {{node.referenceCount}}
+                      </td>
+                      <td>
+                        {{node.shareCount}}
+                      </td>
+                      <td>
+                        <span ng-show="node.pubDate == null">n/a</span>
+                        <span ng-show="node.pubDate != null">{{node.pubDate}}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- END:SELECTION -->
+
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+
   </div>
 
 </div>

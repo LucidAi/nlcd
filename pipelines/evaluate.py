@@ -69,6 +69,7 @@ def step_2_eval_titles(args):
 
         gold_entries = csv.reader(i_gold, delimiter=",", quotechar="\"")
         gold_entries.next()
+        gold_entries = list(gold_entries)
 
         for i, entry in enumerate(gold_entries):
 
@@ -99,6 +100,7 @@ def step_2_eval_titles(args):
 
         eval_csv.writerow([
             "#",
+            "URL",
             "GOLD",
             "NLCD PRF=%.2f;%.2f;%.2f" % methods_out[0][0],
             "NLCD ERROR",
@@ -112,6 +114,7 @@ def step_2_eval_titles(args):
 
             eval_csv.writerow([
                 str(i),
+                gold_entries[i][0],
 
                 gold_out[i],
 
@@ -121,8 +124,8 @@ def step_2_eval_titles(args):
                 methods_out[1][1][i][0],
                 str(methods_out[1][1][i][1]),
 
-                methods_out[1][1][i][0],
-                str(methods_out[1][1][i][1]),
+                methods_out[2][1][i][0],
+                str(methods_out[2][1][i][1]),
 
             ])
 

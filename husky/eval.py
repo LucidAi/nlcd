@@ -7,19 +7,19 @@ import re
 from husky.textutil import TextUtil
 
 
-def compare_titles(title_1, title_2, k=3, from_beginning=True):
+def compare_titles(p_title, g_title, k=3, from_beginning=True):
 
-    if title_1 == title_2:
+    if p_title == g_title:
         return True
 
-    if title_1 is None or title_2 is None:
+    if p_title is None or g_title is None:
         return False
 
-    words_1 = title_1.split()
-    words_2 = title_2.split()
+    p_words = p_title.split()
+    g_words = g_title.split()
 
-    if len(words_1) < k or len(words_2) < k:
-        return False
+    if len(g_words) < k:
+        k = len(g_words)
 
     for i in xrange(k):
 
@@ -28,7 +28,7 @@ def compare_titles(title_1, title_2, k=3, from_beginning=True):
         else:
             j = -(i + 1)
 
-        if words_1[j] != words_2[j]:
+        if p_words[j] != g_words[j]:
             return False
 
     return True
@@ -69,7 +69,7 @@ def compute_title_prf(eval_data):
                 correct_n += 1
 
             gold_eval_out[i] = gold
-            method_eval_out.append((pred, int(not correct)))
+            method_eval_out.append((pred, str(int(not correct))))
 
         p = 0 if found_n == 0 else float(correct_n) / float(found_n)
         r = 0 if data_size == 0 else float(correct_n) / float(data_size)
@@ -120,7 +120,7 @@ def compute_authors_prf(eval_data):
                     error_n += 1
 
             gold_eval_out[i] = " , ".join(sorted(gold))
-            method_eval_out.append((" , ".join(sorted(pred)), int(error_n)))
+            method_eval_out.append((" , ".join(sorted(pred)), str(int(error_n))))
 
         p = 0 if found_n == 0 else float(correct_n) / float(found_n)
         r = 0 if data_size == 0 else float(correct_n) / float(data_size)
@@ -130,16 +130,14 @@ def compute_authors_prf(eval_data):
 
         eval_out.append((prf, method_eval_out))
 
-
     return gold_eval_out, eval_out
 
 
 def compute_sources_prf(eval_data):
 
     gold_data = [entry[0] for entry in eval_data]
-    data_size = len(gold_data)
 
-    gold_eval_out = [None] * data_size
+    gold_eval_out = [None] * len(eval_data)
     eval_out = []
 
     the_pattern = re.compile("^\s*the\s*", re.IGNORECASE | re.UNICODE)
@@ -151,8 +149,9 @@ def compute_sources_prf(eval_data):
 
         found_n = 0
         correct_n = 0
+        data_size = 0
 
-        for i in xrange(data_size):
+        for i in xrange(len(eval_data)):
 
 
             gold = gold_data[i].split(" AND ") if gold_data[i] != "<NONE>" else []
@@ -162,29 +161,43 @@ def compute_sources_prf(eval_data):
                 gold[k] = gold[k].lower() if gold[k] != "" else None
                 if gold[k] is not None:
                     gold[k] = the_pattern.sub("", gold[k])
+                    gold[k] = gold[k].replace(" ", "")
+                    gold[k] = gold[k].replace("-", "")
 
             for k in xrange(len(pred)):
                 pred[k] = pred[k].lower() if pred[k] != "" else None
                 if pred[k] is not None:
                     pred[k] = the_pattern.sub("", pred[k])
+                    pred[k] = pred[k].replace(" ", "")
+                    pred[k] = pred[k].replace("-", "")
 
-            print pred
-            print gold
-            print
+            correct = False
 
-            # if len(pred) > 0
-            # found_n += 1
-        #
-        #     if pred == gold:
-        #         correct_n += 1
-        #
-        #     gold_eval_out[i] = gold
-        #     method_eval_out.append((pred, int(pred != gold)))
-        #
-        # p = 0 if found_n == 0 else float(correct_n) / float(found_n)
-        # r = 0 if data_size == 0 else float(correct_n) / float(data_size)
-        # f = 0 if p + r == 0 else p * r / (p + r)
-        #
-        # prf = (p, r, f)
-        #
-        # eval_out.append((prf, method_eval_out))
+            if len(pred) > 0:
+                found_n += 1
+
+            if len(gold) > 0:
+                data_size += 1
+
+            for g in gold:
+                for p in pred:
+                    if g in p:
+                        correct = True
+                if correct:
+                    break
+
+            if correct:
+                correct_n += 1
+
+            gold_eval_out[i] = ", ".join(gold)
+            method_eval_out.append((", ".join(pred), ""))
+
+        p = 0 if found_n == 0 else float(correct_n) / float(found_n)
+        r = 0 if data_size == 0 else float(correct_n) / float(data_size)
+        f = 0 if p + r == 0 else p * r / (p + r)
+
+        prf = (p, r, f)
+
+        eval_out.append((prf, method_eval_out))
+
+    return gold_eval_out, eval_out

@@ -255,12 +255,116 @@ def step_3_eval_authors(args):
             ])
 
 
+def step_4_eval_source(args):
+    """Evaluate sources extraction."""
+
+    o_eval_fp = os.path.join(args.work_dir, "eval_sources.csv")
+    documents_db_path = os.path.join(args.work_dir, DOCUMENTS_DB_PATH)
+    documents_db = husky.db.open(documents_db_path)
+    eval_data = []
+
+    extractor = EntityExtractor()
+    normalizer = EntityNormalizer()
+
+    with open(args.cse, "rb") as cse_fl:
+        cse = json.load(cse_fl)
+
+    with open(args.gold, "rb") as i_gold:
+
+        gold_entries = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        gold_entries.next()
+        gold_entries = list(gold_entries)
+
+        for i, entry in enumerate(gold_entries):
+
+            url = entry[0]
+            cse_entry = cse.get(url)
+
+            logging.info("Processing url: %r" % url)
+
+            if cse_entry is None:
+                logging.warn("URL #%d not found in CSE annotations: %s\nSkip." % (i, url))
+                continue
+
+            html = documents_db.get(url)
+
+            if html is None or len(html) == 0:
+                logging.error("URL #%d not found in HTML db: %s." % (i, url))
+                continue
+
+            try:
+                article = extractor.parse_article(url, html)
+            except Exception:
+                logging.error("URL #%d error while parsing: %s." % (i, url))
+                continue
+
+            # Gold
+            gold_sources = entry[3]
+
+            # CSE
+            cse_sources = cse_entry["source"]
+
+            # NLCD
+            try:
+                entities = extractor.extract_authors(article, annotation=None)
+                entities = normalizer.normalize_authors(entities, article=article)
+                nlcd_sources = list(set((e.name for e in entities
+                                         if e.ent_rel == Entity.REL.SOURCE)))
+            except Exception:
+                logging.warning("Error when extracting authors. %r" % url)
+                nlcd_sources = []
+
+            nlcd_sources.extend(extractor.extract_sources(article, None, url))
+
+            # Newspaper
+            np_sources = None
+
+            eval_data.append((gold_sources, nlcd_sources, np_sources, cse_sources))
+
+    gold_out, methods_out = husky.eval.compute_sources_prf(eval_data)
+
+    with open(o_eval_fp, "wb") as o_eval:
+
+        eval_csv = csv.writer(o_eval, delimiter=",", quotechar="\"")
+
+        eval_csv.writerow([
+            "#",
+            "URL",
+            "GOLD",
+            "NLCD PRF=%.2f;%.2f;%.2f" % methods_out[0][0],
+            "NLCD ERROR",
+            "NP PRF=%.2f;%.2f;%.2f" % methods_out[1][0],
+            "NP ERROR",
+            "CSE PRF=%.2f;%.2f;%.2f" % methods_out[2][0],
+            "CSE ERROR",
+        ])
+
+        for i in xrange(len(gold_out)):
+
+            eval_csv.writerow([
+                str(i),
+                gold_entries[i][0],
+
+                gold_out[i],
+
+                methods_out[0][1][i][0],
+                str(methods_out[0][1][i][1]),
+
+                methods_out[1][1][i][0],
+                str(methods_out[1][1][i][1]),
+
+                methods_out[2][1][i][0],
+                # str(methods_out[2][1][i][1]),
+
+            ])
+
 
 
 STEPS = (
     (step_1_init_work_dir, "Prepare data for evaluating."),
     (step_2_eval_titles, "Evaluate titles extraction."),
-    (step_3_eval_authors, "Evaluate sources extraction.")
+    (step_3_eval_authors, "Evaluate authors extraction."),
+    (step_4_eval_source, "Evaluate sources extraction.")
 )
 
 

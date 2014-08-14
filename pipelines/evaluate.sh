@@ -15,4 +15,5 @@ ${PYTHON} ${THISDIR}/pipelines/evaluate.py                      \
     --use-compression 1                                         \
     --nlcd-conf-file ${THISDIR}/fab/dev.json                    \
     --gold distr/gold/titles.authors.sources.dates.extr.csv     \
+    --cse distr/gold/cse.annotations.json						\
     --verbosity-level 0

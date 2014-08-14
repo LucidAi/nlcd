@@ -6,6 +6,8 @@ import json
 import logging
 import datetime
 
+from urlparse import urlparse
+
 import nltk
 import langid
 import newspaper
@@ -89,10 +91,15 @@ class DateExtractor(object):
 class SourcesExtractor(object):
 
     DEFAULT_CONFIGURATION_PATH = "./distr/patterns/google.cse.json"
+    TLD_NAMES_PATH = "./distr/patterns/tld_names.txt"
 
     def __init__(self):
         with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
             self.patterns = json.load(i_fl)
+
+        with open(self.TLD_NAMES_PATH) as tld_fl:
+            self.tlds = frozenset([line.strip() for line in tld_fl if line[0] not in "/\n"])
+
         self.blacklist = Blacklist.load(Blacklist.BLACK_SRC)
         self.util = JsonPatternMatchingUtil()
         self.source_pattern = self.util.compile(self.patterns, "sources")
@@ -101,6 +108,24 @@ class SourcesExtractor(object):
         sources = self.util.match_unique(self.source_pattern, annotation)
         sources = [s for s in sources if s not in self.blacklist]
         return sources
+
+    def extract_from_url(self, url):
+
+        url_elements = urlparse(url)[1].split('.')
+
+        for i in range(-len(url_elements), 0):
+            last_i_elements = url_elements[i:]
+
+            candidate = ".".join(last_i_elements)
+            wildcard_candidate = ".".join(["*"] + last_i_elements[1:])
+            exception_candidate = "!" + candidate
+
+            if exception_candidate in self.tlds:
+                return ".".join(url_elements[i:])
+            if candidate in self.tlds or wildcard_candidate in self.tlds:
+                return ".".join(url_elements[i-1:])
+
+        return None
 
 
 class AuthorExtractor(object):
@@ -194,6 +219,8 @@ class AuthorExtractor(object):
         return found_entities
 
 
+
+
 class EntityExtractor(object):
     """
     Class for extracting article attributes from HTML markup.
@@ -230,8 +257,25 @@ class EntityExtractor(object):
     def extract_images(self, article=None, annotation=None):
         return [article.top_image]
 
-    def extract_sources(self, article=None, annotation=None):
-        return self.source_extractor.extract_from_json(annotation)
+    def extract_sources(self, article=None, annotation=None, url=None):
+        sources = []
+
+        if url is not None:
+            domain = self.source_extractor.extract_from_url(url)
+            if domain is not None:
+                sources.append(domain)
+
+            # parsed_uri = urlparse(url)
+            # domain = "{uri.scheme}://{uri.netloc}/".format(uri=parsed_uri)
+            # sources.append(newspaper.build(domain, memoize_articles=False).brand)
+
+        if article is not None:
+            pass
+
+        if annotation is not None:
+            sources.extend(self.source_extractor.extract_from_json(annotation))
+
+        return sources
 
     def extract_titles(self, article=None, annotation=None, select_best=True):
         """

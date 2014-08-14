@@ -5,19 +5,15 @@
 import os
 import sys
 import csv
+import json
 import logging
 import argparse
 
 import husky.db
 import husky.eval
 
-from husky.dicts import Blacklist
 from husky.fetchers import PageFetcher
-
 from husky.extraction import EntityExtractor
-from husky.extraction import EntityNormalizer
-
-from husky.textutil import TextUtil
 
 
 DOCUMENTS_DB_PATH = "documents.ldb"
@@ -65,6 +61,11 @@ def step_2_eval_titles(args):
 
     extractor = EntityExtractor()
 
+    with open(args.cse, "rb") as cse_fl:
+        cse = json.load(cse_fl)
+
+    urls = set()
+
     with open(args.gold, "rb") as i_gold:
 
         gold_entries = csv.reader(i_gold, delimiter=",", quotechar="\"")
@@ -73,25 +74,41 @@ def step_2_eval_titles(args):
 
         for i, entry in enumerate(gold_entries):
 
-            url = entry[0]
+            # if i > 5:
+            #     break
 
+            url = entry[0]
+            urls.add(url)
+            cse_entry = cse.get(url)
+
+            if cse_entry is None:
+                print url
+
+            continue
             html = documents_db.get(url)
             article = extractor.parse_article(url, html)
 
-            # Gold title
+            # Gold
             gold_title = entry[1]
 
-            # NLCD extraction
+            # NLCD
             nlcd_title = extractor.extract_titles(article, None, select_best=True)
 
-            # Newspaper extraction
+            # Newspaper
             np_title = article.title
 
-            # CSE Extraction
+            # CSE
             cse_title = None
 
             eval_data.append((gold_title, nlcd_title, np_title, cse_title))
 
+    print
+    print
+    for u in cse.iterkeys():
+        if u not in urls:
+            print u
+
+    return
     gold_out, methods_out = husky.eval.compute_title_prf(eval_data)
 
     with open(o_eval_fp, "wb") as o_eval:
@@ -130,9 +147,91 @@ def step_2_eval_titles(args):
             ])
 
 
+def step_3_eval_sources(args):
+
+    """Evaluate titles extraction."""
+
+    o_eval_fp = os.path.join(args.work_dir, "eval_source.csv")
+    documents_db_path = os.path.join(args.work_dir, DOCUMENTS_DB_PATH)
+    documents_db = husky.db.open(documents_db_path)
+    eval_data = []
+
+    extractor = EntityExtractor()
+
+    with open(args.gold, "rb") as i_gold:
+
+        gold_entries = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        gold_entries.next()
+        gold_entries = list(gold_entries)
+
+        for i, entry in enumerate(gold_entries):
+
+            if i > 15:
+                break
+
+            url = entry[0]
+
+            html = documents_db.get(url)
+            article = extractor.parse_article(url, html)
+
+            # Gold
+            gold_sources = entry[3]
+
+            # NLCD
+            nlcd_sources = extractor.extract_sources(article, None, url)
+
+            # Newspaper
+            np_sources  = None#article.brand
+
+            # CSE
+            cse_sources = None
+
+            eval_data.append((gold_sources, nlcd_sources, np_sources, cse_sources))
+
+    gold_out, methods_out = husky.eval.compute_sources_prf(eval_data)
+
+    with open(o_eval_fp, "wb") as o_eval:
+
+        eval_csv = csv.writer(o_eval, delimiter=",", quotechar="\"")
+
+        eval_csv.writerow([
+            "#",
+            "URL",
+            "GOLD",
+            "NLCD PRF=%.2f;%.2f;%.2f" % methods_out[0][0],
+            "NLCD ERROR",
+            "NP PRF=%.2f;%.2f;%.2f" % methods_out[1][0],
+            "NP ERROR",
+            "CSE PRF=%.2f;%.2f;%.2f" % methods_out[2][0],
+            "CSE ERROR",
+        ])
+
+        for i in xrange(len(gold_out)):
+
+            eval_csv.writerow([
+                str(i),
+                gold_entries[i][0],
+
+                gold_out[i],
+
+                methods_out[0][1][i][0],
+                str(methods_out[0][1][i][1]),
+
+                methods_out[1][1][i][0],
+                str(methods_out[1][1][i][1]),
+
+                methods_out[2][1][i][0],
+                str(methods_out[2][1][i][1]),
+
+            ])
+
+
+
+
 STEPS = (
     (step_1_init_work_dir, "Prepare data for evaluating."),
     (step_2_eval_titles, "Evaluate titles extraction."),
+    (step_3_eval_sources, "Evaluate sources extraction.")
 )
 
 
@@ -196,6 +295,11 @@ if __name__ == "__main__":
     argparser.add_argument("--gold",
                            type=str,
                            help="Path to the gold standard file for dates normalization.",
+                           default=None)
+
+    argparser.add_argument("--cse",
+                           type=str,
+                           help="Path to JSON file with Google CSE annotations.",
                            default=None)
 
     argparser.add_argument("--eval-path",

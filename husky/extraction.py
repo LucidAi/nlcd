@@ -177,8 +177,8 @@ class AuthorExtractor(object):
                         web_names = [(domain, w_name)]
                         entity = Entity(name=w_name,
                                         web_names=web_names,
-                                        ent_rel=Entity.REL.AUTHOR,
-                                        ent_type=Entity.TYPE.UNK,
+                                        ent_rel=Entity.REL.SOURCE,
+                                        ent_type=Entity.TYPE.ORG,
                                         is_classified=True)
                         found_entities.append(entity)
                     return found_entities

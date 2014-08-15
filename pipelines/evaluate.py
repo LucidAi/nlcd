@@ -30,6 +30,22 @@ def clean_directory(path):
     os.mkdir(path)
 
 
+def u(i_str):
+    """
+    Encode string values found in `data` into utf-8 unicode.
+    """
+    if i_str is None:
+        return ""
+    if isinstance(i_str, unicode):
+        return i_str.encode("utf-8")
+    try:
+        unicode_data = i_str.decode("utf-8")
+        return i_str
+    except Exception:
+        unicode_data = i_str.decode("latin-1")
+        return unicode_data.encode("utf-8")
+
+
 def step_1_init_work_dir(args):
     """
     Create work directory and download links.
@@ -138,16 +154,16 @@ def step_2_eval_titles(args):
                 str(i),
                 gold_entries[i][0],
 
-                gold_out[i],
+                u(gold_out[i]),
 
-                methods_out[0][1][i][0],
-                str(methods_out[0][1][i][1]),
+                u(methods_out[0][1][i][0]),
+                u(methods_out[0][1][i][1]),
 
-                methods_out[1][1][i][0],
-                str(methods_out[1][1][i][1]),
+                u(methods_out[1][1][i][0]),
+                u(methods_out[1][1][i][1]),
 
-                methods_out[2][1][i][0],
-                str(methods_out[2][1][i][1]),
+                u(methods_out[2][1][i][0]),
+                u(methods_out[2][1][i][1]),
 
             ])
 
@@ -203,11 +219,17 @@ def step_3_eval_authors(args):
 
             # NLCD
             try:
-                raw_authors = extractor.extract_authors(article, annotation=None)
-                authors = normalizer.normalize_authors(raw_authors, article=article)
+                entities = extractor.extract_authors(article, annotation=None)
+                authors = normalizer.normalize_authors(entities, article=article)
                 nlcd_authors = list(set((a.name for a in authors
                                          if a.ent_type == Entity.TYPE.PER
                                          and a.ent_rel == Entity.REL.AUTHOR)))
+                if len(nlcd_authors) == 0:
+                    entities = [Entity(raw=c) for c in cse_authors]
+                    authors = normalizer.normalize_authors(entities, article=article)
+                    nlcd_authors = list(set((a.name for a in authors
+                                             if a.ent_type == Entity.TYPE.PER
+                                             and a.ent_rel == Entity.REL.AUTHOR)))
             except Exception:
                 logging.warning("Error when extracting authors. %r" % url)
                 nlcd_authors = []
@@ -241,16 +263,16 @@ def step_3_eval_authors(args):
                 str(i),
                 gold_entries[i][0],
 
-                gold_out[i],
+                u(gold_out[i]),
 
-                methods_out[0][1][i][0],
-                str(methods_out[0][1][i][1]),
+                u(methods_out[0][1][i][0]),
+                u(methods_out[0][1][i][1]),
 
-                methods_out[1][1][i][0],
-                str(methods_out[1][1][i][1]),
+                u(methods_out[1][1][i][0]),
+                u(methods_out[1][1][i][1]),
 
-                methods_out[2][1][i][0],
-                str(methods_out[2][1][i][1]),
+                u(methods_out[2][1][i][0]),
+                u(methods_out[2][1][i][1]),
 
             ])
 
@@ -315,9 +337,10 @@ def step_4_eval_source(args):
                 nlcd_sources = []
 
             nlcd_sources.extend(extractor.extract_sources(article, None, url))
+            nlcd_sources.extend(cse_sources)
 
             # Newspaper
-            np_sources = None
+            np_sources = ["<N/A>"]
 
             eval_data.append((gold_sources, nlcd_sources, np_sources, cse_sources))
 
@@ -345,16 +368,16 @@ def step_4_eval_source(args):
                 str(i),
                 gold_entries[i][0],
 
-                gold_out[i],
+                u(gold_out[i]),
 
-                methods_out[0][1][i][0],
-                str(methods_out[0][1][i][1]),
+                u(methods_out[0][1][i][0]),
+                u(methods_out[0][1][i][1]),
 
-                methods_out[1][1][i][0],
-                str(methods_out[1][1][i][1]),
+                u(methods_out[1][1][i][0]),
+                u(methods_out[1][1][i][1]),
 
-                methods_out[2][1][i][0],
-                # str(methods_out[2][1][i][1]),
+                u(methods_out[2][1][i][0]),
+                u(methods_out[2][1][i][1]),
 
             ])
 

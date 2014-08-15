@@ -3,7 +3,6 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import os
-import lz4
 import sys
 import json
 import logging

@@ -8,8 +8,8 @@ ${PYTHON} ${THISDIR}/pipelines/evaluate.py                      \
     --pipeline-root ${THISDIR}/scripts/pipeline                 \
     --app-root ${THISDIR}/husky                                 \
     --work-dir ${WORKDIR}                                       \
-    --first-step 4                                              \
-    --last-step 4                                               \
+    --first-step 2                                              \
+    --last-step 2                                               \
     --n-cpus 4                                                  \
     --max-threads 50                                            \
     --use-compression 1                                         \

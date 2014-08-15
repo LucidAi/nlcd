@@ -39,9 +39,8 @@ def compute_title_prf(eval_data):
     text_util = TextUtil()
 
     gold_data = [entry[0] for entry in eval_data]
-    data_size = len(gold_data)
 
-    gold_eval_out = [None] * data_size
+    gold_eval_out = [None] * len(eval_data)
     eval_out = []
 
     for method_id in xrange(1, len(eval_data[0])):
@@ -51,14 +50,18 @@ def compute_title_prf(eval_data):
 
         found_n = 0
         correct_n = 0
+        data_size = 0
 
-        for i in xrange(data_size):
+        for i in xrange(len(eval_data)):
 
             gold = gold_data[i]
             pred = method_data[i]
 
             gold = text_util.simplified_text(gold) if gold != "<NONE>" and gold != "" else None
             pred = text_util.simplified_text(pred) if pred != "<NONE>" and pred != "" else None
+
+            if gold is not None:
+                data_size += 1
 
             if pred is not None:
                 found_n += 1
@@ -73,7 +76,7 @@ def compute_title_prf(eval_data):
 
         p = 0 if found_n == 0 else float(correct_n) / float(found_n)
         r = 0 if data_size == 0 else float(correct_n) / float(data_size)
-        f = 0 if p + r == 0 else p * r / (p + r)
+        f = 0 if p + r == 0 else p * r / (p + r) * 2
 
         prf = (p, r, f)
 
@@ -124,7 +127,7 @@ def compute_authors_prf(eval_data):
 
         p = 0 if found_n == 0 else float(correct_n) / float(found_n)
         r = 0 if data_size == 0 else float(correct_n) / float(data_size)
-        f = 0 if p + r == 0 else p * r / (p + r)
+        f = 0 if p + r == 0 else p * r / (p + r) * 2
 
         prf = (p, r, f)
 
@@ -171,6 +174,9 @@ def compute_sources_prf(eval_data):
                     pred[k] = pred[k].replace(" ", "")
                     pred[k] = pred[k].replace("-", "")
 
+            gold = frozenset(gold)
+            pred = frozenset(pred)
+
             correct = False
 
             if len(pred) > 0:
@@ -190,11 +196,11 @@ def compute_sources_prf(eval_data):
                 correct_n += 1
 
             gold_eval_out[i] = ", ".join(gold)
-            method_eval_out.append((", ".join(pred), ""))
+            method_eval_out.append((", ".join(pred), str(int(not correct))))
 
         p = 0 if found_n == 0 else float(correct_n) / float(found_n)
         r = 0 if data_size == 0 else float(correct_n) / float(data_size)
-        f = 0 if p + r == 0 else p * r / (p + r)
+        f = 0 if p + r == 0 else p * r / (p + r) * 2
 
         prf = (p, r, f)
 

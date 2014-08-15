@@ -1,54 +1,198 @@
-#,URL,GOLD,NLCD PRF=0.63;0.70;0.33,NLCD ERROR,NP PRF=0.00;0.00;0.00,NP ERROR,CSE PRF=0.66;0.73;0.35,CSE ERROR
-0,http://www.bbc.com/news/world-middle-east-25810934,bbc,bbc.com,0,,1,"bbcnews, www.bbc.com",0
-1,http://www.youtube.com/watch?v=sReCLWr4QYU,newsdailyplanet+,"newsdailyplanet+, youtube.com",0,,1,"www.youtube.com, @youtube, youtube",1
-2,http://www.nytimes.com/2014/02/25/world/europe/kremlin-says-ukrainian-instability-threatens-russian-interests.html,newyorktimes,nytimes.com,1,,1,www.nytimes.com,1
-3,http://www.press-report.net/clanek-20923956-more-chemical-tainted-fruits-destroyed,pressreport,pressreport.net,0,,1,www.pressreport.net,0
-4,http://middleeast.about.com/od/mediacultureandthearts/a/Latest-News-In-The-Middle-East-February-24-March-2-2014.htm,,about.com,1,,1,"middleeast.about.com, @aboutdotcom, about.commiddleeastissues",1
-5,http://www.atpinc.com/p2-4a.php?sn=00000395,atp,atpinc.com,0,,1,www.atpinc.com,0
-6,http://en.wikipedia.org/wiki/Industrial-grade_prime,wikipedia,wikipedia.org,0,,1,en.wikipedia.org,0
-7,http://www.dow.com/propyleneglycol/products/industrial_grade.htm,dow,dow.com,0,,1,www.dow.com,0
-8,http://cheaptubes.com/industrialgrademwnts.htm,,cheaptubes.com,1,,1,cheaptubes.com,1
-9,http://www.lyondellbasell.com/Products/ByCategory/basic-chemicals/IntermediateChemicalsAndGlycols/PropyleneGlycolIndustrialGrade/,lyondellbasell,lyondellbasell.com,0,,1,www.lyondellbasell.com,0
-10,http://rpdefense.over-blog.com/2014/06/f-35-weekly-update-5th-june-2014.html,rpdefense,overblog.com,1,,1,"rpdefense, rpdefense.overblog.com",0
-11,http://www.bloomberg.com/news/2013-12-06/tesla-s-industrial-grade-solar-power-storage-system.html,bloomberg,bloomberg.com,0,,1,"www.bloomberg.com, @bloombergnews, bloomberg",0
-12,http://voiceofrussia.com/news/2014_02_24/Ambassadors-withdrawal-a-sign-of-extreme-concern-about-situation-in-Ukraine-Medvedev-1831/,"voiceofrussia, interfax",voiceofrussia.com,0,,1,"voiceofrussia.com, voiceofrussia",0
-13,http://www.amazon.com/Titan-Elite-Industrial-Grade-Scissor/dp/B0046EBW1C,amazon,amazon.com,0,,1,www.amazon.com,0
-14,http://www.cactus-tech.com/en/cactus-difference/industrial-grade-vs-commercial-grade,cactustechnologies,cactustech.com,1,,1,www.cactustech.com,1
-15,https://www.blcklst.com/help/article/368,blacklist,blcklst.com,1,,1,www.blcklst.com,1
-16,http://www.enrollamerica.org/ten-ways-to-make-health-coverage-enrollment-and-renewal-easy/,enrollamerica,enrollamerica.org,0,,1,www.enrollamerica.org,0
-17,https://www.blcklst.com/help/article/325,blacklist,blcklst.com,1,,1,www.blcklst.com,1
-18,http://politicalvelcraft.org/2014/02/24/president-putin-sends-russian-troops-to-crimea-ukraine-east-ukraine-citizens-revolt-against-the-obama-e-u-coup-in-kiev/,politicalvelcraft,politicalvelcraft.org,0,,1,"https://www.facebook.com/wordpresscom, @volubrjotr, politicalvelcraft, politicalvelcraft.org",0
-19,http://www.surrey.ac.uk/research/fellowships_strategy/Process/,universityofsurrey,surrey.ac.uk,1,,1,www.surrey.ac.uk,1
-20,http://www.washingtonpost.com/national/health-science/how-do-the-health-laws-online-exchanges-work-what-you-need-to-know-to-get-started/2013/09/16/ef7974c8-1988-11e3-a628-7e6dde8f889d_story.html,washingtonpost,washingtonpost.com,0,,1,"https://www.facebook.com/washingtonpost, www.washingtonpost.com, washingtonpost",0
-21,http://together.scienceonline.com/faqs/,togetherscienceonline,scienceonline.com,1,,1,together.scienceonline.com,1
-22,http://www.health.state.mn.us/topics/cannabis/,minnesotadepartmentofhealth,state.mn.us,1,,1,www.health.state.mn.us,1
-23,http://www.moonofalabama.org/2013/12/syria-us-moving-towards-supporting-assad.html,moonofalabama,moonofalabama.org,0,,1,www.moonofalabama.org,0
-24,http://www.admin.cam.ac.uk/univ/plagiarism/examiners/detection.html,universityofcambridge,cam.ac.uk,1,,1,www.admin.cam.ac.uk,1
-25,http://www.bbc.com/news/world-middle-east-27178999,bbc,bbc.com,0,,1,"bbcnews, www.bbc.com",0
-26,http://www.youtube.com/watch?v=pkn_6eN4ti8,topworldnews,"topworldnews, youtube.com",0,,1,"www.youtube.com, @youtube, youtube",1
-27,http://www.health.state.mn.us/divs/eh/hazardous/topics/toxfreekids/priority.html,minnesotadepartmentofhealth,state.mn.us,1,,1,www.health.state.mn.us,1
-28,http://www.health.state.mn.us/divs/eh/hazardous/topics/toxfreekids/,minnesotadepartmentofhealth,state.mn.us,1,,1,www.health.state.mn.us,1
-29,http://www.maine.gov/dep/safechem/priority.html,mainedepartmentofenviromentalprotection,maine.gov,1,,1,www.maine.gov,1
-30,http://www.medicalnewstoday.com/articles/276702.php,"medicalnewstoday, mnt",medicalnewstoday.com,0,,1,"medicalnewstoday, www.medicalnewstoday.com, @mnt",0
-31,http://www.globalresearch.ca/the-un-mission-confirms-that-rebels-were-in-possession-of-chemical-weapons/5361459,globalresearch,globalresearch.ca,0,,1,"globalresearch, www.globalresearch.ca",0
-32,http://www.pbs.org/newshour/rundown/what-you-need-to-know-about-the-obamacare-marketplaces/,pbs,pbs.org,0,,1,"pbsnewshour, @newshour, https://www.facebook.com/newshour, www.pbs.org",0
-33,http://www.npr.org/2013/10/11/230916150/faq-all-about-health-insurance-exchanges-and-how-to-shop-for-coverage,npr,npr.org,0,,1,"www.npr.org, @nprnews, npr.org",0
-34,http://www2.cincinnati.com/blogs/dailydose/2013/09/18/answers-to-your-affordable-care-act-questions/,cincinnati,cincinnati.com,0,,1,"cincinnati.com, www2.cincinnati.com",0
-35,http://www.biomonitoring.ca.gov/chemicals/priority-chemicals,biomonitoringcalifornia,ca.gov,1,,1,www.biomonitoring.ca.gov,1
-36,http://4therecord.org/conflict/syria/syria-archive/,4therecord,4therecord.org,0,,1,"@wordpressdotcom, 4therecord.org, https://www.facebook.com/wordpresscom",0
-37,http://www.nytimes.com/2014/02/28/world/europe/crimea-ukraine.html,newyorktimes,nytimes.com,1,,1,www.nytimes.com,1
-38,http://www.usubc.org/site/recent-news/ukraine-in-the-news-2-27-2014-thursday,"usubc, u.s.ukrainebusinesscouncil",usubc.org,0,,1,www.usubc.org,0
-39,http://www.theoccidentalobserver.net/2014/02/competing-nationalisms-in-the-ukraine/,occidentalobserver,occidentalobserver.net,0,,1,"www.theoccidentalobserver.net, occidentalobserver, @jetpack",0
-40,http://ex-army.blogspot.com/2014_02_01_archive.html,exarmny,exarmy.blogspot.com,1,,1,exarmy.blogspot.com,1
-41,http://www.youtube.com/watch?v=iDsZTCg5b8s,freethinkingnews,"freethinkingnews, youtube.com",0,,1,"www.youtube.com, @youtube, youtube",1
-42,http://gawker.com/pro-russia-gunmen-seize-government-buildings-in-ukrain-1532352490,gawker,gawker.com,0,,1,"gawker.com, @gawker, gawker",0
-43,http://www.telegraphindia.com/1140228/jsp/foreign/story_18029825.jsp,telegraph,telegraphindia.com,0,,1,"www.telegraphindia.com, telegraph",0
-44,http://www.youtube.com/watch?v=LOd3uhU3kO8,freethinkingnews,"freethinkingnews, youtube.com",0,,1,"www.youtube.com, @youtube, youtube",1
-45,http://www.abovetopsecret.com/forum/thread1006638/pg1,"abovetopsecret, ats",abovetopsecret.com,0,,1,"www.abovetopsecret.com, abovetopsecret.com",0
-46,http://es.redskins.com/topic/377195-bbc-ukraine-sanctions-imposed-amid-kiev-clashes/page-2,washingtonredskins,redskins.com,1,,1,"@redskins, es.redskins.com, extremeskins",1
-47,http://www.latimes.com/world/europe/la-fg-ukraine-russia-journalist-killed-20140617-story.html,losangelestimes,latimes.com,1,,1,"www.latimes.com, latimes.com, @latimes",1
-48,http://www.nytimes.com/2014/02/27/world/europe/russia.html,newyorktimes,nytimes.com,1,,1,www.nytimes.com,1
-49,http://news.kievukraine.info/2014/02/putin-drills-ground-troops-at-ukraines.html,kievukrainenews,kievukraine.info,1,,1,news.kievukraine.info,1
-50,"http://www.american-reporter.com/4,941W/sec1.html",americanreporter,americanreporter.com,0,,1,www.americanreporter.com,0
-51,http://www.thewire.com/global/2014/02/russia-begin-military-exercises-tensions-rise-crimea/358582/,wire,wire.com,0,,1,"@thewire, wire, https://www.facebook.com/theatlanticwire, www.thewire.com",0
-52,http://patdollard.com/2014/02/putin-drills-military-at-ukraines-doorstep-obama-issues-one-of-his-laughable-weakling-coward-warnings/,patdollar,patdollard.com,0,,1,"patdollard.com, patdollard",0
+#,URL,GOLD,NLCD PRF=0.68;0.75;0.71,NLCD ERROR,NP PRF=0.00;0.00;0.00,NP ERROR,CSE PRF=0.66;0.73;0.69,CSE ERROR
+0,http://www.bbc.com/news/world-middle-east-25810934,bbc,"bbc.com, bbcnews, www.bbc.com",0,<n/a>,1,"bbcnews, www.bbc.com",0
+1,http://www.youtube.com/watch?v=sReCLWr4QYU,newsdailyplanet+,"youtube.com, www.youtube.com, @youtube, youtube, newsdailyplanet+",0,<n/a>,1,"www.youtube.com, @youtube, youtube",1
+2,http://www.nytimes.com/2014/02/25/world/europe/kremlin-says-ukrainian-instability-threatens-russian-interests.html,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+3,http://www.press-report.net/clanek-20923956-more-chemical-tainted-fruits-destroyed,pressreport,"www.pressreport.net, pressreport.net",0,<n/a>,1,www.pressreport.net,0
+4,http://middleeast.about.com/od/mediacultureandthearts/a/Latest-News-In-The-Middle-East-February-24-March-2-2014.htm,,"@aboutdotcom, middleeast.about.com, about.commiddleeastissues, about.com",1,<n/a>,1,"@aboutdotcom, middleeast.about.com, about.commiddleeastissues",1
+5,http://www.atpinc.com/p2-4a.php?sn=00000395,atp,"www.atpinc.com, atpinc.com",0,<n/a>,1,www.atpinc.com,0
+6,http://en.wikipedia.org/wiki/Industrial-grade_prime,wikipedia,"wikipedia.org, en.wikipedia.org",0,<n/a>,1,en.wikipedia.org,0
+7,http://www.dow.com/propyleneglycol/products/industrial_grade.htm,dow,"www.dow.com, dow.com",0,<n/a>,1,www.dow.com,0
+8,http://cheaptubes.com/industrialgrademwnts.htm,,cheaptubes.com,1,<n/a>,1,cheaptubes.com,1
+9,http://www.lyondellbasell.com/Products/ByCategory/basic-chemicals/IntermediateChemicalsAndGlycols/PropyleneGlycolIndustrialGrade/,lyondellbasell,"www.lyondellbasell.com, lyondellbasell.com",0,<n/a>,1,www.lyondellbasell.com,0
+10,http://rpdefense.over-blog.com/2014/06/f-35-weekly-update-5th-june-2014.html,rpdefense,"rpdefense, rpdefense.overblog.com, overblog.com",0,<n/a>,1,"rpdefense, rpdefense.overblog.com",0
+11,http://www.bloomberg.com/news/2013-12-06/tesla-s-industrial-grade-solar-power-storage-system.html,bloomberg,"@bloombergnews, bloomberg.com, www.bloomberg.com, bloomberg",0,<n/a>,1,"@bloombergnews, www.bloomberg.com, bloomberg",0
+12,http://voiceofrussia.com/news/2014_02_24/Ambassadors-withdrawal-a-sign-of-extreme-concern-about-situation-in-Ukraine-Medvedev-1831/,"interfax, voiceofrussia","voiceofrussia.com, voiceofrussia",0,<n/a>,1,"voiceofrussia.com, voiceofrussia",0
+13,http://www.amazon.com/Titan-Elite-Industrial-Grade-Scissor/dp/B0046EBW1C,amazon,"www.amazon.com, amazon.com",0,<n/a>,1,www.amazon.com,0
+14,http://www.cactus-tech.com/en/cactus-difference/industrial-grade-vs-commercial-grade,cactustechnologies,"cactustech.com, www.cactustech.com",1,<n/a>,1,www.cactustech.com,1
+15,https://www.blcklst.com/help/article/368,blacklist,"www.blcklst.com, blcklst.com",1,<n/a>,1,www.blcklst.com,1
+16,http://www.enrollamerica.org/ten-ways-to-make-health-coverage-enrollment-and-renewal-easy/,enrollamerica,"enrollamerica.org, www.enrollamerica.org",0,<n/a>,1,www.enrollamerica.org,0
+17,https://www.blcklst.com/help/article/325,blacklist,"www.blcklst.com, blcklst.com",1,<n/a>,1,www.blcklst.com,1
+18,http://politicalvelcraft.org/2014/02/24/president-putin-sends-russian-troops-to-crimea-ukraine-east-ukraine-citizens-revolt-against-the-obama-e-u-coup-in-kiev/,politicalvelcraft,"politicalvelcraft.org, @volubrjotr, politicalvelcraft, https://www.facebook.com/wordpresscom",0,<n/a>,1,"https://www.facebook.com/wordpresscom, @volubrjotr, politicalvelcraft, politicalvelcraft.org",0
+19,http://www.surrey.ac.uk/research/fellowships_strategy/Process/,universityofsurrey,"surrey.ac.uk, www.surrey.ac.uk",1,<n/a>,1,www.surrey.ac.uk,1
+20,http://www.washingtonpost.com/national/health-science/how-do-the-health-laws-online-exchanges-work-what-you-need-to-know-to-get-started/2013/09/16/ef7974c8-1988-11e3-a628-7e6dde8f889d_story.html,washingtonpost,"washingtonpost, https://www.facebook.com/washingtonpost, www.washingtonpost.com, washingtonpost.com",0,<n/a>,1,"washingtonpost, https://www.facebook.com/washingtonpost, www.washingtonpost.com",0
+21,http://together.scienceonline.com/faqs/,togetherscienceonline,"scienceonline.com, together.scienceonline.com",1,<n/a>,1,together.scienceonline.com,1
+22,http://www.health.state.mn.us/topics/cannabis/,minnesotadepartmentofhealth,"www.health.state.mn.us, state.mn.us",1,<n/a>,1,www.health.state.mn.us,1
+23,http://www.moonofalabama.org/2013/12/syria-us-moving-towards-supporting-assad.html,moonofalabama,"moonofalabama.org, www.moonofalabama.org",0,<n/a>,1,www.moonofalabama.org,0
+24,http://www.admin.cam.ac.uk/univ/plagiarism/examiners/detection.html,universityofcambridge,"cam.ac.uk, www.admin.cam.ac.uk",1,<n/a>,1,www.admin.cam.ac.uk,1
+25,http://www.bbc.com/news/world-middle-east-27178999,bbc,"bbc.com, bbcnews, www.bbc.com",0,<n/a>,1,"bbcnews, www.bbc.com",0
+26,http://www.youtube.com/watch?v=pkn_6eN4ti8,topworldnews,"youtube.com, topworldnews, @youtube, youtube, www.youtube.com",0,<n/a>,1,"www.youtube.com, @youtube, youtube",1
+27,http://www.health.state.mn.us/divs/eh/hazardous/topics/toxfreekids/priority.html,minnesotadepartmentofhealth,"www.health.state.mn.us, state.mn.us",1,<n/a>,1,www.health.state.mn.us,1
+28,http://www.health.state.mn.us/divs/eh/hazardous/topics/toxfreekids/,minnesotadepartmentofhealth,"www.health.state.mn.us, state.mn.us",1,<n/a>,1,www.health.state.mn.us,1
+29,http://www.maine.gov/dep/safechem/priority.html,mainedepartmentofenviromentalprotection,"www.maine.gov, maine.gov",1,<n/a>,1,www.maine.gov,1
+30,http://www.medicalnewstoday.com/articles/276702.php,"mnt, medicalnewstoday","medicalnewstoday.com, www.medicalnewstoday.com, @mnt, medicalnewstoday",0,<n/a>,1,"www.medicalnewstoday.com, @mnt, medicalnewstoday",0
+31,http://www.globalresearch.ca/the-un-mission-confirms-that-rebels-were-in-possession-of-chemical-weapons/5361459,globalresearch,"globalresearch.ca, globalresearch, www.globalresearch.ca",0,<n/a>,1,"globalresearch, www.globalresearch.ca",0
+32,http://www.pbs.org/newshour/rundown/what-you-need-to-know-about-the-obamacare-marketplaces/,pbs,"https://www.facebook.com/newshour, pbs.org, @newshour, pbsnewshour, www.pbs.org",0,<n/a>,1,"https://www.facebook.com/newshour, @newshour, pbsnewshour, www.pbs.org",0
+33,http://www.npr.org/2013/10/11/230916150/faq-all-about-health-insurance-exchanges-and-how-to-shop-for-coverage,npr,"www.npr.org, @nprnews, npr.org",0,<n/a>,1,"www.npr.org, @nprnews, npr.org",0
+34,http://www2.cincinnati.com/blogs/dailydose/2013/09/18/answers-to-your-affordable-care-act-questions/,cincinnati,"cincinnati.com, www2.cincinnati.com",0,<n/a>,1,"cincinnati.com, www2.cincinnati.com",0
+35,http://www.biomonitoring.ca.gov/chemicals/priority-chemicals,biomonitoringcalifornia,"ca.gov, www.biomonitoring.ca.gov",1,<n/a>,1,www.biomonitoring.ca.gov,1
+36,http://4therecord.org/conflict/syria/syria-archive/,4therecord,"@wordpressdotcom, 4therecord.org, https://www.facebook.com/wordpresscom",0,<n/a>,1,"@wordpressdotcom, 4therecord.org, https://www.facebook.com/wordpresscom",0
+37,http://www.nytimes.com/2014/02/28/world/europe/crimea-ukraine.html,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+38,http://www.usubc.org/site/recent-news/ukraine-in-the-news-2-27-2014-thursday,"u.s.ukrainebusinesscouncil, usubc","usubc.org, www.usubc.org",0,<n/a>,1,www.usubc.org,0
+39,http://www.theoccidentalobserver.net/2014/02/competing-nationalisms-in-the-ukraine/,occidentalobserver,"www.theoccidentalobserver.net, occidentalobserver.net, occidentalobserver, @jetpack",0,<n/a>,1,"www.theoccidentalobserver.net, occidentalobserver, @jetpack",0
+40,http://ex-army.blogspot.com/2014_02_01_archive.html,exarmny,exarmy.blogspot.com,1,<n/a>,1,exarmy.blogspot.com,1
+41,http://www.youtube.com/watch?v=iDsZTCg5b8s,freethinkingnews,"youtube.com, www.youtube.com, freethinkingnews, youtube, @youtube",0,<n/a>,1,"www.youtube.com, @youtube, youtube",1
+42,http://gawker.com/pro-russia-gunmen-seize-government-buildings-in-ukrain-1532352490,gawker,"gawker.com, @gawker, gawker",0,<n/a>,1,"gawker.com, @gawker, gawker",0
+43,http://www.telegraphindia.com/1140228/jsp/foreign/story_18029825.jsp,telegraph,"telegraphindia.com, www.telegraphindia.com, telegraph",0,<n/a>,1,"www.telegraphindia.com, telegraph",0
+44,http://www.youtube.com/watch?v=LOd3uhU3kO8,freethinkingnews,"youtube.com, www.youtube.com, freethinkingnews, youtube, @youtube",0,<n/a>,1,"www.youtube.com, @youtube, youtube",1
+45,http://www.abovetopsecret.com/forum/thread1006638/pg1,"abovetopsecret, ats","www.abovetopsecret.com, abovetopsecret.com",0,<n/a>,1,"www.abovetopsecret.com, abovetopsecret.com",0
+46,http://es.redskins.com/topic/377195-bbc-ukraine-sanctions-imposed-amid-kiev-clashes/page-2,washingtonredskins,"@redskins, redskins.com, es.redskins.com, extremeskins",1,<n/a>,1,"@redskins, es.redskins.com, extremeskins",1
+47,http://www.latimes.com/world/europe/la-fg-ukraine-russia-journalist-killed-20140617-story.html,losangelestimes,"www.latimes.com, latimes.com, @latimes",1,<n/a>,1,"www.latimes.com, latimes.com, @latimes",1
+48,http://www.nytimes.com/2014/02/27/world/europe/russia.html,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+49,http://news.kievukraine.info/2014/02/putin-drills-ground-troops-at-ukraines.html,kievukrainenews,"kievukraine.info, news.kievukraine.info",1,<n/a>,1,news.kievukraine.info,1
+50,"http://www.american-reporter.com/4,941W/sec1.html",americanreporter,"americanreporter.com, www.americanreporter.com",0,<n/a>,1,www.americanreporter.com,0
+51,http://www.thewire.com/global/2014/02/russia-begin-military-exercises-tensions-rise-crimea/358582/,wire,"@thewire, wire, https://www.facebook.com/theatlanticwire, wire.com, www.thewire.com",0,<n/a>,1,"@thewire, wire, https://www.facebook.com/theatlanticwire, www.thewire.com",0
+52,http://patdollard.com/2014/02/putin-drills-military-at-ukraines-doorstep-obama-issues-one-of-his-laughable-weakling-coward-warnings/,patdollar,"patdollard, patdollard.com",0,<n/a>,1,"patdollard, patdollard.com",0
+53,http://www.survive55.com/1/category/healthcare/1.html,survive55,"www.survive55.com, survive55.com, survive55.comisallabouthelpingthebabyboomergeneration. <br/>mymissionishelpingbabyboomersintheir50's+toenjoylife;bephysically,mentallyandfinanciallyhealthierandbecurrentonnewsandglobalinformationthataffectsthem.",0,<n/a>,1,"www.survive55.com, survive55.comisallabouthelpingthebabyboomergeneration. <br/>mymissionishelpingbabyboomersintheir50's+toenjoylife;bephysically,mentallyandfinanciallyhealthierandbecurrentonnewsandglobalinformationthataffectsthem.",0
+54,http://www.washingtonpost.com/national/health-science/expert-responses-to-commonly-asked-questions-about-the-individual-mandate/2013/09/30/b46ac5e2-2538-11e3-b75d-5b7f66349852_story.html,washingtonpost,"washingtonpost, https://www.facebook.com/washingtonpost, www.washingtonpost.com, washingtonpost.com",0,<n/a>,1,"washingtonpost, https://www.facebook.com/washingtonpost, www.washingtonpost.com",0
+55,http://members.jacksonville.com/news/premium-news/2013-09-30/story/we-answer-some-questions-about-affordable-care-act,floridatimesunion,"members.jacksonville.com, jacksonville.com",1,<n/a>,1,members.jacksonville.com,1
+56,http://www.forbes.com/sites/mitchelltuchman/2013/06/28/what-is-an-etf-three-simple-answers/,forbes,"forbes.com, forbes, @forbes, www.forbes.com",0,<n/a>,1,"@forbes, forbes, www.forbes.com",0
+57,http://www.theguardian.com/world/2014/jun/13/french-arts-workers-threat-festivals-strike-avignon,guardian,"guardian.com, @guardian, guardian, www.theguardian.com",0,<n/a>,1,"@guardian, www.theguardian.com, guardian",0
+58,http://www.firstbiz.com/corporate/international/nenext-scene-new-act-actors-threaten-french-summer-festivals-over-insurance-cuts-xt-scene-new-act-performers-threaten-french-summer-festivals-cut-unemployment-insurance-87380.html,"reuters, firstbiz","@firstpostbiz, https://www.facebook.com/fpbiz, firstbiz.com, firstbiz, www.firstbiz.com",0,<n/a>,1,"@firstpostbiz, https://www.facebook.com/fpbiz, firstbiz, www.firstbiz.com",0
+59,http://www.cornucopia.org/2014/05/vermont-passes-gmo-labeling-law-food-industry-announces-plans-sue/,cornucopiainstitute,"cornucopiainstitute, cornucopia.org, www.cornucopia.org",0,<n/a>,1,"cornucopiainstitute, www.cornucopia.org",0
+60,http://thinkprogress.org/world/2014/02/27/3339221/crimea-riven-ukraine/,thinkprogress,"thinkprogress.org, @thinkprogress",0,<n/a>,1,"thinkprogress.org, @thinkprogress",0
+61,http://thelede.blogs.nytimes.com/2014/02/27/live-coverage-tensions-in-ukraine/,newyorktimes,"nytimes.com, lede.blogs.nytimes.com, lede",1,<n/a>,1,"lede.blogs.nytimes.com, lede",1
+62,http://uk.reuters.com/article/2014/02/26/uk-ukraine-crisis-usa-idUKBREA1P1LS20140226,reuters,"uk.reuters.com, reuters.com",0,<n/a>,1,uk.reuters.com,0
+63,http://www.theguardian.com/world/2014/feb/26/ukraine-new-leader-disbands-riot-police-crimea-separatism,guardian,"guardian.com, @guardian, guardian, www.theguardian.com",0,<n/a>,1,"@guardian, www.theguardian.com, guardian",0
+64,http://www.businessweek.com/news/2014-02-26/kerry-says-u-dot-s-dot-planning-1-billion-loan-guarantee-for-ukraine,bloombergbusinessweek,"bn, www.businessweek.com, businessweek.com",1,<n/a>,1,"bn, www.businessweek.com, businessweek.com",1
+65,http://www.telegraph.co.uk/news/worldnews/europe/ukraine/10663971/Russia-and-Nato-to-face-off-over-Ukraine.html,telegraph,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0,<n/a>,1,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0
+66,http://valentfx.com/shipping-update-logi-ugv-video-for-sparkfun-avc/,valentfx,"valentf(x), @jetpack, valentfx.com",0,<n/a>,1,"valentf(x), @jetpack, valentfx.com",0
+67,http://bigstory.ap.org/article/us-eyes-1-billion-ukraine-loan-guarantees,bigstory,"bigstory, ap.org, bigstory.ap.org",0,<n/a>,1,"bigstory, bigstory.ap.org",0
+68,http://www.stuff.co.nz/world/europe/9770276/Keep-out-of-Ukraine-Russia-warned,,"www.stuff.co.nz, stuff.co.nz, stuff",1,<n/a>,1,"www.stuff.co.nz, stuff",1
+69,http://www.euractiv.com/europes-east/russia-puts-troops-alert-ukraine-news-533803,hill,"hill.com, hill",0,<n/a>,1,"hill.com, hill",0
+70,http://thehill.com/policy/international/199410-reports-armed-men-seize-ukraine-government-buildings-raise,wjla,"www.wjla.com, wjla, wjla.com",0,<n/a>,1,"www.wjla.com, wjla",0
+71,http://www.wjla.com/articles/2014/02/russia-sheltering-ukrainian-president-viktor-yanukovych-100619.html,businessinsider,"bi_contributors, businessinsider, www.businessinsider.com, businessinsider.com",0,<n/a>,1,"bi_contributors, businessinsider, www.businessinsider.com",0
+72,http://www.businessinsider.com/armed-men-seized-parliament-2014-2,ryot,"https://www.facebook.com/ryotnews, ryot.org, ryotnews, @ryotnews, www.ryot.org",0,<n/a>,1,"@ryotnews, ryotnews, https://www.facebook.com/ryotnews, www.ryot.org",0
+73,http://www.ryot.org/russian-military-men-now-occupy-airport-ukraine/586181,,"military.com, www.military.com",1,<n/a>,1,"military.com, www.military.com",1
+74,http://www.military.com/daily-news/2014/02/27/ukraine-pro-russia-gunmen-seize-offices-in-crimea.html,losangelestimes,"www.latimes.com, latimes.com, @latimes",1,<n/a>,1,"www.latimes.com, latimes.com, @latimes",1
+75,http://www.latimes.com/world/worldnow/la-fg-wn-ukraine-crimea-20140227-story.html,"cbs, cbsnews","cbsnews.com, www.cbsnews.com",0,<n/a>,1,www.cbsnews.com,0
+76,http://www.cbsnews.com/news/fears-of-a-divided-ukraine-rise-as-pro-russia-demonstrators-storm-crimean-parliament/,,"http://www.facebook.com/clearancejobs, @clearancejobs, defensenews, clearancejobs.com, news.clearancejobs.com",1,<n/a>,1,"http://www.facebook.com/clearancejobs, @clearancejobs, defensenews, news.clearancejobs.com",1
+77,http://news.clearancejobs.com/2014/02/27/genealogy-al-qaeda-standoff-crimea-wrangling-government-big-data-daily-intelligence/,hotair,"hotair.com, @jetpack",0,<n/a>,1,"hotair.com, @jetpack",0
+78,http://hotair.com/archives/2014/02/27/pro-russian-forces-seize-crimean-parliament-building/,todayszaman,"todayszaman.com, www.todayszaman.com",0,<n/a>,1,www.todayszaman.com,0
+79,http://www.todayszaman.com/news-340657-russia-reportedly-sheltering-ukraines-president.html,npr,"www.npr.org, @nprnews, npr.org",0,<n/a>,1,"www.npr.org, @nprnews, npr.org",0
+80,http://www.npr.org/blogs/thetwo-way/2014/02/27/283327707/ukraine-crisis-pro-russia-gunmen-seize-offices-in-crimea,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+81,http://www.nytimes.com/2014/02/28/world/europe/ukraine.html,ukrainianweek,ukrainianweek.com,0,<n/a>,1,ukrainianweek.com,0
+82,http://ukrainianweek.com/News/103459,time,"http://www.facebook.com/time, time.com, swampland.time.com",0,<n/a>,1,"http://www.facebook.com/time, time.com, swampland.time.com",0
+83,http://swampland.time.com/2014/02/27/morning-must-reads-february-27-2/,,"https://www.facebook.com/wordpresscom, @wordpressdotcom, wordpress.com, flashtrafficblog.wordpress.com, joelc.rosenberg'sblog",1,<n/a>,1,"@wordpressdotcom, https://www.facebook.com/wordpresscom, flashtrafficblog.wordpress.com, joelc.rosenberg'sblog",1
+84,http://flashtrafficblog.wordpress.com/2014/02/27/is-russia-preparing-to-move-on-ukraine-sends-fighter-jets-troops-near-border-u-s-warns-russia-military-force-would-be-grave-mistake-here-are-the-latest-developments/,,pejmanyousefzadeh.net,1,<n/a>,1,pejmanyousefzadeh.net,1
+85,http://pejmanyousefzadeh.net/2014/02/,newyorktimes,"kyivpost, kyivpost.com, www.kyivpost.com",1,<n/a>,1,"kyivpost, www.kyivpost.com",1
+86,http://www.kyivpost.com/content/ukraine-abroad/new-york-times-ousted-ukrainian-leader-asks-russia-to-protect-him-337761.html,"mensnewsdaily, mnd","mensnewsdaily.com, michaelsnyder.mensnewsdaily.com",0,<n/a>,1,michaelsnyder.mensnewsdaily.com,0
+87,http://michaelsnyder.mensnewsdaily.com/2014/02/12-signs-that-russia-is-ready-to-fight-a-war-over-crimea/,newyorktimes,"kyivpost, kyivpost.com, www.kyivpost.com",1,<n/a>,1,"kyivpost, www.kyivpost.com",1
+88,http://www.kyivpost.com/content/ukraine-abroad/new-york-times-ousted-yanukovych-seeks-russian-aid-as-tensions-rise-in-crimea-337785.html,wikipedia,"wikipedia.org, en.wikipedia.org",0,<n/a>,1,en.wikipedia.org,0
+89,http://en.wikipedia.org/wiki/Self-defense,,"vaselfdefenselaw.com, www.vaselfdefenselaw.com",1,<n/a>,1,www.vaselfdefenselaw.com,1
+90,http://www.vaselfdefenselaw.com/,findlaw,"findlaw.com, findlaw, criminal.findlaw.com",0,<n/a>,1,"findlaw, criminal.findlaw.com",0
+91,http://criminal.findlaw.com/criminal-law-basics/self-defense-overview.html,,"radsystems.com, www.radsystems.com",1,<n/a>,1,www.radsystems.com,1
+92,http://www.rad-systems.com/rad_advanced.html,plosone,"plosone.org, www.plosone.org",0,<n/a>,1,www.plosone.org,0
+93,http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0049986,belarusdigest,"belarusdigest.com, belarusdigest:newsandanalyticsonbelarusianpolitics,economy,humanrightsandmore.",0,<n/a>,1,"belarusdigest.com, belarusdigest:newsandanalyticsonbelarusianpolitics,economy,humanrightsandmore.",0
+94,http://belarusdigest.com/story/winning-crimea-russia-can-lose-belarus-17104,foreignaffairs,"www.foreignaffairs.com, foreignaffairs.com, foreignaffairs, @foreignaffairs",0,<n/a>,1,"www.foreignaffairs.com, foreignaffairs, @foreignaffairs",0
+95,http://www.foreignaffairs.com/articles/141048/andrew-wilson/belarus-wants-out,,"fas.org, www.fas.org",1,<n/a>,1,www.fas.org,1
+96,http://www.fas.org/irp/threat/prolif97/fsu.html,rt,"rt.com, @rt_com",0,<n/a>,1,"rt.com, @rt_com",0
+97,http://rt.com/news/belarus-crimea-part-russia-657/,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+98,http://www.nytimes.com/2014/05/30/world/europe/putin-signs-economic-alliance-with-presidents-of-kazakhstan-and-belarus.html,avert,"avert.org, www.avert.org",0,<n/a>,1,www.avert.org,0
+99,http://www.avert.org/hiv-aids-russia-eastern-europe-central-asia.htm,sydneymorningherald,"@smh, smh.com.au, sydneymorningherald, www.smh.com.au",0,<n/a>,1,"@smh, www.smh.com.au, sydneymorningherald",0
+100,http://www.smh.com.au/world/crimea-airport-calm-but-gunmen-remain-outside-20140228-hvfmj.html,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+101,http://www.nytimes.com/2014/02/28/world/europe/ukraine-tensions.html,newyorktimes,"nytimes.com, www.nytimes.com",1,<n/a>,1,www.nytimes.com,1
+102,http://www.nytimes.com/2014/02/28/world/europe/ukraine.html,,"ny.gov, www.omig.ny.gov",1,<n/a>,1,www.omig.ny.gov,1
+103,http://www.omig.ny.gov/resources/webinars/618-omig-webinar-13,bigstory,"bigstory, ap.org, bigstory.ap.org",0,<n/a>,1,"bigstory, bigstory.ap.org",0
+104,http://bigstory.ap.org/article/vermont-governor-signs-gmo-labeling-bill,preppersworldusa,"www.preppersworldusa.com, preppersworldusa.com, preppersworldusa",0,<n/a>,1,"www.preppersworldusa.com, preppersworldusa",0
+105,http://www.preppersworldusa.com/2014/02/27/gunmen-seize-crimean-parliament-russian-mobilizing-military-forces-quietly/,pri,"pri.org, publicradiointernational, www.pri.org",0,<n/a>,1,"publicradiointernational, www.pri.org",0
+106,http://www.pri.org/stories/2014-02-24/five-reasons-why-ukraines-ousted-president-might-be-hiding-crimea,ultraculture,"ultraculture.org, ultraculture",0,<n/a>,1,"ultraculture.org, ultraculture",0
+107,http://ultraculture.org/blog/2014/05/09/vermont-becomes-first-state-require-gmo-labeling/,staradvertiser,"staradvertiser.com, www.staradvertiser.com, honolulustaradvertiserhawaiinewspaper",0,<n/a>,1,"www.staradvertiser.com, honolulustaradvertiserhawaiinewspaper",0
+108,http://www.staradvertiser.com/news/breaking/20140508_vermont_law_requires_labeling_of_gmo_foods.html,quora,"quora.com, www.quora.com",0,<n/a>,1,www.quora.com,0
+109,http://www.quora.com/Was-the-CIA-involved-in-the-overthrow-of-President-Yanukovych,rawstoryandagencefrancepresse,"rawstory.com, www.rawstory.com",1,<n/a>,1,www.rawstory.com,1
+110,http://www.rawstory.com/rs/2013/12/12/u-n-report-concludes-that-chemical-weapons-were-used-in-syrian-conflict/,reuters,"www.reuters.com, reuters, reuters.com",0,<n/a>,1,"www.reuters.com, reuters",0
+111,http://www.reuters.com/article/2013/12/13/us-syria-crisis-chemical-un-idUSBRE9BB1AJ20131213,"rfe/rl, radiofreeeuroperadioliberty","www.rferl.org, rferl.org, https://www.facebook.com/rferl, radiofreeeurope/radioliberty, @rferl",1,<n/a>,1,"www.rferl.org, radiofreeeurope/radioliberty, @rferl, https://www.facebook.com/rferl",1
+112,http://www.rferl.org/content/ukraine-horlivak-occupied/25367823.html,mashable,"@mashable, mashable, mashable.com",0,<n/a>,1,"@mashable, mashable, mashable.com",0
+113,http://mashable.com/2014/06/12/ukraine-anti-terrorist-operation/,"reuters, aljazeera","aljazeera.com, www.aljazeera.com",0,<n/a>,1,www.aljazeera.com,0
+114,http://www.aljazeera.com/news/europe/2014/04/ukraine-launches-anti-terrorist-operation-201441363951423315.html,telegraph,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0,<n/a>,1,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0
+115,http://www.telegraph.co.uk/news/worldnews/europe/ukraine/10780790/Ukraine-to-restart-anti-terrorist-operation-as-military-plane-hit-by-gunfire.html,tehrantimes,"www.tehrantimes.com, tehrantimes.com",0,<n/a>,1,www.tehrantimes.com,0
+116,http://www.tehrantimes.com/middle-east/112778-assad-win-may-be-syrias-best-option-ex-cia-chief,telegraph,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0,<n/a>,1,"telegraph.co.uk, @telegraph, www.telegraph.co.uk",0
+117,http://www.telegraph.co.uk/news/worldnews/europe/ukraine/10797862/Ukraine-on-full-combat-alert-against-possible-Russia-invasion.html,globeandmail,"globeandmail, globeandmail.com, www.theglobeandmail.com",0,<n/a>,1,"globeandmail, www.theglobeandmail.com",0
+118,http://www.theglobeandmail.com/sports/olympics/rossiya-rossiya-rare-sight-of-national-pride-for-host-country/article16760280/,guardian,"guardian.com, @guardian, guardian, www.theguardian.com",0,<n/a>,1,"@guardian, www.theguardian.com, guardian",0
+119,http://www.theguardian.com/world/2013/dec/13/syria-chemical-weapons-four-locations-un,zerohedge,"zerohedge.com, www.zerohedge.com",0,<n/a>,1,www.zerohedge.com,0
+120,http://www.zerohedge.com/news/2014-02-27/pro-russian-gunmen-seize-ukraine-crimean-parliament-russia-puts-jets-high-alert-hryv?page=1,moscowtimes,"@moscowtimes, moscowtimes.com, moscowtimes, www.themoscowtimes.com",0,<n/a>,1,"@moscowtimes, moscowtimes, www.themoscowtimes.com",0
+121,http://www.themoscowtimes.com/news/article/armed-men-seize-government-buildings-in-crimea/495328.html,nation,"www.thenation.com, nation.com",0,<n/a>,1,www.thenation.com,0
+122,http://www.thenation.com/blogs/bob-dreyfuss?page=0%2C4,wire,"@thewire, wire, https://www.facebook.com/theatlanticwire, wire.com, www.thewire.com",0,<n/a>,1,"@thewire, wire, https://www.facebook.com/theatlanticwire, www.thewire.com",0
+123,http://www.thewire.com/global/2014/04/jpmorgan-really-upset-the-russian-foreign-ministry/360068/,timeanddate,"timeanddate.com, www.timeanddate.com",0,<n/a>,1,www.timeanddate.com,0
+124,http://www.timeanddate.com/holidays/russia/russia-day,nancyremsen,"www.burlingtonfreepress.com, burlingtonfreepress.com",1,<n/a>,1,www.burlingtonfreepress.com,1
+125,http://www.burlingtonfreepress.com/story/news/politics/2014/06/12/gma-sues-vt-gmo-law/10389209/,today,"today.com, www.today.com, today",0,<n/a>,1,"www.today.com, today",0
+126,http://www.today.com/video/today/54496813,ultimateselfdefense,"www.ultimateselfdefense.com, ultimateselfdefense.com",0,<n/a>,1,www.ultimateselfdefense.com,0
+127,http://www.ultimateselfdefense.com/,unitednationsandun,"www.un.org, unnewsservicesection, un.org",1,<n/a>,1,"www.un.org, unnewsservicesection",1
+128,http://www.un.org/apps/news/story.asp?NewsID=38187,unitednationsandun,"www.un.org, unnewsservicesection, un.org",1,<n/a>,1,"www.un.org, unnewsservicesection",1
+129,http://www.un.org/apps/news/story.asp?NewsID=46730,businessinsider,"businessinsider, bi_defense, www.businessinsider.com, businessinsider.com",0,<n/a>,1,"businessinsider, bi_defense, www.businessinsider.com",0
+130,http://www.businessinsider.com/sukhoi-t-50-cant-compete-with-the-f-35-2014-6?op=1,unian,"www.unian.info, unian.info",0,<n/a>,1,www.unian.info,0
+131,http://www.unian.info/politics/894010-un-recognizes-that-yanukovych-is-no-longer-president-of-ukraine.html,u.s.departmentofveteransaffairs,"www.va.gov, va.gov",1,<n/a>,1,www.va.gov,1
+132,http://www.va.gov/healthbenefits/apply/veterans.asp,salon,"www.salon.com, salon.com",0,<n/a>,1,www.salon.com,0
+133,http://www.salon.com/2014/06/12/grocers_sue_vermont_over_gmo_food_label_law/,cnn,"amanpour.blogs.cnn.com, cnn.com",0,<n/a>,1,amanpour.blogs.cnn.com,0
+134,http://amanpour.blogs.cnn.com/2014/02/25/putin-has-no-reason-to-interfere-in-ukraine-says-former-kremlin-adviser/,"nunezreport, beforeit'snews","beforeit'snews|alternativenews|ufo|beyondscience|truenews|prophecynews|peoplepowerednews, beforeitsnews.com",0,<n/a>,1,"beforeit'snews|alternativenews|ufo|beyondscience|truenews|prophecynews|peoplepowerednews, beforeitsnews.com",0
+135,http://beforeitsnews.com/alternative/2014/02/ukraine-conflict-fears-rise-as-crimea-airport-is-seized-2908348.html,,"boredoftherings.150m.com, 150m.com",1,<n/a>,1,boredoftherings.150m.com,1
+136,http://boredoftherings.150m.com/bored_five.html,,consortiumnews.com,1,<n/a>,1,consortiumnews.com,1
+137,http://consortiumnews.com/2013/12/13/fresh-doubts-about-syrias-sarin-guilt/,dish,"dish, @dishfeed, dish.andrewsullivan.com, andrewsullivan.com, https://www.facebook.com/wordpresscom",0,<n/a>,1,"dish, @dishfeed, dish.andrewsullivan.com, https://www.facebook.com/wordpresscom",0
+138,http://edition.cnn.com/2014/05/08/health/vermont-gmo-labeling/,eaworldview,"eaworldview, eaworldview.com",0,<n/a>,1,"eaworldview, eaworldview.com",0
+139,http://dish.andrewsullivan.com/2014/02/27/chaos-in-crimea/,alarabiyanews,"alarabiya.net, @alarabiya_eng, english.alarabiya.net",1,<n/a>,1,"@alarabiya_eng, english.alarabiya.net",1
+140,http://eaworldview.com/2013/12/syria-conclusions-un-mission-use-chemical-weapons/,eyeonacrazyplanet,eyecrazy.blogspot.com,1,<n/a>,1,eyecrazy.blogspot.com,1
+141,http://english.alarabiya.net/en/News/middle-east/2013/12/13/Syria-used-chemicals-multiple-times-U-N-.html,,"folk.uib.no, uib.no",1,<n/a>,1,folk.uib.no,1
+142,http://eyecrazy.blogspot.com/2014_02_01_archive.html,bankrate,"www.bankrate.com, bankrate.com, @bankrate",0,<n/a>,1,"www.bankrate.com, @bankrate",0
+143,http://folk.uib.no/hnohf/auldelv.htm,,"https://www.facebook.com/wordpresscom, @wordpressdotcom, wordpress.com, gowans.wordpress.com, what'sleft",1,<n/a>,1,"https://www.facebook.com/wordpresscom, @wordpressdotcom, what'sleft, gowans.wordpress.com",1
+144,http://www.bankrate.com/finance/insurance/obamacares-10-essential-benefits-1.aspx,hawaiiankingdom,"hawaiiankingdom.org, hawaiiankingdomblog, @jetpack",0,<n/a>,1,"hawaiiankingdom.org, hawaiiankingdomblog, @jetpack",0
+145,http://gowans.wordpress.com/2013/12/14/under-reported-un-investigation-points-to-rebel-use-of-chemical-weapons-in-syria/,interventionswatch,"interventionswatch.wordpress.com, @wordpressdotcom, https://www.facebook.com/wordpresscom, wordpress.com, interventionswatch",0,<n/a>,1,"https://www.facebook.com/wordpresscom, @wordpressdotcom, interventionswatch, interventionswatch.wordpress.com",0
+146,http://hawaiiankingdom.org/blog/hawaii-and-the-crimean-crisis-obama-is-not-a-legitimate-president/,joshuapundit,joshuapundit.blogspot.com,0,<n/a>,1,joshuapundit.blogspot.com,0
+147,http://interventionswatch.wordpress.com/2013/12/13/release-of-latest-u-n-report-on-alleged-cw-use-in-syria-strangely-low-key/,levantreport,"@wordpressdotcom, levantreport, levantreport.com, https://www.facebook.com/wordpresscom",0,<n/a>,1,"@wordpressdotcom, levantreport, levantreport.com, https://www.facebook.com/wordpresscom",0
+148,http://joshuapundit.blogspot.com/2014/02/russia-is-now-moving-troops-to-ukraine.html,levantreport,levantreport.com,0,<n/a>,1,levantreport.com,0
+149,http://levantreport.com/2014/04/10/white-house-denies-hersh-allegations-but-what-do-the-united-nations-massachusetts-institute-of-technology-and-tesla-labs-inc-say-about-syria-chemical-weapons/,,lonelyconservative.com,1,<n/a>,1,lonelyconservative.com,1
+150,http://levantreport.com/category/syria-chemical-weapons/,lyricsduble,"duble.com, lyrics.duble.com",1,<n/a>,1,lyrics.duble.com,1
+151,http://lonelyconservative.com/2014/02/now-that-olympics-are-over-russia-moves-troops-to-ukraine-border/,kievukrainenewsblog,"kievukraine.info, news.kievukraine.info",1,<n/a>,1,news.kievukraine.info,1
+152,http://lyrics.duble.com/we-agree-lyrics-judy-jacobs.html,kuwaittimes,"kuwaittimes.net, kuwaittimes, news.kuwaittimes.net",0,<n/a>,1,"kuwaittimes, news.kuwaittimes.net",0
+153,http://news.kievukraine.info/2014_02_01_archive.html,ncnbc,"nsnbcinternational, nsnbc.me",1,<n/a>,1,"nsnbcinternational, nsnbc.me",1
+154,http://news.kuwaittimes.net/protesters-take-kiev-president-slams-coup-opposition-icon-tymoshenko-walks-free/,"reuters, newyorkpost","https://www.facebook.com/wordpresscom, @nypost, newyorkpost, nypost.com",0,<n/a>,1,"https://www.facebook.com/wordpresscom, @nypost, nypost.com, newyorkpost",0
+155,http://nsnbc.me/2013/12/14/un-syria-mission-confirms-rebels-possession-chemical-weapons/,osnetdaily,"osnetdaily, osnetdaily.com, @jetpack",0,<n/a>,1,"osnetdaily, osnetdaily.com, @jetpack",0
+156,http://nypost.com/2014/02/27/ukraine-government-buildings-seized-by-armed-men/,patdollar,"patdollard, patdollard.com",0,<n/a>,1,"patdollard, patdollard.com",0
+157,http://osnetdaily.com/2014/02/breaking-russia-mobilizes-rapid-deployment-forces-to-ukraine-border/,"cbspittsburgh, cbs","pittsburgh.cbslocal.com, cbslocal.com, @/cbspittsburgh",0,<n/a>,1,"pittsburgh.cbslocal.com, @/cbspittsburgh",0
+158,http://patdollard.com/2014/02/ousted-ukraine-president-issues-defiant-statement-as-moscow-puts-jets-on-combat-alert/,rt,"rt.com, @rt_com",0,<n/a>,1,"rt.com, @rt_com",0
+159,http://pittsburgh.cbslocal.com/2014/04/03/clergyman-charged-in-australia-faces-credible-allegations-from-time-at-north-catholic-hs/,rt,"rt.com, @rt_com",0,<n/a>,1,"rt.com, @rt_com",0
+160,http://rt.com/news/un-syria-chemical-arms-171/,organicconsumers,"organicconsumers.org, www.organicconsumers.org",0,<n/a>,1,www.organicconsumers.org,0
+161,http://rt.com/usa/162968-us-republicans-prisoner-exchange/,greenwashing,"greenwashingblog.com, greenwashingnewsandinformation:thegreenwashingblog",0,<n/a>,1,"greenwashingblog.com, greenwashingnewsandinformation:thegreenwashingblog",0
+162,http://www.organicconsumers.org/articles/article_30274.cfm,moth,moth.org,0,<n/a>,1,moth.org,0
+163,http://thegreenwashingblog.com/2011/02/17/chevron-greenwashing-we-agree/,voiceofrussia,"voiceofrussia.com, voiceofrussia",0,<n/a>,1,"voiceofrussia.com, voiceofrussia",0
+164,http://themoth.org/posts/stories/a-very-dangerous-person,voiceofrussia,"voiceofrussia.com, voiceofrussia",0,<n/a>,1,"voiceofrussia.com, voiceofrussia",0
+165,http://voiceofrussia.com/2014_03_02/Ukraine-total-mobilization-combat-alert-amid-Crimea-tensions-1246/,"inferfax, voiceofrussia","voiceofrussia.com, voiceofrussia",0,<n/a>,1,"voiceofrussia.com, voiceofrussia",0
+166,http://voiceofrussia.com/2014_04_04/Russia-prepares-to-attack-the-petrodollar-2335/,weaponsman,weaponsman.com,0,<n/a>,1,weaponsman.com,0
+167,http://voiceofrussia.com/news/2014_02_24/Legitimacy-of-many-of-Ukraines-governing-bodies-is-doubtful-there-is-no-one-to-deal-with-Medvedev-2196/,euronews,"@euronews, euronews, www.euronews.com, euronews.com",0,<n/a>,1,"euronews, www.euronews.com, @euronews",0
+168,http://weaponsman.com/?p=14144,time,"http://www.facebook.com/time, time.com, world.time.com",0,<n/a>,1,"http://www.facebook.com/time, time.com, world.time.com",0
+169,http://www.euronews.com/2014/04/25/ukraine-launches-phase-two-of-anti-terrorist-operation/,brattlebororeformer,"www.reformer.com, reformer.com",1,<n/a>,1,www.reformer.com,1
+170,http://world.time.com/2013/12/12/u-n-report-says-chemical-weapons-were-used-in-syria/,wig,"wisconsingazette.com, www.wisconsingazette.com",1,<n/a>,1,www.wisconsingazette.com,1
+171,http://www.reformer.com/opinion/ci_25733652/battle-over-gmo-labels-far-from-over,aljazeera,"aljazeera.com, www.aljazeera.com",0,<n/a>,1,www.aljazeera.com,0
+172,http://www.wisconsingazette.com/green-gaze/grocery-manufacturers-lobby-seeks-to-block-gmo-labeling-law-in-vermont.html,,"www.artsalive.ca, artsalive.ca",1,<n/a>,1,www.artsalive.ca,1
+173,http://www.aljazeera.com/news/europe/2014/03/putin-suggests-troops-deployment-ukraine-201431132515398667.html,atlanticcouncil,"www.atlanticcouncil.org, atlanticcouncil, atlanticcouncil.org",0,<n/a>,1,"www.atlanticcouncil.org, atlanticcouncil",0
+174,http://www.artsalive.ca/en/dan/mediatheque/videos/videosDetails.asp?mediaID=462,,"www.azlyrics.com, azlyrics.com",1,<n/a>,1,www.azlyrics.com,1
+175,http://www.atlanticcouncil.org/en/blogs/menasource/top-news-new-un-report-concludes-chemical-arms-used-repeatedly-in-syria,bbc,"www.bbc.co.uk, bbc.co.uk, bbcnews",0,<n/a>,1,"www.bbc.co.uk, bbcnews",0
+176,http://www.azlyrics.com/lyrics/donaldlawrence/weagree.html,bbc,"www.bbc.co.uk, bbc.co.uk, bbcnews",0,<n/a>,1,"www.bbc.co.uk, bbcnews",0
+177,http://www.bbc.co.uk/news/world-middle-east-25810934,dailynews,"nydailynews.com, https://www.facebook.com/thenewyorkdailynews, @nydailynews, nydailynews, www.nydailynews.com",0,<n/a>,1,"https://www.facebook.com/thenewyorkdailynews, @nydailynews, nydailynews, www.nydailynews.com",0
+178,http://www.bbc.co.uk/news/world-middle-east-27178999,bostonglobe,"https://www.facebook.com/globe, www.bostonglobe.com, bostonglobe.com, bostonglobe",0,<n/a>,1,"https://www.facebook.com/globe, www.bostonglobe.com, bostonglobe.com, bostonglobe",0
+179,http://www.nydailynews.com/news/national/sarin-gas-syria-conflicts-u-n-report-article-1.1546804,bbc,"bbc.com, bbcnews, www.bbc.com",0,<n/a>,1,"bbcnews, www.bbc.com",0
+180,http://www.bostonglobe.com/news/world/2014/02/28/armed-standoff-crimea-president-looks-russia/lXXwLG4jpzhAd2Zw0ekbYI/story.html,"reuters, businessinsider","bi_contributors, businessinsider, www.businessinsider.com, businessinsider.com",0,<n/a>,1,"bi_contributors, businessinsider, www.businessinsider.com",0
+181,http://www.bbc.com/news/world-europe-27035196,"cbs, cbsnews, cbs/wireservices","cbsnews.com, www.cbsnews.com",0,<n/a>,1,www.cbsnews.com,0
+182,http://www.businessinsider.com/ukraine-puts-forces-on-combat-alert-says-intervention-would-lead-to-war-2014-3,"cbs, cbsnews","cbsnews.com, www.cbsnews.com",0,<n/a>,1,www.cbsnews.com,0
+183,http://www.cbsnews.com/news/ukraine-puts-armed-forces-on-combat-alert-warns-of-war/,councilonforeignrelations,"cfr.org, councilonforeignrelations, @cfr_org, www.cfr.org",0,<n/a>,1,"councilonforeignrelations, @cfr_org, www.cfr.org",0
+184,http://www.cbsnews.com/videos/bowe-bergdahl-swap-sets-very-dangerous-precedent-says-gop-senator/,globalresearch,"globalresearch.ca, globalresearch, www.globalresearch.ca",0,<n/a>,1,"globalresearch, www.globalresearch.ca",0
+185,http://www.cfr.org/syria/un-report-chemical-weapons-use-syria/p31404,clarknursing&rehabilitationcenter,"clarkrehab.com, www.clarkrehab.com",1,<n/a>,1,www.clarkrehab.com,1
+186,http://www.globalresearch.ca/syria-un-mission-report-confirms-that-opposition-rebels-used-chemical-weapons-against-civilians-and-government-forces/5363139,cnn,"cnn, www.cnn.com, cnn.com, @cnn",0,<n/a>,1,"cnn, www.cnn.com, @cnn",0
+187,http://www.clarkrehab.com/MedFAQ.cfm,voaandvoiceofamericanews,"https://www.facebook.com/voiceofamerica, www.voanews.com, @voa_news, voanews.com, voa",1,<n/a>,1,"https://www.facebook.com/voiceofamerica, www.voanews.com, voa, @voa_news",1
+188,http://www.cnn.com/2013/12/12/world/meast/syria-civil-war/index.html,csgmidwest,"www.csgmidwest.org, csgmidwest.org",0,<n/a>,1,www.csgmidwest.org,0
+189,http://www.cnn.com/2014/02/27/politics/russia-ukraine-troop-movements/,ctvnews,"ctvnews.ca, @ctvnews, ctvnews, www.ctvnews.ca",0,<n/a>,1,"@ctvnews, www.ctvnews.ca, ctvnews",0
+190,http://www.voanews.com/content/ukraine-launches-antiterrorist-operation-in-slovyansk/1892309.html,philly,"@phillycomhealth, www.philly.com, philly.com",0,<n/a>,1,"@phillycomhealth, www.philly.com, philly.com",0
+191,http://www.csgmidwest.org/policyresearch/0713navigators.aspx,obamacarefacts,obamacarefacts.com,0,<n/a>,1,obamacarefacts.com,0
+192,http://www.ctvnews.ca/world/un-inspectors-report-more-probable-chemical-weapons-attack-in-syria-1.1590646,drivebyplanet,"www.drivebyplanet.com, drivebyplanet.com",0,<n/a>,1,www.drivebyplanet.com,0
+193,http://www.philly.com/philly/health/healthcare-exchange/Poll_Most_Americans_say_health_law_has_not_affected_their_families.html,,"epa.gov, www.epa.gov",1,<n/a>,1,www.epa.gov,1
+194,http://obamacarefacts.com/essential-health-benefits.php,esquire,"https://www.facebook.com/esquire, www.esquire.com, esquire.com, esquire",0,<n/a>,1,"https://www.facebook.com/esquire, www.esquire.com, esquire",0
+195,http://www.drivebyplanet.com/2014/01/ghouta-sarin-attack-whodunnit-seymour.html,rt,"rt.com, @rt_com",0,<n/a>,1,"rt.com, @rt_com",0
+196,http://www.epa.gov/osw/hazard/wastemin/priority.htm,foreignpolicyinitiative,"www.foreignpolicyi.org, foreignpolicyi.org",1,<n/a>,1,www.foreignpolicyi.org,1

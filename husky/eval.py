@@ -207,3 +207,54 @@ def compute_sources_prf(eval_data):
         eval_out.append((prf, method_eval_out))
 
     return gold_eval_out, eval_out
+
+
+def compute_dates_prf(eval_data):
+
+    gold_data = [entry[0] for entry in eval_data]
+
+    gold_eval_out = [None] * len(eval_data)
+    eval_out = []
+
+    s_pattern = re.compile("\s", re.IGNORECASE | re.UNICODE)
+
+    for method_id in xrange(1, len(eval_data[0])):
+
+        method_data = [entry[method_id] for entry in eval_data]
+        method_eval_out = []
+
+        found_n = 0
+        correct_n = 0
+        data_size = 0
+
+        for i in xrange(len(eval_data)):
+
+            gold = gold_data[i] if gold_data[i] != "<NONE>" else None
+            pred = min(method_data[i]) if len(method_data[i]) > 0 else None
+
+            if gold is not None:
+                gold = s_pattern.sub("", gold)
+
+            if pred is not None:
+                found_n += 1
+
+            if gold is not None:
+                data_size += 1
+
+            correct = gold == pred
+
+            if gold == pred and gold is not None and pred is not None:
+                correct_n += 1
+
+            gold_eval_out[i] = gold
+            method_eval_out.append((pred, str(int(not correct))))
+
+        p = 0 if found_n == 0 else float(correct_n) / float(found_n)
+        r = 0 if data_size == 0 else float(correct_n) / float(data_size)
+        f = 0 if p + r == 0 else p * r / (p + r) * 2
+
+        prf = (p, r, f)
+
+        eval_out.append((prf, method_eval_out))
+
+    return gold_eval_out, eval_out

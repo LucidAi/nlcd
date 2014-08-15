@@ -382,12 +382,94 @@ def step_4_eval_source(args):
             ])
 
 
+def step_5_eval_dates(args):
+    """Evaluate dates extraction."""
+
+    o_eval_fp = os.path.join(args.work_dir, "eval_dates.csv")
+    documents_db_path = os.path.join(args.work_dir, DOCUMENTS_DB_PATH)
+    documents_db = husky.db.open(documents_db_path)
+    eval_data = []
+
+    extractor = EntityExtractor()
+    normalizer = EntityNormalizer()
+
+    with open(args.cse, "rb") as cse_fl:
+        cse = json.load(cse_fl)
+
+    with open(args.gold, "rb") as i_gold:
+
+        gold_entries = csv.reader(i_gold, delimiter=",", quotechar="\"")
+        gold_entries.next()
+        gold_entries = list(gold_entries)
+
+        for i, entry in enumerate(gold_entries):
+
+            url = entry[0]
+            cse_entry = cse.get(url)
+
+            if cse_entry is None:
+                logging.warn("URL #%d not found in CSE annotations: %s\nSkip." % (i, url))
+                continue
+
+            # Gold
+            gold_dates = entry[4]
+
+            # CSE
+            cse_dates = normalizer.normalize_dates(cse_entry["dates"])
+
+            # NLCD
+            nlcd_dates = cse_dates
+
+
+            # Newspaper
+            np_dates = ["<N/A>"]
+
+            eval_data.append((gold_dates, nlcd_dates, np_dates, cse_dates))
+
+    gold_out, methods_out = husky.eval.compute_dates_prf(eval_data)
+
+    with open(o_eval_fp, "wb") as o_eval:
+
+        eval_csv = csv.writer(o_eval, delimiter=",", quotechar="\"")
+
+        eval_csv.writerow([
+            "#",
+            "URL",
+            "GOLD",
+            "NLCD PRF=%.2f;%.2f;%.2f" % methods_out[0][0],
+            "NLCD ERROR",
+            "NP PRF=%.2f;%.2f;%.2f" % methods_out[1][0],
+            "NP ERROR",
+            "CSE PRF=%.2f;%.2f;%.2f" % methods_out[2][0],
+            "CSE ERROR",
+        ])
+
+        for i in xrange(len(gold_out)):
+
+            eval_csv.writerow([
+                str(i),
+                gold_entries[i][0],
+
+                u(gold_out[i]),
+
+                u(methods_out[0][1][i][0]),
+                u(methods_out[0][1][i][1]),
+
+                u(methods_out[1][1][i][0]),
+                u(methods_out[1][1][i][1]),
+
+                u(methods_out[2][1][i][0]),
+                u(methods_out[2][1][i][1]),
+
+            ])
+
 
 STEPS = (
     (step_1_init_work_dir, "Prepare data for evaluating."),
     (step_2_eval_titles, "Evaluate titles extraction."),
     (step_3_eval_authors, "Evaluate authors extraction."),
-    (step_4_eval_source, "Evaluate sources extraction.")
+    (step_4_eval_source, "Evaluate sources extraction."),
+    (step_5_eval_dates, "Evaluate dates extraction."),
 )
 
 

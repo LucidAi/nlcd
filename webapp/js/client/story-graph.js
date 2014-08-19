@@ -1,8 +1,8 @@
 /*
- *
  * Author: Vova Zaytsev <zaytsev@usc.edu>
- *
  */
+
+"use strict";
 
 
 function StoryGraph(data) {

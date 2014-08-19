@@ -1,6 +1,6 @@
-/**
-Author: Vova Zaytsev <zaytsev@usc.edu>
-**/
+/*
+ * Author: Vova Zaytsev <zaytsev@usc.edu>
+ */
 
 "use strict";
 

@@ -1,6 +1,9 @@
-/**
+/*
  * Author: Vova Zaytsev <zaytsev@usc.edu>
  */
+
+"use strict";
+
 
 app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiFactory",
     function ($scope, $location, $sce, NcldApiFactory) {

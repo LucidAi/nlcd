@@ -180,6 +180,22 @@ def step_4_extract_sentences(args):
                 sentences = text_util.sent_tokenize(body)
                 quoted = text_util.extract_quoted(body)
                 segments = text_util.select_segments(sentences, quoted)
+                
+                #########################################################
+                #TODO: Cut long segments. Move this to function or method
+
+                for i in xrange(len(segments)):
+
+                    segment = segments[i]
+                    segment = text_util.simplified_text(segment, remove_punct=False)
+                    words = segment.split()
+
+                    if len(words) > 32:
+                        words = words[:32]
+
+                    segments[i] = " ".join(words)
+                
+                ########################################################
 
                 json_dump({
                     "url": url,

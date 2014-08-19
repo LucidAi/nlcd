@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+# Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import os
 import sys

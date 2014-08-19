@@ -1,7 +1,6 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
-
 import re
 import lxml
 import nltk
@@ -41,13 +40,14 @@ class TextUtil(object):
         self.np_config.fetch_images = False
         self.seq_matcher = difflib.SequenceMatcher(None)
 
-    def simplified_text(self, text):
+    def simplified_text(self, text, remove_punct=True):
         if text is None:
             return None
         text = text.lower()
         if isinstance(text, unicode):
             text = text.encode("utf-8")
-        text = text.translate(None, string.punctuation)
+        if remove_punct:
+            text = text.translate(None, string.punctuation)
         text = self.RE_MULTIPLE_SPACE.sub(" ", text)
         text = " ".join(nltk.word_tokenize(text))
         return text

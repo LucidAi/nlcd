@@ -1,8 +1,9 @@
 #!/bin/sh
+# Author: Vova Zaytsev <zaytsev@usc.edu>
 
 PYTHON=python
 THISDIR=`pwd`
-ORIGINS=distr/test/origins.txt
+ORIGINS=distr/proposal/origins.txt
 WORKDIR=/Users/zvm/dev/nlcd
 
 ${PYTHON} ${THISDIR}/pipelines/pipeline.py          \
@@ -10,12 +11,12 @@ ${PYTHON} ${THISDIR}/pipelines/pipeline.py          \
     --app-root ${THISDIR}/husky                     \
     --pipeline-root ${THISDIR}/scripts/pipeline     \
     --work-dir ${WORKDIR}                           \
-    --first-step 1                                  \
-    --last-step 4                                   \
+    --first-step 7                                  \
+    --last-step 7                                   \
     --n-cpus 4                                      \
     --max-threads 16                                \
     --use-compression 1                             \
-    --nlcd-conf-file ${THISDIR}/fab/dev.json        \
+    --nlcd-conf-file ${THISDIR}/conf/dev.json       \
     --gse-bottom-threshold 100                      \
     --gse-upper-threshold 1000                      \
     --gse-query-size-heuristic 10                   \

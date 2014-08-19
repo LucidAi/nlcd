@@ -1,6 +1,7 @@
 /*
  * Author: Vova Zaytsev <zaytsev@usc.edu>
  */
+
 "use strict";
 
 app.factory("NcldApiFactory", ["$http", "$location",

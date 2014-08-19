@@ -1,7 +1,6 @@
 # coding: utf-8
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
-
 class Entity(object):
     """
     Definition of entity concept.

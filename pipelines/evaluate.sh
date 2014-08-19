@@ -1,4 +1,5 @@
 #!/bin/sh
+# Author: Vova Zaytsev <zaytsev@usc.edu>
 
 PYTHON=python
 THISDIR=`pwd`

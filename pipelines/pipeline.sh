@@ -10,8 +10,8 @@ ${PYTHON} ${THISDIR}/pipelines/pipeline.py          \
     --app-root ${THISDIR}/husky                     \
     --pipeline-root ${THISDIR}/scripts/pipeline     \
     --work-dir ${WORKDIR}                           \
-    --first-step 9                                  \
-    --last-step 9                                   \
+    --first-step 1                                  \
+    --last-step 4                                   \
     --n-cpus 4                                      \
     --max-threads 16                                \
     --use-compression 1                             \

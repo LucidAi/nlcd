@@ -1,0 +1,126 @@
+<style>
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #AAAAAA;
+    shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #999;
+}
+
+.tick text {
+  fill: #666;
+  font-family: "Helvetica Neue";
+  font-weight: lighter;
+}
+
+text.label {
+  fill: #333;
+  font-family: "Helvetica Neue";
+  font-weight: normal;
+}
+
+.line {
+  fill: none;
+  stroke: #0266C8;
+  stroke-width: 2px;
+}
+
+.pikeTip {
+  cursor: pointer;
+}
+
+.pikeTip circle {
+  fill: none;
+  stroke: #333;
+}
+
+.pikeTip text {
+  fill: black;
+}
+
+.pikeTip.selected circle {
+  fill: black;
+}
+
+.pikeTip.selected text {
+  fill: white;
+}
+
+
+rect {
+  fill: none;
+  pointer-events: all;
+}
+
+.node {
+  fill: #0266C8;
+  stroke: black;
+}
+
+.link {
+  stroke: #AAA;
+  opacity: 1;
+  stroke-width: 1px;
+}
+
+</style>
+
+<div class="container">
+  <div class="page-header" id="StoryGraphHeader">
+    <h1>Story Lifespan</h1>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="row">
+    <div id="StoryNetwork" class="md-12"></div>
+  </div>
+
+  <div class="row">
+    <div id="StoryLifespanGraph" class="md-12"></div>
+  </div>
+
+  <div class="row">
+    <div class="md-6">
+
+      <table class="table table-condensed table-bordered table-striped">
+        <thead>
+          <tr>
+            <td>Article</td>
+            <td>Sources</td>
+            <td>Authors</td>
+            <td>Refs</td>
+            <td>Shares</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="node in selectedDateData.nodes">
+            <td>
+              <a href="{{node.url}}">{{node.title|cut:true:85:' ...'}}</a>
+            </td>
+            <td>
+                {{node.sources.join(", ")}}
+            </td>
+            <td>
+                {{node.authors.join(", ").toTitleCase()}}
+            </td>
+            <td>
+                {{node.referenceCount}}
+            </td>
+            <td>
+                {{node.facebookShares+node.twitterShares}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    </div>
+  </div>
+
+</div>

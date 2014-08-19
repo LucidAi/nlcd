@@ -725,15 +725,15 @@ def step_9_enrich_story_graphs(args):
 
 
 STEPS = (
-    (step_1_init_work_dir, "Prepare data for processing."),
-    (step_2_fetch_origin_articles, "Fetch origin articles."),
-    (step_3_extract_origin_bodies, "Extract origin content bodies."),
-    (step_4_extract_sentences, "Extract sentences/segments."),
-    (step_5_request_gse, "Fetch related links from Google Search."),
-    (step_6_filter_out_unrelated, "Filter unrelated links."),
-    (step_7_gen_cr_data, "Generate data for cross-reference detection."),
-    (step_8_find_cross_references, "Find references between related articles."),
-    (step_9_enrich_story_graphs, "Enrich story graphs"),
+    (step_1_init_work_dir,          "Prepare data for processing."),
+    (step_2_fetch_origin_articles,  "Fetch origin articles."),
+    (step_3_extract_origin_bodies,  "Extract origin content bodies."),
+    (step_4_extract_sentences,      "Extract sentences/segments."),
+    (step_5_request_gse,            "Fetch related links from Google Search."),
+    (step_6_filter_out_unrelated,   "Filter unrelated links."),
+    (step_7_gen_cr_data,            "Generate data for cross-reference detection."),
+    (step_8_find_cross_references,  "Find references between related articles."),
+    (step_9_enrich_story_graphs,    "Enrich story graphs"),
 )
 
 

@@ -7,6 +7,8 @@ This repository contains natural language processing library for news cycle dete
 
 ### Description
 
+The web media space is filled with the same piece of information cited and recited over and over again by different newspapers, blogs, etc. It is often difficult for journalists and readers to track statements to their origin and figure out, who published this piece of news first, when was it published, who cited whom, etc.
+
 We propose a service that will detect a “life cycle” of a piece of news. It will allow news readers to track the piece of news back to it origins, see other citations of the original text together with the publishing source and the date of publishing.
 
 ### Contributors

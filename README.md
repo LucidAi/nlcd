@@ -1,9 +1,9 @@
 News Life Cycle Detector
 ========================
 
-This repository contains natural languahe processing library for news detection - `husky`, simple command line pipeline and web application for demostrating final output of the pipeline. This work is prototype, it contains many bug, does not scale and requires special knowlege for using. Our research is in the early stage and we don't provide any useful readme at this point. Some screenshots:
+This repository contains natural language processing library for news cycle detection - `husky`, a simple command line pipeline and web application for demostrating the final output of the pipeline. This work is a prototype, it contains many bug, does not scale and requires a special knowlege to be used. Our research is in the early stage and we don't provide any useful readme at this point, but you can look at our demo (link is in the last section of this readme). Some screenshots:
 
-![Prototype GUI](https://octodex.github.com/images/yaktocat.png)
+![Prototype GUI](https://raw.githubusercontent.com/MediaAnalysisTools/nlcd/dev/prototype.png)
 
 ### Description
 
@@ -16,5 +16,6 @@ We propose a service that will detect a “life cycle” of a piece of news. It 
 
 #### More information
 
+[Prototype Demo](mediaanalysistools.github.io/app.html)
+
 [Mediator Project](mediaanalysistools.github.io)
-[Prototype Demonstration](mediaanalysistools.github.io/app.html)

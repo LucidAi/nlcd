@@ -1,7 +1,7 @@
 News Life Cycle Detector
 ========================
 
-This repository contains natural language processing library for news cycle detection - `husky`, a simple command line pipeline and web application for demostrating the final output of the pipeline. This work is a prototype, it contains many bug, does not scale and requires a special knowlege to be used. Our research is in the early stage and we don't provide any useful readme at this point, but you can look at our demo (link is in the last section of this readme). Some screenshots:
+This repository contains natural language processing library for news cycle detection - `husky`, a simple command line pipeline and web application for demostrating the final output of the pipeline. This work is a prototype, it contains many bugs, does not scale and requires a special knowlege to be used. Our research is in the early stage and we don't provide any useful readme at this point, but you can look at our demo (link is in the last section of this readme). Some screenshots:
 
 ![Prototype GUI](https://raw.githubusercontent.com/MediaAnalysisTools/nlcd/dev/prototype.png)
 

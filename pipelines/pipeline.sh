@@ -4,15 +4,15 @@
 PYTHON=python
 THISDIR=`pwd`
 ORIGINS=distr/proposal/origins.txt
-WORKDIR=/Users/zvm/dev/nlcd
+WORKDIR=/Users/zvm/dev/nlcd_1
 
 ${PYTHON} ${THISDIR}/pipelines/pipeline.py          \
     --origins-file-path ${ORIGINS}                  \
     --app-root ${THISDIR}/husky                     \
     --pipeline-root ${THISDIR}/scripts/pipeline     \
     --work-dir ${WORKDIR}                           \
-    --first-step 7                                  \
-    --last-step 7                                   \
+    --first-step 1                                  \
+    --last-step 9                                   \
     --n-cpus 4                                      \
     --max-threads 16                                \
     --use-compression 1                             \

@@ -1,29 +1,30 @@
-/*
+/**
  * Author: Vova Zaytsev <zaytsev@usc.edu>
  */
-
-"use strict";
 
 
 app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiFactory",
     function ($scope, $location, $sce, NcldApiFactory) {
+
         /**
-        **/
+          *
+          **/
+
+        var graphId = $location.search().g;
 
         $scope.central              = null;
         $scope.related              = [];
         $scope.meta                 = null;
         $scope.selection            = [];
         $scope.textSelection        = null;
+        $scope.dateDistr            = null;
+        $scope.selectedDateEntry    = null;
+
         $scope.display = {
 
             // Tab 'ALL'
             relatedTabAllReversed:        false,
             relatedTabAllPredicate:       "inSelection",
-
-            // Tab 'SELECTION'
-            relatedTabSelectionReversed:  false,
-            relatedTabSelectionPredicate: "pubDate",
 
             // Tab 'SOURCES'
             relatedTabSourcesReversed:    false,
@@ -31,7 +32,11 @@ app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiF
 
             // Tab 'AUTHORS'
             relatedTabAuthorsReversed:    false,
-            relatedTabAuthorsPredicate:   "referenceCount"
+            relatedTabAuthorsPredicate:   "referenceCount",
+
+            // Tab 'DATES'
+            relatedTabDatesReversed:      false,
+            relatedTabDatesPredicate:     "date"
 
         };
 
@@ -42,14 +47,31 @@ app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiF
             $(this).tab("show");
         });
         $("#relatedTabs a:first").tab("show");
+        
+        
+        // Init tooltipe
+        $(".tip-tooltip").tooltip({
+            "animation": true,
+            "placement": "top",
+        });
+        
+        $("body").popover({
+              "container": "body",
+              "trigger": "hover",
+              "delay": 1,
+              "html": true,
+              "placement": "right",
+              "selector": ".tip-popover"
+        });
 
-
-        NcldApiFactory.getTestGraph().success(function(data){
-            $scope.sg = new StoryGraph(data.data);
+        NcldApiFactory.getTestGraph(graphId).success(function(data){
+            
+            $scope.sg = new StoryGraph(data);
             $scope.central = $scope.sg.getCentralNode();
             $scope.related = $scope.sg.getNodes();
-            $scope.meta = data.data.meta;
+            $scope.meta = data.meta;
 
+            console.log($scope.sg);
 
             var distrPlaceId = "storyDistribution";
             var nwPlaceId = "storyNetwork";
@@ -57,12 +79,12 @@ app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiF
             var distrWidth = document.getElementById(distrPlaceId).offsetWidth;
             var nwWidth = document.getElementById(nwPlaceId).offsetWidth;
 
-            console.log(nwWidth);
-
             var height = 300;
 
             $scope.sg.drawDistribution(distrPlaceId, distrWidth, height);
             $scope.sg.drawNetwork(nwPlaceId, nwWidth, height);
+            $scope.dateDistr = $scope.sg.distr.dateDistr;
+
         });
 
 
@@ -76,16 +98,17 @@ app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiF
 
 
         //
-        $scope.RelatedSelectionTabOrderBy = function(predicate) {
-            if ($scope.display.relatedTabSelectionPredicate == predicate) {
-                $scope.display.relatedTabSelectionReversed = !$scope.display.relatedTabSelectionReversed;
+        $scope.RelatedDatesTabOrderBy = function(predicate) {
+            if ($scope.display.relatedTabDatesPredicate == predicate) {
+                $scope.display.relatedTabDatesReversed = !$scope.display.relatedTabDatesReversed;
             }
-            $scope.display.relatedTabSelectionPredicate = predicate;
+            $scope.display.relatedTabDatesPredicate = predicate;
         }
 
 
         //
         $scope.SetSelection = function(referencesList) {
+
             for (var i in $scope.selection) {
                 $scope.selection[i].inSelection = null;
             };
@@ -96,26 +119,88 @@ app.controller("NlcdClientController", ["$scope", "$location", "$sce", "NcldApiF
                 item.inSelection = true;
                 $scope.selection.push(item);
             };
-            $scope.sg.gfx.SetDistributionSelection(referencesList);
-            $scope.sg.gfx.SetNetworkSelection(referencesList);
+            
+            if (referencesList !== 0) {
+                $scope.sg.gfx.SetDistributionSelection(referencesList);
+                $scope.sg.gfx.SetNetworkSelection(referencesList);
+            }
+
         };
 
 
         //
         $scope.TextSelection = function(chunk, referencesList) {
+
+            $scope.SetSelection(0);
+
+            if ($scope.selectedDateEntry) {
+                $scope.SelectDate($scope.selectedDateEntry);
+            }
+
             if ($scope.textSelection) {
                 $scope.textSelection.isSelected = false;
                 if ($scope.textSelection.tagId == chunk.tagId) {
                     $scope.textSelection = null;
-                    $scope.SetSelection([]);
                     return;
                 }
             }
             $scope.textSelection = chunk;
             $scope.textSelection.isSelected = true;
             $scope.SetSelection(referencesList);
+
         };
 
 
+        //
+        $scope.SelectDate = function(dateEntry) {
+            
+            if ($scope.textSelection) {
+                $scope.TextSelection($scope.textSelection, []);
+            }
+
+            $scope.SetSelection(0);
+
+            if ($scope.selectedDateEntry == dateEntry) {
+
+                $scope.selectedDateEntry.selected = false;
+                $scope.selectedDateEntry = null;
+
+            } else {
+
+                $scope.SetSelection(dateEntry.selection);
+                
+                if ($scope.selectedDateEntry)
+                    $scope.selectedDateEntry.selected = false;
+
+                $scope.selectedDateEntry = dateEntry;
+                $scope.selectedDateEntry.selected = true;
+
+            }
+            
+            
+        };
+
+
+        //
+        $scope.toolPopoverContent = function(node) {
+            
+            var authors = node.authors.join(", ").toTitleCase();
+            var source = "";
+            var len = 10000;
+            for (var i in node.sources) {
+                if (node.sources[i].length < len) {
+                    source = node.sources[i];
+                    len = node.sources[i].length;
+                }
+            }
+            
+            return "<ul><li>authror: "
+                   + authors
+                   + "</li><li>source: "
+                   + source
+                   + "</li></ul><p><small>"
+                   + String.prototype.CutStr(node.body, true, 256, "...")
+                   + "</small><p>";
+        }
 
 }]);

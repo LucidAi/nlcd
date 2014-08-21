@@ -9,7 +9,7 @@ def project_dir(dir_name):
     return os.path.join(os.path.dirname(__file__), "..", dir_name)\
         .replace("\\", "//")
 
-with open(project_dir("fab/dev.json"), "rb") as fp:
+with open(project_dir("conf/dev.json"), "rb") as fp:
     CONF = json.load(fp)
 
 

@@ -13,6 +13,8 @@ import collections
 import husky.db
 import husky.api.google
 
+from husky.entity import Entity
+
 from husky.dicts import Blacklist
 from husky.fetchers import PageFetcher
 
@@ -302,6 +304,7 @@ def step_6_filter_out_unrelated(args):
         for segment_entry in gse:
 
             segment_text = text_util.simplified_text(segment_entry["segment"])
+            
             uniq_segments.add(segment_text)
 
             for gse_found_item in segment_entry["foundItems"]:
@@ -322,8 +325,7 @@ def step_6_filter_out_unrelated(args):
 
                 if item_url not in related_url2html:
                     related_url2html[item_url] = None
-
-
+        
         fetcher.fetch_urls(related_url2html, max_threads=args.max_threads)
 
         # Now, filter not related
@@ -338,7 +340,7 @@ def step_6_filter_out_unrelated(args):
         for j, rel_url in enumerate(related_urls):
 
             if j % 10 == 0:
-                logging.info("Fuzzy matching %d/%d" % (j, len(related_urls)))
+                logging.info("Fuzzy matching (%d) %d/%d" % (i, j, len(related_urls)))
 
             html = related_url2html[rel_url]
             body, _ = text_util.extract_body(rel_url, html)
@@ -349,9 +351,10 @@ def step_6_filter_out_unrelated(args):
             matches = []
 
             for segment in segments:
-
+                
                 fuzzy_pattern = fuzzy_patterns[segment]
                 ratio, match = text_util.fuzzy_search(body, segment, fuzzy_pattern)
+
                 matches.append({
                     "match": match,
                     "ratio": ratio,
@@ -406,10 +409,12 @@ def step_7_gen_cr_data(args):
 
         with open(i_links_fp, "rb") as i_fl:
             link_entries = json.load(i_fl)
+            logging.info("Loaded %d entries." % len(link_entries))
 
         for link_entry in link_entries:
 
             if not link_entry["highRatio"]:
+                logging.info("Ratio is low. Continue.")
                 continue
 
             url = link_entry["url"].encode("utf-8")
@@ -436,15 +441,22 @@ def step_7_gen_cr_data(args):
             text = article.text
 
             # 3. Extract title
-            titles = extractor.extract_titles(article)
-            if len(titles) == 0:
+            title = extractor.extract_titles(article, gse_data, select_best=True)
+            if title is None:
                 logging.warning("Strange document. Skip")
                 continue
-            else:
-                title = list(titles)[0]
 
             # 4. Extract sources
-            sources = extractor.extract_sources(annotation=gse_data)
+            try:
+                entities = extractor.extract_authors(article, annotation=gse_data)
+                entities = normalizer.normalize_authors(entities, article=article)
+                sources = list(set((e.name for e in entities
+                                           if e.ent_rel == Entity.REL.SOURCE)))
+            except Exception:
+                logging.warning("Error when extracting authors. %r" % url)
+                sources = []
+
+            sources.extend(extractor.extract_sources(article, gse_data, url))
             sources = list(set((s.lower() for s in sources)))
 
             # 5. Extract publication dates
@@ -463,7 +475,9 @@ def step_7_gen_cr_data(args):
             try:
                 raw_authors = extractor.extract_authors(article, annotation=gse_data)
                 authors = normalizer.normalize_authors(raw_authors, article=article)
-                authors = list(set((a.name.lower() for a in authors)))
+                authors = list(set((a.name.lower() for a in authors
+                                                   if a.ent_type == Entity.TYPE.PER
+                                                   and a.ent_rel == Entity.REL.AUTHOR)))
             except Exception:
                 logging.warning("Error when extracting authors. %r" % url)
                 authors = []
@@ -567,9 +581,6 @@ def step_9_enrich_story_graphs(args):
 
     for i, origin_url in enumerate(origins):
 
-        # if i != 4:
-        #     continue
-
         logging.info("Processing graph #%d" % i)
 
         graph_fp = os.path.join(graph_dir, "%d.json" % i)
@@ -605,14 +616,24 @@ def step_9_enrich_story_graphs(args):
         urls = [node["url"] for node in graph["nodes"].itervalues()]
 
         # Download FB reactions
-        fb_counts = fetcher.get_facebool_counts(urls)
+
+        fb_counts = fetcher.get_facebook_counts(urls)
         logging.info("Fetched %d FB reactions" % len([fc for fc in fb_counts if fc is not None]))
         fb_comments = {}
         fb_shares = {}
+
         for fb_entry in (fc for fc in fb_counts if fc is not None):
             n_comments = fb_entry.get("comments", 0)
             n_shares = fb_entry.get("shares", 0)
-            ref_id = url_index[fb_entry["id"]]["refId"]
+
+            try:
+                ref_id = url_index[fb_entry.get("id")]["refId"]
+            except KeyError:
+                try:
+                    ref_id = url_index[fb_entry.get("url")]["refId"]
+                except KeyError:
+                    continue
+
             fb_comments[ref_id] = n_comments
             fb_shares[ref_id] = n_shares
 

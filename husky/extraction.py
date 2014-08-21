@@ -64,6 +64,25 @@ class JsonPatternMatchingUtil(object):
                 return matched.value
 
 
+class TitleExtractor(object):
+
+    DEFAULT_CONFIGURATION_PATH = "./distr/patterns/google.cse.json"
+
+    def __init__(self):
+        with open(self.DEFAULT_CONFIGURATION_PATH, "rb") as i_fl:
+            self.patterns = json.load(i_fl)
+        self.util = JsonPatternMatchingUtil()
+        self.titles_pattern = self.util.compile(self.patterns, "title")
+
+    def extract_from_annotation(self, annotation):
+        titles = self.util.match(self.titles_pattern, annotation)
+        return list(set(titles))
+
+    def extract(self, article):
+        # logging.warning("Article date extraction is not implemented.")
+        return []
+
+
 class DateExtractor(object):
 
     DEFAULT_CONFIGURATION_PATH = "./distr/patterns/google.cse.json"
@@ -219,8 +238,6 @@ class AuthorExtractor(object):
         return found_entities
 
 
-
-
 class EntityExtractor(object):
     """
     Class for extracting article attributes from HTML markup.
@@ -229,7 +246,8 @@ class EntityExtractor(object):
     def __init__(self, config=None):
         self.sites_blacklist = Blacklist.load(Blacklist.BLACK_DOM)
         self.parser = ArticleParser()
-
+        
+        self.title_extractor = TitleExtractor()
         self.date_extractor = DateExtractor()
         self.source_extractor = SourcesExtractor()
         self.author_extractor = AuthorExtractor(self.parser)
@@ -282,13 +300,20 @@ class EntityExtractor(object):
         If select_best is True - returns shortest found title.
         """
         titles = set()
-        if len(article.title) > 0:
+
+        if article is not None and len(article.title) > 0:
             titles.add(article.title)
+
+        if annotation is not None:
+            titles.update(self.title_extractor.extract(annotation))
+
         if select_best:
+
             if len(titles) == 0:
                 return None
             else:
                 return min(titles, key=len)
+
         else:
             return titles
 

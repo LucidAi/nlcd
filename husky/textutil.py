@@ -200,13 +200,13 @@ class TextUtil(object):
         query_re = re.compile(query_re, re.UNICODE | re.IGNORECASE)
         return query_re
 
-    def ffs(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5, min_ratio=0.5):
+    def ffs(self, text, query_text, fuzzy_pattern, min_threshold=0.5, max_threshold=1.5, min_m_size=5, min_ratio=0.5):
 
         if query_text in text:
             return True
 
-        max_len = len(query_text) * max_threshold
         min_len = max(len(query_text) * min_threshold, min_m_size)
+        max_len = len(query_text) * max_threshold
 
         matches = [m for m in fuzzy_pattern.findall(text) if min_len < len(m) < max_len]
 
@@ -225,12 +225,13 @@ class TextUtil(object):
 
         return False
 
-    def fuzzy_search(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5):
+    def fuzzy_search(self, text, query_text, fuzzy_pattern, min_threshold=0.5, max_threshold=1.5, min_m_size=5):
 
-        max_len = len(query_text) * max_threshold
         min_len = max(len(query_text) * min_threshold, min_m_size)
-
-        matches = [m for m in fuzzy_pattern.findall(text) if min_len < len(m) < max_len]
+        max_len = len(query_text) * max_threshold
+        
+        mm = fuzzy_pattern.findall(text)
+        matches = [m for m in mm if min_len < len(m) < max_len]
 
         if len(matches) == 0:
             return 0.0, None
@@ -252,13 +253,14 @@ class TextUtil(object):
         return best_ratio, best_match
 
 
-    def fuzzy_group_search(self, text, query_text, fuzzy_pattern, min_threshold=2, max_threshold=1.5, min_m_size=5):
+    def fuzzy_group_search(self, text, query_text, fuzzy_pattern, min_threshold=0.5, max_threshold=1.5, min_m_size=5):
 
-        max_len = len(query_text) * max_threshold
         min_len = max(len(query_text) * min_threshold, min_m_size)
+        max_len = len(query_text) * max_threshold
 
         match_groups = [m for m in fuzzy_pattern.finditer(text)]
         matches = []
+
         for m_g in match_groups:
             if min_len < len(m_g.group()) < max_len:
                 matches.append(m_g)

@@ -1,5 +1,3 @@
-<!-- Author: Vova Zaytsev <zaytsev@usc.edu>  -->
-
 <style>
 
 .axis path,
@@ -58,7 +56,8 @@ rect {
   pointer-events: all;
 }
 
-.node {
+.node .nodecircle {
+  cursor: pointer;
   stroke-width: 1.5px;
   fill: rgb(107, 174, 214);
   stroke: rgb(74, 121, 149);
@@ -125,6 +124,25 @@ rect {
   height: 300px;
   margin-bottom: 10px;
 
+}
+
+.node .nodetext {
+  color: #333;
+  font-weight: 500;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.node:hover .nodecircle {
+  fill: rgb(214, 39, 40);
+  stroke: rgb(104, 19, 19);
+}
+
+.node:not(:hover) .nodetext {
+  display: none;
+}
+
+.popover{
+    width: 400px;
 }
 
 </style>
@@ -204,35 +222,30 @@ rect {
             <!-- Related Tabs -->
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
 
-              <li style="cursor:pointer;" class="active">
-                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabAll">all {{related.length}}</a>
+              <li style="cursor:pointer;" class="active tip-tooltip" data-toggle="tooltip" title="View all related documents">
+                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabAll">articles {{related.length}}</a>
               </li>
 
-              <li style="cursor:pointer;">
+              <li style="cursor:pointer;" data-toggle="tooltip" class="tip-tooltip" title="Filter related by text query">
                 <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabFilter">search</a>
               </li>
 
-              <li style="cursor:pointer;">
+              <li style="cursor:pointer;" data-toggle="tooltip" class="tip-tooltip" title="View only cited">
                 <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabCit">cit.</a>
               </li>
 
 
-              <li style="cursor:pointer;">
+              <li style="cursor:pointer;" data-toggle="tooltip" class="tip-tooltip" title="View related authors">
                 <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabAuthors">authors</a>
               </li>
 
-              <li style="cursor:pointer;">
+              <li style="cursor:pointer;" data-toggle="tooltip" class="tip-tooltip" title="View related sources">
                 <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabSources">src.</a>
               </li>
 
-              <li style="cursor:pointer;">
+              <li style="cursor:pointer;" data-toggle="tooltip" class="tip-tooltip" title="Select documents by dates">
                 <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabDates">dates</a>
               </li>
-
-              <li style="cursor:pointer;">
-                <a role="tab" data-toggle="tab" class="text-uppercase" data-target="#relatedTabSelection">selection {{selection.length}}</a>
-              </li>
-
 
             </ul>
             <!-- END:Related Tabs -->
@@ -245,7 +258,7 @@ rect {
               <!-- PANE:ALL -->
               <div class="tab-pane fade in active" id="relatedTabAll">
 
-                <table class="table table-condensed table-striped">
+                <table class="table table-condensed table-striped table-bordered">
                   <thead>
                     <tr>
 
@@ -297,7 +310,17 @@ rect {
                         ng-class="{danger: node.inSelection}">
                       <td>
                         <span class="glyphicon glyphicon-star" ng-show="node.refId==central.refId"></span>
-                        <a href="{{node.url}}">{{node.title|cut:true:40:' ...'}}</a>
+                        <a href="{{node.url}}"
+                           class="tip-popover"
+                           data-toggle="popover"
+                           title="{{node.title}}"
+                           data-content="{{toolPopoverContent(node)}}"
+                        >
+                        
+                        
+                                              
+                          {{node.title|cut:true:40:' ...'}}
+                        </a>
                         <!-- <a style="cursor:pointer;">focus</a> -->
                         <!-- <a style="cursor:pointer;" class="glyphicon glyphicon-info-sign"></a> -->
                       </td>
@@ -320,21 +343,27 @@ rect {
               <!-- END:ALL -->
 
 
-              <!-- PANE:CIT -->
-              <div class="tab-pane fade" id="relatedTabCit">
-              </div>
-              <!-- END:CIT -->
-
-
               <!-- PANE:FILTER -->
               <div class="tab-pane fade" id="relatedTabFilter">
               </div>
               <!-- END:FILTER -->
 
 
+              <!-- PANE:CIT -->
+              <div class="tab-pane fade" id="relatedTabCit">
+                <div>
+                  <p class="lead">
+                    Sorry! This tab is not implemented yet :-(<br/>
+                    Our robots are working hard to finish this soon! Please comeback later.
+                  </p>
+                </div>
+              </div>
+              <!-- END:CIT -->
+
+
               <!-- PANE:AUTHORS -->
               <div class="tab-pane fade" id="relatedTabAuthors">
-                <table class="table table-condensed table-striped">
+                <table class="table table-condensed table-striped  table-bordered">
                   <thead>
                     <tr>
                       <td></td>
@@ -358,7 +387,7 @@ rect {
 
               <!-- PANE:SOURCES -->
               <div class="tab-pane fade" id="relatedTabSources">
-                <table class="table table-condensed table-striped">
+                <table class="table table-condensed table-striped  table-bordered">
                   <thead>
                     <tr>
                       <td></td>
@@ -382,73 +411,75 @@ rect {
 
               <!-- PANE:DATES -->
               <div class="tab-pane fade" id="relatedTabDates">
-              </div>
-              <!-- END:DATES -->
+                
 
 
-              <!-- PANE:SELECTION -->
-              <div class="tab-pane fade" id="relatedTabSelection">
-                <table class="table table-condensed table-striped">
+
+                <table class="table table-condensed table-striped table-bordered">
                   <thead>
                     <tr>
 
-                      <td></td>
-
-                      <td class="text-muted text-uppercase" style="width:60px;">
-                        <a ng-click="RelatedSelectionTabOrderBy('referenceCount');">
-                          ref
-                          <span ng-show="display.relatedTabSelectionPredicate=='referenceCount'">
-                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
-                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
+                      <td class="text-muted text-uppercase">
+                        <a ng-click="RelatedDatesTabOrderBy('date');">
+                          date
+                          <span ng-show="display.relatedTabDatesPredicate=='date'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabDatesReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabDatesReversed"></span>
                           </span>
                         </a>
                       </td>
 
-                      <td class="text-muted text-uppercase" style="width:60px;">
-                        <a ng-click="RelatedSelectionTabOrderBy('shareCount');">
-                          shr
-                          <span ng-show="display.relatedTabSelectionPredicate=='shareCount'">
-                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
-                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
+                      <td class="text-muted text-uppercase" style="width:200px;">
+                        <a ng-click="RelatedDatesTabOrderBy('documentsCount');">
+                          documents
+                          <span ng-show="display.relatedTabDatesPredicate=='documentsCount'">
+                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabDatesReversed"></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabDatesReversed"></span>
                           </span>
                         </a>
                       </td>
-
-                      <td class="text-muted text-uppercase" style="width:60px;">
-                        <a ng-click="RelatedSelectionTabOrderBy('pubDate');">
-                          pub
-                          <span ng-show="display.relatedTabSelectionPredicate=='pubDate'">
-                            <span class="glyphicon glyphicon-chevron-down" ng-show="display.relatedTabSelectionReversed"></span>
-                            <span class="glyphicon glyphicon-chevron-up" ng-show="!display.relatedTabSelectionReversed"></span>
-                          </span>
-                        </a>
+                      
+                      <td  style="width:68px;">
                       </td>
 
                     </tr>
                   </thead>
 
                   <tbody>
-                    <tr ng-repeat="node in selection | orderBy : display.relatedTabSelectionPredicate : display.relatedTabSelectionReversed">
+                    <tr ng-repeat="dateEntry in dateDistr | orderBy : display.relatedTabDatesPredicate : display.relatedTabDatesReversed">
+
+                      <td>{{dateEntry.date}}</td>
+
+                      <td>{{dateEntry.documentsCount}}</td>
+                      
                       <td>
-                        <span class="glyphicon glyphicon-star" ng-show="node.refId==central.refId"></span>
-                        <a href="{{node.url}}">{{node.title|cut:true:40:' ...'}}</a>
+
+                        <button type="button"
+                                class="btn btn-default btn-xs"
+                                ng-show="!dateEntry.selected"
+                                ng-click="SelectDate(dateEntry)"
+                                >select</button>
+
+                        <button type="button"
+                                class="btn btn-danger btn-xs"
+                                ng-show="dateEntry.selected"
+                                ng-click="SelectDate(dateEntry)"
+                                >deselect</button>
+
                       </td>
-                      <td>
-                        {{node.referenceCount}}
-                      </td>
-                      <td>
-                        {{node.shareCount}}
-                      </td>
-                      <td>
-                        <span ng-show="node.pubDate == null">n/a</span>
-                        <span ng-show="node.pubDate != null">{{node.pubDate}}</span>
-                      </td>
+
                     </tr>
                   </tbody>
                 </table>
-              </div>
-              <!-- END:SELECTION -->
 
+
+
+
+
+
+                
+              </div>
+              <!-- END:DATES -->
 
           </div>
         </div>

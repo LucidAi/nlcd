@@ -18,5 +18,5 @@ We propose a service that will detect a “life cycle” of a piece of news. It 
 
 #### More information
 
-* [Prototype Demo](http://mediaanalysistools.github.io/app.html)
+* [Prototype Demo](http://mediaanalysistools.github.io/prototype.html)
 * [Mediator Project](http://mediaanalysistools.github.io)

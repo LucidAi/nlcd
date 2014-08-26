@@ -1,13 +1,13 @@
 parsedatetime
+scikit-learn
 readability
 jsonpath-rw
 newspaper
 grequests
 requests
 textblob
-sklearn
 plyvel
-langid
+langid==1.1dev
 numpy
 scipy
 ftfy

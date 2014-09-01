@@ -1,0 +1,186 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #AAAAAA;
+    shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #999;
+}
+
+.tick text {
+  fill: #444;
+  font-family: "Helvetica Neue";
+  font-weight: light;
+}
+
+text.label {
+  fill: #333;
+  font-family: "Helvetica Neue";
+  font-weight: normal;
+}
+
+.line {
+  fill: none;
+  stroke: #0266C8;
+  stroke-width: 2px;
+}
+
+.pikeTip {
+  cursor: pointer;
+}
+
+.pikeTip circle {
+  fill: none;
+  stroke: #333;
+}
+
+.pikeTip text {
+  fill: black;
+}
+
+.pikeTip.selected circle {
+  fill: black;
+}
+
+.pikeTip.selected text {
+  fill: white;
+}
+
+
+rect {
+  fill: none;
+  pointer-events: all;
+}
+
+.node .nodecircle {
+  cursor: pointer;
+  stroke-width: 1.5px;
+  fill: rgb(107, 174, 214);
+  stroke: rgb(74, 121, 149);
+}
+
+.link {
+  stroke: rgba(32,32,32,.3);
+  opacity: 1;
+  stroke-width: 1px;
+}
+
+/*#CentralDocumentText {
+  -webkit-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  -moz-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  border-radius: 3px;
+
+  margin-top:8px;
+  padding:0;
+  height:360px;
+  border:1px #DEDEDE solid;
+  overflow:scroll;
+  overflow-y:auto;
+  overflow-y: scroll;
+
+}*/
+
+#relatedTabsContainer {
+  
+  margin-top:17px;
+
+  -webkit-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  -moz-box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  box-shadow: inset 2px 0px 31px -3px #EDEDED;
+  border-radius: 3px;
+
+  padding:0;
+  height:360px;
+  border:1px #DEDEDE solid;
+  overflow:scroll;
+  overflow-y:auto;
+  overflow-y: scroll;
+
+}
+
+.DistrSelectionBar {
+  fill:#ffb7b7;
+  opacity: 1;
+}
+
+
+#storyDistribution {
+
+  border: 1px #EAEAEA solid;
+  border-radius: 3px;
+  height: 300px;
+  
+}
+
+#storyNetwork {
+
+  border: 1px #EAEAEA solid;
+  border-radius: 3px;
+  height: 300px;
+  margin-bottom: 10px;
+
+}
+
+.node .nodetext {
+  color: #333;
+  font-weight: 500;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.node:hover .nodecircle {
+  fill: rgb(214, 39, 40);
+  stroke: rgb(104, 19, 19);
+}
+
+.node:not(:hover) .nodetext {
+  display: none;
+}
+
+.popover{
+    width: 400px;
+}
+
+/**
+  *
+  */
+#DocumentContentTitle {
+
+  border-bottom: 1px #EAEAEA solid;
+  padding-bottom: 4px;
+  margin-bottom: 32px;
+
+}
+
+#DocuementContentByline {
+  margin-bottom:4px;
+}
+
+#DocuementContentSource {
+  margin-bottom:24px;
+}
+
+#DocuementContentByline .author-tag {
+  margin-right: 4px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+.text-font-serif {
+  font-family: "Gentium Book Basic", Georgia, Cambria, "Times New Roman", Times,serif;
+  font-weight: normal;
+}
+
+.text-font-serif-bold {
+  font-family: "Gentium Book Basic", Georgia, Cambria, "Times New Roman", Times,serif;
+  font-weight: bold;
+}
+
+.text-normal-sans {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}

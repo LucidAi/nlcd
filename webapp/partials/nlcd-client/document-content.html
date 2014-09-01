@@ -1,0 +1,67 @@
+<div id="DocumentContentTitle">
+  <h3>
+
+
+    <a target="_blank"
+       href="{{central.url}}"
+       class="tip-tooltip"
+       data-toggle="tooltip"
+       data-placement="left"
+       title="Open Original">
+      <sup class="vertical-align:super;">
+        <span style="font-size:12px;" 
+              class="glyphicon glyphicon-link "></span>
+      </sup>
+    </a>
+
+    <span ng-repeat="chunk in meta.markup.title.taggedText"
+          ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
+          ng-click="TextSelection(chunk, chunk.references)"><span class="text-font-serif-bold" style="font-size:32px;">{{chunk.text}}</span></span>
+
+  </h3>
+
+</div>
+
+
+<!-- AUTHOR -->
+<div id="DocuementContentByline">
+    <span style="font-size:12px;" class="text-muted">by:</span>
+    <a ng-repeat="author in central.authors"
+       class="author-tag btn btn-default btn-xs tip-tooltip"
+       data-toggle="tooltip"
+       data-placement="left"
+       title="Select Articles By This Author">
+      <span class="glyphicon glyphicon-user"></span> 
+      {{author.toTitleCase()}}
+    </a>
+</div>
+
+
+<!-- SOURCE -->
+<div id="DocuementContentSource">
+  <span style="font-size:12px;" class="text-muted">source:</span>
+  <a class="btn btn-default btn-xs tip-tooltip"
+     data-toggle="tooltip"
+     data-placement="left"
+     title="Select Articles From This Source">
+    <span class="glyphicon glyphicon-bullhorn"></span>
+    {{central.sources[0]}}
+  </a>
+</div>
+
+
+<!-- id="CentralDocumentText" -->
+<!--  <span ng-show="chunk.tagged" class="label label-warning">{{chunk.references.length}}</span></span> -->
+
+<div>
+  <p ng-repeat="paragraphMarkup in meta.markup.body" class="text-font-serif">
+
+    <span ng-repeat="chunk in paragraphMarkup.taggedText"
+            ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
+            ng-click="TextSelection(chunk, chunk.references)" style="font-size:18px;"><span class="tip-tooltip" ng-show="chunk.tagged" data-toggle="tooltip" data-placement="left" title="Select Cited Articles ({{chunk.references.length}})">{{chunk.text}} </span><span ng-show="!chunk.tagged">{{chunk.text}}</span><span ng-show="chunk.tagged"></span><span ng-show="chunk.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">{{chunk.references.length}}</span></span>
+    <br/><br/>
+  </p>
+
+
+</div>
+

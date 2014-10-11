@@ -17,7 +17,15 @@
 
 .taggedTextActive {
     cursor: pointer;
-    background: #fff2a8;
+    background: rgb(255, 248, 225);
+    padding: 0 3px 0 3px;
+    border-radius: 3px;
+}
+
+.taggedTextActive:hover {
+    background: rgb(255, 245, 155);
+    border: 0.8px solid #AEAEAE;
+    box-shadow: 0 0 5px #cccccc;
 }
 
 .table > tbody > tr.warning > td {

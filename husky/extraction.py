@@ -35,10 +35,24 @@ NLTK2NLCD_LANG = {
 
 
 class JsonPatternMatchingUtil(object):
+    """
+    Helper class for pattern matchers parametrized from JSON file.
+    """
+
     @staticmethod
     def compile(json_patterns, field_name):
+        """
+        Compiles regex-patterns stored in field_name entry of json_patterns JSON
+
+        :rtype : list
+        :param json_patterns:
+        :param field_name:
+        :return: list of compiled patterns
+        """
+
         patterns = json_patterns[field_name]
         compiled = [jsonpath_rw.parse(pattern) for pattern in patterns]
+
         return compiled
 
     @staticmethod

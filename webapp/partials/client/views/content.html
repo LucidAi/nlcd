@@ -9,7 +9,7 @@
        data-placement="left"
        title="Open Original">
       <sup class="vertical-align:super;">
-        <span style="font-size:12px;" 
+        <span style="font-size:12px;"
               class="glyphicon glyphicon-link "></span>
       </sup>
     </a>
@@ -25,13 +25,12 @@
 
 <!-- AUTHOR -->
 <div id="DocuementContentByline">
-    <span style="font-size:12px;" class="text-muted">by:</span>
+    <span style="font-size:12px;" class="text-muted"><span class="glyphicon glyphicon-user"></span> </span>
     <a ng-repeat="author in central.authors"
-       class="author-tag btn btn-default btn-xs tip-tooltip"
+       class="author-tag tip-tooltip"
        data-toggle="tooltip"
        data-placement="left"
        title="Select Articles By This Author">
-      <span class="glyphicon glyphicon-user"></span> 
       {{author.toTitleCase()}}
     </a>
 </div>
@@ -39,12 +38,11 @@
 
 <!-- SOURCE -->
 <div id="DocuementContentSource">
-  <span style="font-size:12px;" class="text-muted">source:</span>
-  <a class="btn btn-default btn-xs tip-tooltip"
+  <span style="font-size:12px;" class="text-muted"><span class="glyphicon glyphicon-bullhorn"></span></span>
+  <a class="tip-tooltip"
      data-toggle="tooltip"
      data-placement="left"
      title="Select Articles From This Source">
-    <span class="glyphicon glyphicon-bullhorn"></span>
     {{central.sources[0]}}
   </a>
 </div>

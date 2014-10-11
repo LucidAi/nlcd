@@ -9,8 +9,8 @@ def project_dir(dir_name):
     return os.path.join(os.path.dirname(__file__), "..", dir_name)\
         .replace("\\", "//")
 
-with open(project_dir("conf/dev.json"), "rb") as fp:
-    CONF = json.load(fp)
+# with open(project_dir("conf/dev.json"), "rb") as fp:
+#     CONF = json.load(fp)
 
 
 SECRET_KEY = "h8(e(u3#k)l802(4mfh^f&&jp!@p*s#98tf++l#z-e83(#$x@*"

@@ -1,0 +1,9 @@
+#ClientBarLeft, #ClientBarRight {
+    /**/
+}
+
+#ClientBarCenter {
+    overflow:   scroll;
+    overflow-y: auto;
+    overflow-y: scroll;
+}

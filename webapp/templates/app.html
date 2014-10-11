@@ -1,6 +1,6 @@
 <!-- Author: Vova Zaytsev <zaytsev@usc.edu> -->
 <!DOCTYPE html>
-<html lang="en" ng-app="NlcdClient">
+<html lang="en" ng-app="MdApp">
 
   <head>
 
@@ -10,11 +10,16 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>News Life Cycle Detector</title>
+    <!-- Google Font -->
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Gentium%20Book%20Basic">
+
+    <title>&alpha; mediator</title>
 
     <!-- CSS -->
-    <link href="webapp/vendor/bs/css/bootstrap.css" rel="stylesheet">
-    <link href="webapp/css/custom.css" rel="stylesheet">
+    <link href="/webapp/vendor/bs/css/bootstrap.css" rel="stylesheet">
+    <link href="/webapp/css/custom.css" rel="stylesheet">
+    <link href="/webapp/css/client.css" rel="stylesheet">
+    <link href="/webapp/css/layout.css" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="/favicon.png">
@@ -26,7 +31,7 @@
     <![endif]-->
 
     <!-- Java Script -->
-    <script src="webapp/js/vendor/angular.min.js"></script>
+    <script src="/webapp/js/vendor/angular.min.js"></script>
 
   </head>
 
@@ -36,14 +41,14 @@
     <div id="wrap" ng-view>
 
     </div>
-    
+
     <br/>
-    
+
     <div id="footer">
       <div class="container">
         <p class="text-muted">
           <small>
-            2014 &copy; Mediator Project | 
+            2014 &copy; Mediator |
             <a href="http://zaycev.github.io/">Vova Zaytsev</a> zaytsev@usc.edu,
             <a href="http://ovchinnikova.me">Katya Ovchinnikova</a> e.ovchinnikova@gmail.com
           </small>
@@ -52,20 +57,28 @@
     </div>
 
     <!-- Angular libs -->
-    <script src="webapp/js/vendor/angular-route.min.js"></script>
-    <script src="webapp/js/vendor/angular-cookies.min.js"></script>
-    <script src="webapp/js/vendor/angular-sanitize.js"></script>
+    <script src="/webapp/js/vendor/angular-route.min.js"></script>
+    <script src="/webapp/js/vendor/angular-cookies.min.js"></script>
+    <script src="/webapp/js/vendor/angular-sanitize.min.js"></script>
 
     <!-- Other JS libs -->
-    <script src="webapp/js/vendor/d3.min.js"></script>
-    <script src="webapp/js/vendor/jquery-2.1.0.min.js"></script>
-    <script src="webapp/vendor/bs/js/bootstrap.min.js"></script>
+    <script src="/webapp/js/vendor/d3.min.js"></script>
+    <script src="/webapp/js/vendor/jquery-2.1.0.min.js"></script>
+    <script src="/webapp/vendor/bs/js/bootstrap.min.js"></script>
 
-    <!-- Angular web app -->
-    <script src="webapp/js/app.js"></script>
-    <script src="webapp/js/api/api-factory.js"></script>
-    <script src="webapp/js/client/client-controller.js"></script>
-    <script src="webapp/js/client/story-graph.js"></script>
+    <!-- Libs -->
+    <script src="/webapp/js/lib/story-api.js"></script>
+    <script src="/webapp/js/lib/story-index.js"></script>
+    <script src="/webapp/js/lib/story-document.js"></script>
+    <script src="/webapp/js/lib/story-network.js"></script>
+    <script src="/webapp/js/lib/story-timespan.js"></script>
+    <script src="/webapp/js/lib/story-heatmap.js"></script>
+    <script src="/webapp/js/lib/story-entities.js"></script>
+
+    <!-- App -->
+    <script src="/webapp/js/app.js"></script>
+    <script src="/webapp/js/api.js"></script>
+    <script src="/webapp/js/controller.js"></script>
 
   </body>
 </html>

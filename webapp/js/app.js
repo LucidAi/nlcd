@@ -4,45 +4,50 @@ Author: Vova Zaytsev <zaytsev@usc.edu>
 
 "use strict";
 
-var app = angular.module("NlcdClient", ["ngRoute", "ngSanitize"])
-    .config(["$routeProvider", "$locationProvider",
 
+var app = angular.module("MdApp", ["ngRoute", "ngSanitize"])
+    .config(["$routeProvider", "$locationProvider",
     function($routeProvider, $locationPrvioder) {
+
         $routeProvider.when("/", {
-             templateUrl: "webapp/partials/nlcd-client/client.html",
-             controller: "NlcdClientController"
+             templateUrl:   "/webapp/partials/client.html",
+             controller:    "MdClientController"
 
         });
+
         $routeProvider.otherwise({redirectTo: "/"});
 
 }]);
 
-angular.module("ng").filter("cut", function () {
-    return function (value, wordwise, max, tail) {
-        if (!value) return "";
 
-        max = parseInt(max, 10);
-        if (!max) return value;
-        if (value.length <= max) return value;
 
-        value = value.substr(0, max);
-        if (wordwise) {
-            var lastspace = value.lastIndexOf(' ');
-            if (lastspace != -1) {
-                value = value.substr(0, lastspace);
-            }
-        }
+// angular.module("ng").filter("cut", function () {
+//     return function (value, wordwise, max, tail) {
+//         if (!value) return "";
 
-        return value + (tail || " ...");
-    };
-});
+//         max = parseInt(max, 10);
+//         if (!max) return value;
+//         if (value.length <= max) return value;
 
-angular.module("ng")
-    .filter("to_trusted", ["$sce", function($sce){
-        return function(text) {
-            return $sce.trustAsHtml(text);
-        };
-    }]);
+//         value = value.substr(0, max);
+//         if (wordwise) {
+//             var lastspace = value.lastIndexOf(' ');
+//             if (lastspace != -1) {
+//                 value = value.substr(0, lastspace);
+//             }
+//         }
+
+//         return value + (tail || " ...");
+//     };
+// });
+
+
+// angular.module("ng")
+//     .filter("to_trusted", ["$sce", function($sce){
+//         return function(text) {
+//             return $sce.trustAsHtml(text);
+//         };
+//     }]);
 
 
 String.prototype.toTitleCase = function () {

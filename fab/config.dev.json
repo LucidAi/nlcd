@@ -1,0 +1,32 @@
+{
+    "APP":                      "nlcd",
+    "STAGE":                    "dev",
+    "USER":                     "root",
+    "GROUP":                    "root",
+    "ROOT":                     "/root/nlcd-dev",
+    "LOG_DIR":                  "/root/logs/dev",
+
+    "ADMIN_NAME":               "Vova Zaytsev",
+    "ADMIN_EMAIL":              "zaytsev@usc.edu",
+
+    "DJANGO_DEBUG":             "True",
+    "DJANGO_DB_NAME":           "heimt",
+    "DJANGO_DB_USER":           "odin",
+    "DJANGO_DB_PORT":           "5432",
+    "DJANGO_DB_HOST":           "localhost",
+    "DJANGO_DB_PASS":           "Cefaigfilj#twuc5",
+
+    "NGINX_PORT":               80,
+    "NGINX_SERVER_NAME":        "localhost",
+
+    "NGINX_LOG_ACCESS":         "/root/logs/dev/nginx.access.log",
+    "NGINX_LOG_ERROR":          "/root/logs/dev/nginx.error.log",
+
+    "LOGGING_DJANGO_FILE":      "/root/logs/dev/django.error.log",
+    "LOGGING_APILOG_FILE":      "/root/logs/dev/api.log",
+
+    "LOGGING_UWSGI_FILE":       "/root/logs/dev/uwsgi.log"
+
+}
+
+

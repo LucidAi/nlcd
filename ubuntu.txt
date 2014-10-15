@@ -1,0 +1,7 @@
+git
+nginx
+python
+python-dev
+python-pip
+postgresql-server-9.3
+postgresql-server-dev-9.3

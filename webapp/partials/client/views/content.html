@@ -57,9 +57,10 @@
     <span ng-repeat="chunk in paragraphMarkup.taggedText"
             ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
             ng-click="TextSelection(chunk, chunk.references)" style="font-size:18px;"><span class="tip-tooltip" ng-show="chunk.tagged" data-toggle="tooltip" data-placement="left" title="Select Cited Articles ({{chunk.references.length}})">{{chunk.text}} </span><span ng-show="!chunk.tagged">{{chunk.text}}</span><span ng-show="chunk.tagged"></span><span ng-show="chunk.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">{{chunk.references.length}}</span></span>
-    <br/><br/>
-  </p>
 
+
+
+  </p>
 
 </div>
 

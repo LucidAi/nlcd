@@ -65,6 +65,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                 return entities;
             });
 
+
             // Index articles
             storyIndex.IndexItems(storyApi.GetNodes(), "article", function(node) {
                 return [new Entity({

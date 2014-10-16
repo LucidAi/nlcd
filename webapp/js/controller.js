@@ -65,7 +65,6 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                 return entities;
             });
 
-
             // Index articles
             storyIndex.IndexItems(storyApi.GetNodes(), "article", function(node) {
                 return [new Entity({
@@ -82,9 +81,9 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             });
 
             // Index article body fragments
+            var fragmentCounter = 0;
             storyIndex.IndexItems(data.meta.markup.body, "bodyFragment", function(markupItem) {
                 var entities = [];
-                var fragmentCounter = 0;
                 for(var i in markupItem.taggedText) {
                     var fragment = markupItem.taggedText[i];
                     entities.push(new Entity({
@@ -114,12 +113,24 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                 return entities;
             });
 
+            // Group markup by paragraphs
+            var bodyFragments = [[]];
+            var j = 0;
+            for(var i in storyIndex.groups.bodyFragment) {
+                var fragment = storyIndex.groups.bodyFragment[i];
+                if (fragment.extra.paragraphEnd) {
+                    bodyFragments.push([]);
+                    j++;
+                } else {
+                    bodyFragments[j].push(fragment);
+                }
+            }
 
             $scope.meta = data.meta;
-            $scope.bodyFragments = storyIndex.groups.bodyFragment;
-            $scope.central  = centralNode;
+            $scope.bodyFragments = bodyFragments;
+            $scope.central = centralNode;
 
-            console.log($scope.bodyFragments);
+            console.log(bodyFragments);
 
 
             /**

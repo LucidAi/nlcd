@@ -12,3 +12,7 @@ ftfy
 nltk
 lz4
 django
+django-filter
+markdown
+djangorestframework
+PyJWT

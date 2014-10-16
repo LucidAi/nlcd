@@ -5,3 +5,11 @@ python-dev
 python-pip
 postgresql-server-9.3
 postgresql-server-dev-9.3
+python-numpy
+python-scipy
+python-matplotlib
+libleveldb1
+libleveldb-dev
+python-lxml
+uwsgi
+uwsgi-plugin-python

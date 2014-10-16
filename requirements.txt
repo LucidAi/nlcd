@@ -8,8 +8,7 @@ requests
 textblob
 plyvel
 langid==1.1dev
-numpy
-scipy
 ftfy
 nltk
 lz4
+django

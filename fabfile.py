@@ -46,7 +46,7 @@ def prod():
 
 
 def server():
-    env.host_string  = "104.131.81.29"
+    env.host_string  = "162.243.42.148"
     env.user         = "root"
     env.key_filename = "~/.ssh/id_rsa"
     env.local        = False
@@ -115,7 +115,7 @@ def deploy():
 
         print(green("Uploading setting.py"))
         fabric.contrib.files.upload_template("fab/settings.py",
-                                             "{path}/ldt/settings.py".format(**config),
+                                             "{path}/nlcd/settings.py".format(**config),
                                              context=context,
                                              use_jinja=True)
 

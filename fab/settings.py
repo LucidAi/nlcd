@@ -30,9 +30,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.admin",
     "rest_framework",
-    "feed",
-    "api",
-    "app",
+    "client",
 )
 
 

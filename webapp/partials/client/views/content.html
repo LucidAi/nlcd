@@ -54,11 +54,8 @@
 <div>
 
   <p ng-repeat="paragraphFragments in bodyFragments" class="text-font-serif">
-    <span ng-repeat="fragment in paragraphFragments"
-            ng-class="{taggedTextPassive: !fragment.extra.tagged, taggedTextActive: fragment.extra.tagged && !fragment.isSelected, taggedTextSelected: fragment.extra.tagged && fragment.isSelected}"
-            ng-click="SelectFragment()" style="font-size:18px;"><span class="tip-tooltip" ng-show="fragment.extra.tagged" data-toggle="tooltip" data-placement="left" title="Select Cited Articles (0)">{{fragment.name}} </span><span ng-show="!fragment.extra.tagged">{{fragment.name}}</span><span ng-show="fragment.extra.tagged"></span><span ng-show="fragment.extra.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">0</span></span>
+    <span ng-repeat="fragment in paragraphFragments" ng-class="{taggedTextPassive: !fragment.extra.tagged, taggedTextActive: fragment.extra.tagged && !fragment.isSelected, taggedTextSelected: fragment.extra.tagged && fragment.isSelected}" style="font-size:18px;"><span class="tip-tooltip" ng-show="fragment.extra.tagged" data-toggle="tooltip" data-placement="left" title="Select Cited Articles (0)" ng-click="SelectEntity(fragment.gid)">{{fragment.name}} </span><span ng-show="!fragment.extra.tagged">{{fragment.name}}</span><span ng-show="fragment.extra.tagged"></span><span ng-show="fragment.extra.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">{{fragment.ref.article.length}}</span></span>
   </p>
-
 
 </div>
 

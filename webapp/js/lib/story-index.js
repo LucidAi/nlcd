@@ -10,7 +10,8 @@ function StoryIndex(data, api) {
     this.data           = data;
     this.api            = api;
     this.items          = [];
-    this.activated      = [];
+    this.selected       = [];
+    this.related        = [];
     this.groups         = {};
     this.globalIndex    = {};
 
@@ -18,13 +19,58 @@ function StoryIndex(data, api) {
 
 
 StoryIndex.prototype.GetItem = function(globalId) {
-
+    return this.globalIndex[globalId];
 };
+
+
+StoryIndex.prototype.SelectItem = function(globalId) {
+    var entity = this.GetItem(globalId);
+    if (entity) {
+        for (var i in this.selected)
+            this.selected[i].isSelected = false;
+        for (var i in this.related)
+            this.related[i].isRelated = false;
+        this.selected = [entity];
+        entity.isSelected = true;
+        this.related = [];
+        for (var groupId in entity.ref) {
+            var groupReferences = entity.ref[groupId];
+            for (var i in groupReferences) {
+                var related = groupReferences[i];
+                related.isRelated = true;
+                this.related.push(related);
+            }
+        }
+    }
+    console.log(this.selected);
+    console.log(this.related);
+    return entity;
+}
+
 
 
 StoryIndex.prototype.FindItem = function(textQuery, extraAttrib) {
 
 };
+
+
+StoryIndex.prototype.IndexReferences = function() {
+    for (var i in this.globalIndex) {
+        var item = this.globalIndex[i];
+        for (var groupId in item.ref) {
+            var groupReferences = item.ref[groupId];
+            var indexReferences = [];
+            // TODO: filter duplicates
+            for (var k in groupReferences) {
+                var groupUnique = groupReferences[k];
+                var refItem = this.groups[groupId][groupUnique];
+                indexReferences.push(refItem);
+            }
+            item.ref[groupId] = indexReferences;
+        }
+    }
+}
+
 
 
 StoryIndex.prototype.IndexItems = function(items, groupId, mapper) {
@@ -55,7 +101,6 @@ StoryIndex.prototype.IndexItems = function(items, groupId, mapper) {
         }
     }
 };
-
 
 
 

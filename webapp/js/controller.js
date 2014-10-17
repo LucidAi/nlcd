@@ -13,14 +13,17 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
         $scope.meta    = null;       // TODO: remove this
         $scope.central = null;       // Central Node
 
+        //
+        var storyIndex;
+        var storyApi;
 
         MdApi.getTestGraph(graphId).success(function(response) {
 
             var data        = response.data;                    // Unpack data
-            var storyApi    = new StoryApi(data);               // Create API to story data
-            var storyIndex  = new StoryIndex(data, storyApi);   // Index story entities
+            storyApi    = new StoryApi(data);               // Create API to story data
+            storyIndex  = new StoryIndex(data, storyApi);   // Index story entities
             var centralNode = storyApi.GetCentralNode();        // main article
-
+            console.log(["data", data]);
 
             // Index authors
             storyIndex.IndexItems(storyApi.GetNodes(), "author", function(node) {
@@ -83,9 +86,15 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             // Index article body fragments
             var fragmentCounter = 0;
             storyIndex.IndexItems(data.meta.markup.body, "bodyFragment", function(markupItem) {
+                // console.log(["markup item", markupItem]);
                 var entities = [];
                 for(var i in markupItem.taggedText) {
                     var fragment = markupItem.taggedText[i];
+                    var articleReferences = [];
+                    for (var j in fragment.references) {
+                        var refId = fragment.references[j];
+                        articleReferences.push("story_" + String(refId));
+                    }
                     entities.push(new Entity({
                         "unique":   "fragment_" + String(++fragmentCounter),
                         "name":     fragment.text,
@@ -95,7 +104,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         },
                         "central":  true,
                         "ref": {
-                            "article": [],
+                            "article": articleReferences,
                             "source":  [],
                             "date":    []
                         }
@@ -114,6 +123,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             });
 
             // Group markup by paragraphs
+            storyIndex.IndexReferences();
             var bodyFragments = [[]];
             var j = 0;
             for(var i in storyIndex.groups.bodyFragment) {
@@ -129,9 +139,6 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             $scope.meta = data.meta;
             $scope.bodyFragments = bodyFragments;
             $scope.central = centralNode;
-
-            console.log(bodyFragments);
-
 
             /**
 
@@ -149,122 +156,135 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
         });
 
+
+        //
+
+        $scope.SelectEntity = function(entityId) {
+            var selected = storyIndex.SelectItem(entityId);
+            if (selected) {
+                alert("Selected entity " + selected.groupId + " gid=" + selected.gid);
+            } else {
+                alert("Selected entity not found.");
+            }
+        }
+
+
         return;
 
 
-        //
-        $scope.RelatedAllTabOrderBy = function(predicate) {
-            if ($scope.display.relatedTabAllPredicate == predicate) {
-                $scope.display.relatedTabAllReversed = !$scope.display.relatedTabAllReversed;
-            }
-            $scope.display.relatedTabAllPredicate = predicate;
-        }
+        // //
+        // $scope.RelatedAllTabOrderBy = function(predicate) {
+        //     if ($scope.display.relatedTabAllPredicate == predicate) {
+        //         $scope.display.relatedTabAllReversed = !$scope.display.relatedTabAllReversed;
+        //     }
+        //     $scope.display.relatedTabAllPredicate = predicate;
+        // }
 
 
-        //
-        $scope.RelatedDatesTabOrderBy = function(predicate) {
-            if ($scope.display.relatedTabDatesPredicate == predicate) {
-                $scope.display.relatedTabDatesReversed = !$scope.display.relatedTabDatesReversed;
-            }
-            $scope.display.relatedTabDatesPredicate = predicate;
-        }
+        // //
+        // $scope.RelatedDatesTabOrderBy = function(predicate) {
+        //     if ($scope.display.relatedTabDatesPredicate == predicate) {
+        //         $scope.display.relatedTabDatesReversed = !$scope.display.relatedTabDatesReversed;
+        //     }
+        //     $scope.display.relatedTabDatesPredicate = predicate;
+        // }
 
 
-        //
-        $scope.SetSelection = function(referencesList) {
+        // //
+        // $scope.SetSelection = function(referencesList) {
 
-            for (var i in $scope.selection) {
-                $scope.selection[i].inSelection = null;
-            };
-            $scope.selection = [];
-            for (var i in referencesList) {
-                var refId = referencesList[i];
-                var item = $scope.sg.getNode(refId);
-                item.inSelection = true;
-                $scope.selection.push(item);
-            };
+        //     for (var i in $scope.selection) {
+        //         $scope.selection[i].inSelection = null;
+        //     };
+        //     $scope.selection = [];
+        //     for (var i in referencesList) {
+        //         var refId = referencesList[i];
+        //         var item = $scope.sg.getNode(refId);
+        //         item.inSelection = true;
+        //         $scope.selection.push(item);
+        //     };
 
-            if (referencesList !== 0) {
-                $scope.sg.gfx.SetDistributionSelection(referencesList);
-                $scope.sg.gfx.SetNetworkSelection(referencesList);
-            }
+        //     if (referencesList !== 0) {
+        //         $scope.sg.gfx.SetDistributionSelection(referencesList);
+        //         $scope.sg.gfx.SetNetworkSelection(referencesList);
+        //     }
 
-        };
-
-
-        //
-        $scope.TextSelection = function(chunk, referencesList) {
-
-            $scope.SetSelection(0);
-
-            if ($scope.selectedDateEntry) {
-                $scope.SelectDate($scope.selectedDateEntry);
-            }
-
-            if ($scope.textSelection) {
-                $scope.textSelection.isSelected = false;
-                if ($scope.textSelection.tagId == chunk.tagId) {
-                    $scope.textSelection = null;
-                    return;
-                }
-            }
-            $scope.textSelection = chunk;
-            $scope.textSelection.isSelected = true;
-            $scope.SetSelection(referencesList);
-
-        };
+        // };
 
 
-        //
-        $scope.SelectDate = function(dateEntry) {
+        // //
+        // $scope.TextSelection = function(chunk, referencesList) {
 
-            if ($scope.textSelection) {
-                $scope.TextSelection($scope.textSelection, []);
-            }
+        //     $scope.SetSelection(0);
 
-            $scope.SetSelection(0);
+        //     if ($scope.selectedDateEntry) {
+        //         $scope.SelectDate($scope.selectedDateEntry);
+        //     }
 
-            if ($scope.selectedDateEntry == dateEntry) {
+        //     if ($scope.textSelection) {
+        //         $scope.textSelection.isSelected = false;
+        //         if ($scope.textSelection.tagId == chunk.tagId) {
+        //             $scope.textSelection = null;
+        //             return;
+        //         }
+        //     }
+        //     $scope.textSelection = chunk;
+        //     $scope.textSelection.isSelected = true;
+        //     $scope.SetSelection(referencesList);
 
-                $scope.selectedDateEntry.selected = false;
-                $scope.selectedDateEntry = null;
-
-            } else {
-
-                $scope.SetSelection(dateEntry.selection);
-
-                if ($scope.selectedDateEntry)
-                    $scope.selectedDateEntry.selected = false;
-
-                $scope.selectedDateEntry = dateEntry;
-                $scope.selectedDateEntry.selected = true;
-
-            }
+        // };
 
 
-        };
+        // //
+        // $scope.SelectDate = function(dateEntry) {
+
+        //     if ($scope.textSelection) {
+        //         $scope.TextSelection($scope.textSelection, []);
+        //     }
+
+        //     $scope.SetSelection(0);
+
+        //     if ($scope.selectedDateEntry == dateEntry) {
+
+        //         $scope.selectedDateEntry.selected = false;
+        //         $scope.selectedDateEntry = null;
+
+        //     } else {
+
+        //         $scope.SetSelection(dateEntry.selection);
+
+        //         if ($scope.selectedDateEntry)
+        //             $scope.selectedDateEntry.selected = false;
+
+        //         $scope.selectedDateEntry = dateEntry;
+        //         $scope.selectedDateEntry.selected = true;
+
+        //     }
 
 
-        //
-        $scope.toolPopoverContent = function(node) {
+        // };
 
-            var authors = node.authors.join(", ").toTitleCase();
-            var source = "";
-            var len = 10000;
-            for (var i in node.sources) {
-                if (node.sources[i].length < len) {
-                    source = node.sources[i];
-                    len = node.sources[i].length;
-                }
-            }
 
-            return "<ul><li>authror: "
-                   + authors
-                   + "</li><li>source: "
-                   + source
-                   + "</li></ul><p><small>"
-                   + String.prototype.CutStr(node.body, true, 256, "...")
-                   + "</small><p>";
-        }
+        // //
+        // $scope.toolPopoverContent = function(node) {
+
+        //     var authors = node.authors.join(", ").toTitleCase();
+        //     var source = "";
+        //     var len = 10000;
+        //     for (var i in node.sources) {
+        //         if (node.sources[i].length < len) {
+        //             source = node.sources[i];
+        //             len = node.sources[i].length;
+        //         }
+        //     }
+
+        //     return "<ul><li>authror: "
+        //            + authors
+        //            + "</li><li>source: "
+        //            + source
+        //            + "</li></ul><p><small>"
+        //            + String.prototype.CutStr(node.body, true, 256, "...")
+        //            + "</small><p>";
+        // }
 
 }]);

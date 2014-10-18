@@ -8,14 +8,16 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
         // Get node ID from URL parameters
         var graphId = $location.search().g;
-        if (!graphId) graphId = "5"; // Default
+        if (!graphId) graphId = "1_1"; // Default
 
-        $scope.meta    = null;       // TODO: remove this
-        $scope.central = null;       // Central Node
+        $scope.meta         = null;       // TODO: remove this
+        $scope.central      = null;       // Central Node
+        $scope.filterQuery  = "";
 
         //
         var storyIndex;
         var storyApi;
+        var layout = new StoryLayout();
 
         MdApi.getTestGraph(graphId).success(function(response) {
 
@@ -36,8 +38,8 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         "extra":    {},
                         "central":  node.refId == centralNode.refId,
                         "ref": {
-                            "article": [],
-                            "source":  [],
+                            "article": ["article_" + String(node.refId)],
+                            "source":  [].concat(node.sources),
                             "date":    []
                         }
                     });
@@ -71,7 +73,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             // Index articles
             storyIndex.IndexItems(storyApi.GetNodes(), "article", function(node) {
                 return [new Entity({
-                    "unique":   "story_" + String(node.refId),
+                    "unique":   "article_" + String(node.refId),
                     "name":     node.title,
                     "extra":    node,
                     "central":  node.refId == centralNode.refId,
@@ -86,14 +88,18 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             // Index article body fragments
             var fragmentCounter = 0;
             storyIndex.IndexItems(data.meta.markup.body, "bodyFragment", function(markupItem) {
-                // console.log(["markup item", markupItem]);
                 var entities = [];
                 for(var i in markupItem.taggedText) {
                     var fragment = markupItem.taggedText[i];
                     var articleReferences = [];
+                    var authorReferences = [].concat(centralNode.authors);
                     for (var j in fragment.references) {
                         var refId = fragment.references[j];
-                        articleReferences.push("story_" + String(refId));
+                        var article = storyApi.GetNode(refId);
+                        for (var k in article.authors) {
+                            authorReferences.push(article.authors[k]);
+                        }
+                        articleReferences.push("article_" + String(refId));
                     }
                     entities.push(new Entity({
                         "unique":   "fragment_" + String(++fragmentCounter),
@@ -105,6 +111,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         "central":  true,
                         "ref": {
                             "article": articleReferences,
+                            "author": authorReferences,
                             "source":  [],
                             "date":    []
                         }
@@ -138,7 +145,10 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
             $scope.meta = data.meta;
             $scope.bodyFragments = bodyFragments;
+            $scope.authors = storyIndex.Group("author");
             $scope.central = centralNode;
+
+            console.log($scope.authors);
 
             /**
 
@@ -161,12 +171,10 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
         $scope.SelectEntity = function(entityId) {
             var selected = storyIndex.SelectItem(entityId);
-            if (selected) {
-                alert("Selected entity " + selected.groupId + " gid=" + selected.gid);
-            } else {
-                alert("Selected entity not found.");
-            }
         }
+
+
+        $scope.tableAPI = layout.tableAPI;
 
 
         return;

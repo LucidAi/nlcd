@@ -4,7 +4,37 @@
  *
  */
 
-function MdDocument() {
+function TableAPI () {
+
+    this.sort = {
+
+        articleR:   false,
+        articleP:   "name",
+
+        sourceR:    false,
+        sourceP:    "name",
+
+        authorR:    false,
+        authorP:    "name"
+
+    };
+
+}
+
+TableAPI.prototype.OrderBy = function(table, predicate) {
+    if (this.sort[table + "P"] == predicate) {
+        this.sort[table + "R"] = !this.sort[table + "R"];
+    }
+    this.sort[table + "P"] = predicate;
+};
+
+TableAPI.prototype.textFilter = function(actual, expected) {
+    console.log([actual, expected]);
+    return true;
+};
+
+
+function StoryLayout() {
 
     // Resize center content;
     var clientBarCenterTopMargin = 70;
@@ -26,5 +56,8 @@ function MdDocument() {
         "animation":    true,
         "selector":     ".tip-tooltip"
     });
+
+    // Init table API functions
+    this.tableAPI = new TableAPI();
 
 }

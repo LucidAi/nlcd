@@ -23,26 +23,35 @@ StoryIndex.prototype.GetItem = function(globalId) {
 };
 
 
+StoryIndex.prototype.Group = function(groupId) {
+    var group = [];
+    for (var i in this.groups[groupId])
+        group.push(this.groups[groupId][i]);
+    return group;
+};
+
+
 StoryIndex.prototype.SelectItem = function(globalId) {
     var entity = this.GetItem(globalId);
+    var deselect = this.selected.length > 0 && (entity.gid == this.selected[0].gid);
     if (entity) {
         for (var i in this.selected)
             this.selected[i].isSelected = false;
         for (var i in this.related)
             this.related[i].isRelated = false;
-        this.selected = [entity];
-        entity.isSelected = true;
+        this.selected = deselect ? [] : [entity];
+        entity.isSelected = !deselect;
         this.related = [];
-        for (var groupId in entity.ref) {
-            var groupReferences = entity.ref[groupId];
-            for (var i in groupReferences) {
-                var related = groupReferences[i];
-                related.isRelated = true;
-                this.related.push(related);
+        if (!deselect)
+            for (var groupId in entity.ref) {
+                var groupReferences = entity.ref[groupId];
+                for (var i in groupReferences) {
+                    var related = groupReferences[i];
+                    related.isRelated = true;
+                    this.related.push(related);
+                }
             }
-        }
     }
-    console.log(this.selected);
     console.log(this.related);
     return entity;
 }
@@ -55,6 +64,19 @@ StoryIndex.prototype.FindItem = function(textQuery, extraAttrib) {
 
 
 StoryIndex.prototype.IndexReferences = function() {
+    for (var i in this.globalIndex) {
+        var item = this.globalIndex[i];
+        for (var groupId in item.ref) {
+            var groupReferences = item.ref[groupId];
+            for (var k in groupReferences) {
+                var groupUnique = groupReferences[k];
+                var refItem = this.groups[groupId][groupUnique];
+                if (!refItem.ref[item.groupId])
+                    refItem.ref[item.groupId] = [];
+                refItem.ref[item.groupId].push(item.unique)
+            }
+        }
+    }
     for (var i in this.globalIndex) {
         var item = this.globalIndex[i];
         for (var groupId in item.ref) {
@@ -82,7 +104,6 @@ StoryIndex.prototype.IndexItems = function(items, groupId, mapper) {
         for (var j in entities) {
             var entity = entities[j];
             var isSeen = Boolean(this.groups[groupId][entity.unique]);
-
             if (!isSeen) {
                 var globalId = Object.keys(this.globalIndex).length;
                 entity.gid = globalId;
@@ -91,11 +112,13 @@ StoryIndex.prototype.IndexItems = function(items, groupId, mapper) {
                 this.groups[groupId][entity.unique] = entity;
             }
             else {
-                for (var key in entity.ref) {
-                    console.log("TODO: merge references");
-                    // If object with the same `unique` occurred twice
-                    // add its references to the existing index entry's
-                    // references list
+                var newRef = entity.ref;
+                entity = this.groups[groupId][entity.unique];
+                for (var key in newRef) {
+                    if (entity.ref[key])
+                        entity.ref[key] = d3.set(entity.ref[key].concat(newRef[key])).values();
+                    else
+                        entity.ref[key] = newRef[key];
                 }
             }
         }

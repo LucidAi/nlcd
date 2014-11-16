@@ -1,9 +1,27 @@
-#ClientBarLeft, #ClientBarRight {
-    /**/
+
+/*   */
+
+.Component {
+    border: black 1px solid;
+    height:236px;
+    margin-bottom: 16px;
 }
 
-#ClientBarCenter {
+
+/*
+*/
+
+#ClientBarCenter, #ArticlesTableComponent, #AuthorsTableComponent, #SourcesTableComponent {
     overflow:   scroll;
     overflow-y: auto;
     overflow-y: scroll;
+}
+
+#RightBar, .Component {
+    margin-bottom: 8px;
+    height:226px;
+}
+
+#TextFilter {
+    margin-bottom: 8px;
 }

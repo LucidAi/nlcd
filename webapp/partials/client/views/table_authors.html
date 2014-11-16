@@ -1,0 +1,47 @@
+<table class="table table-condensed table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th ng-click="tableAPI.OrderBy('author', 'name')" style="cursor:pointer;">
+                Author
+                <span ng-show="tableAPI.sort.authorP == 'name'">
+                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                </span>
+            </th>
+            <th ng-click="tableAPI.OrderBy('author', 'ref.source.length')" style="cursor:pointer;">
+                Sources
+                <span ng-show="tableAPI.sort.authorP == 'ref.source.length'">
+                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                </span>
+            </th>
+            <th ng-click="tableAPI.OrderBy('author', 'ref.article.length')" style="cursor:pointer;">
+                Articles
+                <span ng-show="tableAPI.sort.authorP == 'ref.article.length'">
+                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                </span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="entity in authors | filter : {name: filterQuery} | orderBy : tableAPI.sort.authorP : tableAPI.sort.authorR"
+            ng-class="{danger: entity.isSelected, info: entity.isRelated}">
+            <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="TODO" style="cursor:pointer;">
+                <span>
+                    {{entity.name}}
+                </span>
+            </td>
+            <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+                <span>
+                    {{entity.ref.source.length}}
+                </span>
+            </td>
+            <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+                <span>
+                    {{entity.ref.article.length}}
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>

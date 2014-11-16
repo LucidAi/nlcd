@@ -6,7 +6,7 @@
 
 app.factory("MdApi", ["$http", "$location",
     function($http, $location) {
-
+                
         return {
 
             getTestGraph: function(graphId) {

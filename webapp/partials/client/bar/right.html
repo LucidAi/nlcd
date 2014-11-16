@@ -1,5 +1,28 @@
-<input type="text" class="form-control" ng-model="filterQuery">
+<div id="RightBar" class="ClientBar">
 
-<div ng-include="'/webapp/partials/client/views/table_articles.html'">
+    <div id="TextFilter">
+        <input type="text" class="form-control" ng-model="filterQuery">
+    </div>
+
+    <div id="RightPanel_1" class="BarPanel RightBarPanel">
+        <div id="ArticlesTableComponent" class="Component">
+            <div ng-include="'/webapp/partials/client/views/table_articles.html'">
+            </div>
+        </div>
+    </div>
+
+    <div id="RightPanel_2" class="BarPanel RightBarPanel">
+        <div id="AuthorsTableComponent" class="Component">
+            <div ng-include="'/webapp/partials/client/views/table_authors.html'">
+            </div>
+        </div>
+    </div>
+
+    <div id="RightPanel_3" class="BarPanel RightBarPanel">
+        <div id="SourcesTableComponent" class="Component">
+            <div ng-include="'/webapp/partials/client/views/table_sources.html'">
+            </div>
+        </div>
+    </div>
 
 </div>

@@ -13,8 +13,9 @@ function StoryApi(data) {
      */
 
     this.data = data;
+    this.dateAPI = new DateAPI(data, this);
 
-};
+}
 
 
 //
@@ -24,7 +25,7 @@ StoryApi.prototype.GetNode = function(nodeId) {
      *
      */
     return this.data.nodes[nodeId];
-}
+};
 
 
 //
@@ -36,7 +37,7 @@ StoryApi.prototype.GetNodes = function() {
 
     return d3.values(this.data.nodes);
 
-}
+};
 
 
 //
@@ -50,14 +51,24 @@ StoryApi.prototype.GetCentralNode = function() {
 
      return this.GetNode(centralNodeId);
 
-}
+};
+
+
+//
+StoryApi.prototype.GetDates = function () {
+
+};
+
+
+
+
 
 
 
 // //
 // StoryGraph.prototype.computeDistribution = function() {
 
-//     this.distr = new StoryDistribution(this);
+//     this.distr = new DateAPI(this);
 
 
 // }
@@ -74,12 +85,12 @@ StoryApi.prototype.GetCentralNode = function() {
 //     var ticks = 7;
 //     var data = [];
 //     var dates = this.distr.getDateRange();
-//     var l = this.distr.str2Date(this.distr.lD);
-//     var f = this.distr.str2Date(this.distr.fD);
+//     var l = this.distr.Str2Date(this.distr.lD);
+//     var f = this.distr.Str2Date(this.distr.fD);
 
 //     for (var i in dates)
 //         data.push({
-//             "key": this.distr.str2Date(dates[i]),
+//             "key": this.distr.Str2Date(dates[i]),
 //             "value": this.distr.getDistrValue(dates[i])
 //         });
 
@@ -174,7 +185,7 @@ StoryApi.prototype.GetCentralNode = function() {
 //             var refId = referencesList[i];
 //             var node = sg.getNode(refId);
 //             if (node.pubDate) {
-//                 var start = sg.distr.str2Date(node.pubDate);
+//                 var start = sg.distr.Str2Date(node.pubDate);
 //                 var end = sg.distr.addDays(start, 2);
 //                 start = sg.distr.addDays(start, -2);
 //                 dates.push({
@@ -364,7 +375,7 @@ StoryApi.prototype.GetCentralNode = function() {
 
 // //
 // function StoryNode(node, sg, config, height, width) {
-//     this.boxX = node.pubDate? sg.gfx.xScale(sg.distr.str2Date(node.pubDate)) : width / 2;
+//     this.boxX = node.pubDate? sg.gfx.xScale(sg.distr.Str2Date(node.pubDate)) : width / 2;
 //     this.boxY = height / 2;
 //     this.index = node.refId;
 //     this.radius = config.radius;
@@ -380,153 +391,100 @@ StoryApi.prototype.GetCentralNode = function() {
 // };
 
 
-// //
-// function StoryDistribution(storyGraph, dateMargins, topK) {
+//
+function DateAPI(data, api, dateMargin) {
 
-//     if (!topK)
-//         topK = 6;
+    if (!dateMargin) dateMargin = 7;
 
-//     this.sg = storyGraph;
-//     this.str2Date = d3.time.format("%Y.%m.%d").parse;
-//     this.date2Str = d3.time.format("%Y.%m.%d")
+    this.api                = api;
+    this.data               = data;
+    this.Str2Date           = d3.time.format("%Y.%m.%d").parse;
+    this.Date2Str           = d3.time.format("%Y.%m.%d");
+    this.dates              = [];
+    this.datesDistr         = {};
+    this.datesDistrList     = [];
 
-//     this.dates = [];
-//     this.dateNodes = [];
-//     this.average = 0.0;
+    // Extract dates from data
+    var nodes = this.api.GetNodes();
+    for (var i in nodes) {
+        var node = nodes[i];
+        if (node.pubDate) {
+            this.dates.push(node.pubDate);
+            if (node.pubDate in this.datesDistr)
+                this.datesDistr[node.pubDate] += 1;
+            else
+                this.datesDistr[node.pubDate] = 1;
+        }
+    }
+    this.dates = d3.set(this.dates).values();
+    this.dates = this.dates.sort(d3.ascending);
+    for (var i in this.dates) {
+        var pubDate = this.dates[i];
+        this.datesDistrList.push({
+            "pubDate":  pubDate,
+            "freq":     this.datesDistr[pubDate]
+        });
+    }
 
-//     for (var i in this.sg.data.nodes) {
-//         var node = this.sg.data.nodes[i];
-//         var pd = node.pubDate;
-//         if (pd) {
+    // Remember first and the last dates
+    this.first              = d3.min(this.dates);
+    this.last               = d3.max(this.dates);
 
-//             if (this.dateNodes[pd])
-//                 this.dateNodes[pd].push(node)
-//             else {
-//                 this.dateNodes[pd] = [node];
-//                 this.dates.push(pd);
-//             }
-//         }
-//     }
+    var first = this.Str2Date(this.first);
+    var last = this.Str2Date(this.last);
 
-//     console.log(this.dateNodes);
+    this.allDates           = this.DateRange(first, last);
+    this.allDatesDistr      = {};
+    this.allDatesDistrList  = [];
 
-//     var datesNumber = 0;
-//     for (var d in this.dateNodes) {
-//         this.average += this.dateNodes[d].length;
-//         datesNumber += 1;
-//     }
-//     this.average /= datesNumber;
-
-//     this.firstDate = d3.min(this.dates);
-//     this.lastDate = d3.max(this.dates);
-
-//     if(!dateMargins) {
-//         var first = this.str2Date(this.firstDate);
-//         var last = this.str2Date(this.lastDate);
-//         dateMargins = this.daysDiff(first, last) / 10;
-//     }
-
-//     this.fD = this.date2Str(this.addDays(this.str2Date(this.firstDate), -dateMargins));
-//     this.lD = this.date2Str(this.addDays(this.str2Date(this.lastDate), +dateMargins));
-
-//     this.referenceTop = {};
-//     for (var i in this.sg.data.nodes) {
-//         var node = this.sg.data.nodes[i];
-//         var pd = node.pubDate;
-//         var rc = node.referenceCount;
-//         if (pd && !this.referenceTop[pd] || (this.referenceTop[pd] && this.referenceTop[pd].rc < rc)) {
-//             this.referenceTop[pd] = {"rc": rc, "pd": pd, "node": node};
-//         }
-//     }
-
-//     this.topK = {};
-//     var topNodes = [];
-//     for (var pd in this.referenceTop)
-//         topNodes.push(this.referenceTop[pd]);
-
-//     topNodes.sort(function(a, b) {
-//         if(a.rc > b.rc) return -1;
-//         if(a.rc < b.rc) return 1;
-//         return 0;
-//     });
-
-//     this.topK = topNodes.slice(0, topK);
-//     this.topKIndeces = [];
-//     for (var i in this.topK)
-//         this.topKIndeces.push(this.topK[i].node.refId);
-
-//     this.dateDistr = [];
-//     for (var i in this.dates) {
-
-//         var date = this.dates[i];
-//         var nodes = this.dateNodes[date];
-
-//         if (node) {
-
-//             var selection = [];
-//             for (var j in nodes)
-//                 selection.push(nodes[j].refId);
-
-//             this.dateDistr.push({
-//                 "date": date,
-//                 "nodes": nodes,
-//                 "selected": false,
-//                 "selection": selection,
-//                 "documentsCount": this.dateNodes[date].length
-//             })
-
-//         }
-//     }
-// };
+    for (var i in this.allDates) {
+        var pubDate = this.allDates[i];
+        if (pubDate in this.datesDistr) {
+            this.allDatesDistr[pubDate] = this.datesDistr[pubDate];
+            this.allDatesDistrList.push({
+                "pubDateStr"    : pubDate,
+                "pubDate"       : this.Str2Date(pubDate),
+                "freq"          : this.datesDistr[pubDate]
+            });
+        } else {
+            this.allDatesDistr[pubDate] = 0;
+            this.allDatesDistrList.push({
+                "pubDateStr"    : pubDate,
+                "pubDate"       : this.Str2Date(pubDate),
+                "freq"          : 0
+            });
+        }
+    }
+}
 
 
-// //
-// StoryDistribution.prototype.SelectTopFrom = function(sgNodeSubset, k) {
-
-//     k = Math.min(k, sgNodeSubset.length);
-//     if (k == 0)
-//         return [];
-
-//     this.nodeArray = [];
-
-// };
+//
+DateAPI.prototype.AddDays = function(date, deltaDays) {
+     var dat = new Date(date.valueOf());
+     dat.setDate(dat.getDate() + deltaDays);
+     return dat;
+};
 
 
-// //
-// StoryDistribution.prototype.addDays = function(date, deltaDays) {
-//     var dat = new Date(date.valueOf());
-//     dat.setDate(dat.getDate() + deltaDays);
-//     return dat;
-// };
+//
+DateAPI.prototype.DateRange = function(start, end) {
+     var dateArray = [];
+     var currentDate = start;
+     while (currentDate <= end) {
+         dateArray.push(this.Date2Str(new Date(currentDate)));
+         currentDate = this.AddDays(currentDate, 1);
+     }
+     return dateArray;
+};
 
 
-// //
-// StoryDistribution.prototype.dateRange = function(start, end) {
-//     var dateArray = [];
-//     var currentDate = start;
-//     while (currentDate <= end) {
-//         dateArray.push(this.date2Str(new Date(currentDate)));
-//         currentDate = this.addDays(currentDate, 1);
-//     }
-//     return dateArray;
-// };
+//
+DateAPI.prototype.GetDateRange = function() {
+     return this.DateRange(this.Str2Date(this.first), this.Str2Date(this.last));
+};
 
 
-// //
-// StoryDistribution.prototype.getDistrValue = function(date) {
-//     if (this.dateNodes[date])
-//         return this.dateNodes[date].length;
-//     return 0;
-// };
-
-
-// //
-// StoryDistribution.prototype.getDateRange = function() {
-//     return this.dateRange(this.str2Date(this.fD), this.str2Date(this.lD));
-// };
-
-
-// //
-// StoryDistribution.prototype.daysDiff = function(first, second) {
-//     return (second-first)/(1000*60*60*24);
-// };
+//
+DateAPI.prototype.DaysDiff = function(first, second) {
+     return (second-first) / (1000*60*60*24);
+};

@@ -137,6 +137,6 @@ function Entity(options) {
 
     this.isSelected     = false;
     this.isRelated      = false;
-    this.ref            = options.ref
+    this.ref            = options.ref;
 
 }

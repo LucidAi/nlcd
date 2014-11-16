@@ -8,7 +8,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
         // Get node ID from URL parameters
         var graphId = $location.search().g;
-        if (!graphId) graphId = "1_1"; // Default
+        if (!graphId) graphId = "1_0"; // Default
 
         $scope.meta         = null;       // TODO: remove this
         $scope.central      = null;       // Central Node
@@ -160,16 +160,13 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
 
             $scope.$evalAsync(function() {
-                layout.AddComponent(storyTimespan, "TimespanComponent",
+                layout.AddComponent(storyTimespan, "TestTimespan",
                     function (wW, pW) {
-                        return 400;
-                        /*pW;*/
+                        return pW;
                     },
                     function (wH, pH) {
                         return 400;
-                        /*wH / 3;*/
                     });
-
                 layout.RenderComponents();
             });
 

@@ -81,7 +81,7 @@ StoryLayout.prototype.RenderComponents = function() {
 
 StoryLayout.prototype.AddComponent = function(component, placeId, widthFunc, heightFunc) {
 
-    var place = $("#placeId");
+    var place = $("#" + placeId);
 
     this.components.push(function(wW, wH) {
 

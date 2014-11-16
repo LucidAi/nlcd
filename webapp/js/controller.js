@@ -61,7 +61,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         "extra":    {},
                         "central":  node.refId == centralNode.refId,
                         "ref": {
-                            "article": [],
+                            "article": ["article_" + String(node.refId)],
                             "source":  [],
                             "date":    []
                         }
@@ -79,7 +79,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                     "extra":    node,
                     "central":  node.refId == centralNode.refId,
                     "ref": {
-                        "article": [],
+                        "article": ["article_" + String(node.refId)],
                         "source":  [],
                         "date":    []
                     }
@@ -94,11 +94,15 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                     var fragment = markupItem.taggedText[i];
                     var articleReferences = [];
                     var authorReferences = [].concat(centralNode.authors);
+                    var sourceReferences = [];
                     for (var j in fragment.references) {
                         var refId = fragment.references[j];
                         var article = storyApi.GetNode(refId);
                         for (var k in article.authors) {
                             authorReferences.push(article.authors[k]);
+                        }
+                        for (var k in article.sources) {
+                            sourceReferences.push(article.sources[k]);
                         }
                         articleReferences.push("article_" + String(refId));
                     }
@@ -111,10 +115,10 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         },
                         "central":  true,
                         "ref": {
-                            "article": articleReferences,
-                            "author": authorReferences,
-                            "source":  [],
-                            "date":    []
+                            "article":  articleReferences,
+                            "author":   authorReferences,
+                            "source":   sourceReferences,
+                            "date":     []
                         }
                     }));
                 }

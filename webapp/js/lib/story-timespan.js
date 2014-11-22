@@ -5,17 +5,68 @@
  */
 
 
-function StoryTimespan(data, api, index) {
+function StoryTimespan(data, api, index, $scope) {
     this.data       = data;
     this.index      = index;
     this.api        = api;
+
+    var distr       = this.api.dateAPI.allDatesDistrList;
+    var values      = [];
+    var dateFormat  = d3.time.format("%x");
+
+    for (var i in distr) {
+        values.push({
+            "x": distr[i].pubDate,
+            "y": distr[i].freq
+        });
+    }
+
+    this.timespanData   = [{
+        "key"       : "News Distribution",
+        "values"    : values
+    }];
+    this.timespanOptions = {
+        chart: {
+            type: "lineWithFocusChart",
+            height: 256,
+            margin: {
+                top: 24,
+                right: 24,
+                bottom: 30,
+                left: 24
+            },
+            transitionDuration: 0,
+            xAxis: {
+                axisLabel: "Date",
+                tickFormat: function (d) {
+                    return dateFormat(new Date(d));
+                }
+            },
+            x2Axis: {
+                tickFormat: function (d) {
+                    return dateFormat(new Date(d));
+                }
+            },
+            yAxis: {
+                axisLabel: "Articles",
+                tickFormat: function (d) {
+                    return d;
+                },
+                rotateYLabel: false
+            },
+            y2Axis: {
+                tickFormat: function (d) {
+                    return d;
+                }
+            }
+
+        }
+    };
+
+    $scope.timespanData = this.timespanData;
+    $scope.timespanOptions = this.timespanOptions;
+
 }
-
-
-//
-StoryTimespan.prototype.ComputeDistribution = function() {
-
-};
 
 
 //
@@ -28,31 +79,8 @@ StoryTimespan.prototype.Resize = function(placeId, place, width, height, radius,
 //
 StoryTimespan.prototype.RenderDistribution = function(placeId, place, width, height, radius, ticks) {
 
-    place.html("");
+    console.log(height);
 
-    var data = this.api.dateAPI.allDatesDistrList;
-    var small = {};
-    small.width = width;
-    small.height = height;
-    small.left = 20;
-    small.right = 20;
-    small.top = 20;
-    small.xax_count = 5;
-
-    data_graphic({
-        title: "Timespan",
-        description: "Description",
-        data: data,
-        width: small.width,
-        height: small.height,
-        right: small.right,
-        top: small.top,
-        xax_count: 4,
-        target: "#" + placeId,
-        x_accessor: "pubDate",
-        y_accessor: "freq",
-        animate_on_load: true
-    });
-
+    this.timespanOptions.chart.height = height;
 
 };

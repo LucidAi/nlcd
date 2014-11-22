@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="Vova Zaytsev <zaytsev@usc.edu>">
 
     <!-- Google Font -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Gentium%20Book%20Basic">
@@ -17,8 +17,10 @@
 
     <!-- Bootstrap -->
     <link href="/webapp/vendor/bs/css/bootstrap.css" rel="stylesheet">
-    <!-- Metrics -->
-    <link href="/webapp/vendor/metrics/css/metricsgraphics.css" rel="stylesheet">
+
+    <!-- NV3 -->
+    <link href="/webapp/vendor/nv3/nv.d3.min.css" rel="stylesheet">
+
     <!-- NLCD -->
     <link href="/webapp/css/custom.css" rel="stylesheet">
     <link href="/webapp/css/client.css" rel="stylesheet">
@@ -27,26 +29,14 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="/favicon.png">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="/static/js/vendor/html5shiv.js"></script>
-      <script src="/static/js/vendor/respond.min.js"></script>
-    <![endif]-->
-
     <!-- Java Script -->
-    <script src="/webapp/js/vendor/angular.min.js"></script>
+    <script src="/webapp/vendor/angular/angular.min.js"></script>
 
   </head>
 
   <body>
 
-
-    <div id="TEST"></div>
-
-
-    <div id="wrap" ng-view>
-
-    </div>
+    <div id="wrap" ng-view></div>
 
     <br/>
 
@@ -62,39 +52,17 @@
       </div>
     </div>
 
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">
-          <small>
-            Tshh! Secret level!
-          </small>
-        </p>
-      </div>
-    </div>
-
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-
-    <div id="TestTimespan">
-
-    </div>
+    <!-- Some JS libs -->
+    <script src="/webapp/vendor/jquery-2.1.0.min.js"></script>
+    <script src="/webapp/vendor/d3.min.js"></script>
+    <script src="/webapp/vendor/nv3/nv.d3.min.js"></script>
+    <script src="/webapp/vendor/bs/js/bootstrap.min.js"></script>
 
     <!-- Angular libs -->
-    <script src="/webapp/js/vendor/angular-route.min.js"></script>
-    <script src="/webapp/js/vendor/angular-cookies.min.js"></script>
-    <script src="/webapp/js/vendor/angular-sanitize.min.js"></script>
-
-    <!-- Other JS libs -->
-    <script src="/webapp/js/vendor/jquery-2.1.0.min.js"></script>
-    <script src="/webapp/js/vendor/d3.js"></script>
-    <script src="/webapp/vendor/bs/js/bootstrap.min.js"></script>
-    <script src="/webapp/vendor/metrics/js/metricsgraphics.min.js"></script>
+    <script src="/webapp/vendor/angular/angular-route.min.js"></script>
+    <script src="/webapp/vendor/angular/angular-cookies.min.js"></script>
+    <script src="/webapp/vendor/angular/angular-sanitize.min.js"></script>
+    <script src="/webapp/vendor/angular/angular-nvd3.min.js"></script>
 
     <!-- Libs -->
     <script src="/webapp/js/lib/story-api.js"></script>

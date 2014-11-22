@@ -6,9 +6,9 @@
 app.controller("MdClientController", ["$scope", "$location", "MdApi",
     function ($scope, $location, MdApi) {
 
-        // Get node ID from URL parameters
+        // Get node ID from URL parameters.
         var graphId = $location.search().g;
-        if (!graphId) graphId = "1_0"; // Default
+        if (!graphId) graphId = "3"; // Default
 
         $scope.meta         = null;       // TODO: remove this
         $scope.central      = null;       // Central Node
@@ -25,7 +25,6 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             var data        = response.data;                                    // unpack data
             storyApi        = new StoryApi(data);                               // create API to story data
             storyIndex      = new StoryIndex(data, storyApi);                   // index story entities
-            storyTimespan   = new StoryTimespan(data, storyApi, storyIndex);    // create story timespan
             var centralNode = storyApi.GetCentralNode();                        // main article
 
             // Index authors
@@ -111,7 +110,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                         "name":     fragment.text,
                         "extra":    {
                             "tagged": fragment.tagged,
-                            "paragraphEnd": false,
+                            "paragraphEnd": false
                         },
                         "central":  true,
                         "ref": {
@@ -156,17 +155,17 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
             $scope.central          = centralNode;
 
 
-            storyTimespan.ComputeDistribution();
-
-
             $scope.$evalAsync(function() {
+
+                storyTimespan   = new StoryTimespan(data, storyApi, storyIndex, $scope);
+
                 layout = new StoryLayout();
-                layout.AddComponent(storyTimespan, "TestTimespan",
+                layout.AddComponent(storyTimespan, "TimespanComponent",
                     function (wW, pW) {
                         return pW;
                     },
                     function (wH, pH) {
-                        return 400;
+                        return pH;
                     });
                 layout.ResizeContainers();
                 layout.RenderComponents();

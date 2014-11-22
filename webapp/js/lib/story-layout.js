@@ -73,7 +73,6 @@ StoryLayout.prototype.ResizeContainers = function () {
     var windowHeight = $(window).height();
     var leftMargin = this.leftMargin;
     var rightMargin = this.rightMargin;
-
     this.leftComponents.each(function() {
         $(this).height((windowHeight - leftMargin) / 3);
     });
@@ -86,33 +85,21 @@ StoryLayout.prototype.ResizeContainers = function () {
 StoryLayout.prototype.RenderComponents = function() {
     var windowHeight = $(window).height();
     var windowWidth = $(window).width();
-
     this.clientBarCenter.height(windowHeight - this.clientBarCenterTopMargin);
-
     for (var i in this.components) {
-
         var resizeComponent = this.components[i];
-
         resizeComponent(windowHeight, windowWidth);
-
     }
 };
 
 
-StoryLayout.prototype.AddComponent = function(component, placeId, widthFunc, heightFunc) {
-
+StoryLayout.prototype.AddComponent = function (component, placeId, widthFunc, heightFunc) {
     var place = $("#" + placeId);
-
-    this.components.push(function(wW, wH) {
-
-            var pW = place.width();
-            var pH = place.height();
-
-            var width = widthFunc(wW, pW);
-            var height = heightFunc(wH, pH);
-
-            component.Resize(placeId, place, width, height);
-
+    this.components.push(function (wW, wH) {
+        var pW = place.width();
+        var pH = place.height();
+        var width = widthFunc(wW, pW);
+        var height = heightFunc(wH, pH);
+        component.Resize(placeId, place, width, height);
     });
-
 };

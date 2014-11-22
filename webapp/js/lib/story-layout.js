@@ -55,17 +55,37 @@ function StoryLayout() {
 
     // Components to resize.
     this.components = [];
+    this.leftComponents = $("#LeftBar .Component");
+    this.rightComponents = $("#RightBar .Component");
+    this.leftMargin = 36 + 8 * 2 + 48;
+    this.rightMargin = 78 + 8 * 2 + 48;
 
     var layout = this;
+
     $(window).resize(function() {
+        layout.ResizeContainers();
         layout.RenderComponents();
     });
 }
 
 
+StoryLayout.prototype.ResizeContainers = function () {
+    var windowHeight = $(window).height();
+    var leftMargin = this.leftMargin;
+    var rightMargin = this.rightMargin;
+
+    this.leftComponents.each(function() {
+        $(this).height((windowHeight - leftMargin) / 3);
+    });
+    this.rightComponents.each(function() {
+        $(this).height((windowHeight - rightMargin) / 3);
+    });
+};
+
+
 StoryLayout.prototype.RenderComponents = function() {
     var windowHeight = $(window).height();
-    var windowWidth = $(window).width()
+    var windowWidth = $(window).width();
 
     this.clientBarCenter.height(windowHeight - this.clientBarCenterTopMargin);
 

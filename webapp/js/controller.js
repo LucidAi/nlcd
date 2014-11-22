@@ -18,7 +18,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
         var storyIndex;
         var storyApi;
         var storyTimespan;
-        var layout = new StoryLayout();
+        var layout;
 
         MdApi.getTestGraph(graphId).success(function(response) {
 
@@ -160,6 +160,7 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
 
 
             $scope.$evalAsync(function() {
+                layout = new StoryLayout();
                 layout.AddComponent(storyTimespan, "TestTimespan",
                     function (wW, pW) {
                         return pW;
@@ -167,19 +168,15 @@ app.controller("MdClientController", ["$scope", "$location", "MdApi",
                     function (wH, pH) {
                         return 400;
                     });
+                layout.ResizeContainers();
                 layout.RenderComponents();
+                $scope.tableAPI = layout.tableAPI;
             });
-
-
-
 
 
             $scope.SelectEntity = function(entityId) {
                 storyIndex.SelectItem(entityId);
             };
-
-
-            $scope.tableAPI = layout.tableAPI;
 
         });
 

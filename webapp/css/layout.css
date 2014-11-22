@@ -17,6 +17,10 @@
     overflow-y: scroll;
 }
 
+#RightBar, #LeftBar {
+    padding-top: 16px;
+}
+
 #RightBar, .Component {
     margin-bottom: 8px;
     height:226px;
@@ -24,4 +28,16 @@
 
 #TextFilter {
     margin-bottom: 8px;
+}
+
+
+#ClientBarCenter {
+}
+
+#HeadContainer {
+    margin-right: 0;
+    margin-left:  0;
+    -webkit-box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
+    -moz-box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
+    box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
 }

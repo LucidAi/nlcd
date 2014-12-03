@@ -46,3 +46,10 @@
 .table > tbody > tr.danger > td {
     background: #ffb7b7;
 }
+
+
+
+.extent {
+    background: black;
+    fill: black;
+}

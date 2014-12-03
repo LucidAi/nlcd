@@ -63,6 +63,16 @@ function StoryTimespan(data, api, index, $scope) {
         }
     };
 
+
+    // $("#preset-range").on("click", function() {
+    //     // Get the min and max
+    //     // min = $(this).data("min")
+    //     // max = $(this).data("max")
+
+    //     // Change the focus chart range programatically
+    //     // chart.brushExtent([min, max]).update();
+    // });
+
     $scope.timespanData = this.timespanData;
     $scope.timespanOptions = this.timespanOptions;
 

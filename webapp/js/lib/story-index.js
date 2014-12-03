@@ -33,16 +33,18 @@ StoryIndex.prototype.Group = function(groupId) {
 
 StoryIndex.prototype.SelectItem = function(globalId) {
     var entity = this.GetItem(globalId);
-    var deselect = this.selected.length > 0 && (entity.gid == this.selected[0].gid);
+    var deselect = this.selected.length > 0 && (globalId == null || entity.gid == this.selected[0].gid);
+
+    for (var i in this.selected)
+        this.selected[i].isSelected = false;
+    for (var i in this.related)
+        this.related[i].isRelated = false;
+    this.selected = deselect ? [] : [entity];
+    
     if (entity) {
-        for (var i in this.selected)
-            this.selected[i].isSelected = false;
-        for (var i in this.related)
-            this.related[i].isRelated = false;
-        this.selected = deselect ? [] : [entity];
         entity.isSelected = !deselect;
         this.related = [];
-        if (!deselect)
+        if (!deselect) {
             for (var groupId in entity.ref) {
                 var groupReferences = entity.ref[groupId];
                 for (var i in groupReferences) {
@@ -51,9 +53,10 @@ StoryIndex.prototype.SelectItem = function(globalId) {
                     this.related.push(related);
                 }
             }
+        }
     }
-    console.log(this.related);
-    return entity;
+
+    return this.related;
 }
 
 

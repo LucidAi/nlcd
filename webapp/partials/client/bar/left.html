@@ -6,12 +6,20 @@
     </div>
     <div id="LeftPanel_2" class="BarPanel LeftBarPanel">
         <div id="TimespanComponent" class="Component">
-            <nvd3 options="timespanOptions" data="timespanData"></nvd3>
+            <nvd3
+                options="timespanOptions"
+                data="timespanData"
+                api="api"
+                events="timespanEvents">
+            </nvd3>
         </div>
     </div>
     <div id="LeftPanel_3" class="BarPanel LeftBarPanel">
         <div id="HeatmapComponent" class="Component">
-            <code>heatmap.html</code>
+            <div id="HeatmapCanvas"></div>
+            <button id="HeatmapCanvas_Prev" type="button" class="btn btn-default btn-sm">Prev</button>
+            <button type="button" class="btn btn-default btn-sm">Reset</button>
+            <button id="HeatmapCanvas_Next" type="button" class="btn btn-default btn-sm">Next</button>
         </div>
     </div>
 </div>

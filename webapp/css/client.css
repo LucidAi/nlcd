@@ -84,7 +84,7 @@ rect {
 }*/
 
 #relatedTabsContainer {
-  
+
   margin-top:17px;
 
   -webkit-box-shadow: inset 2px 0px 31px -3px #EDEDED;
@@ -112,7 +112,7 @@ rect {
   border: 1px #EAEAEA solid;
   border-radius: 3px;
   height: 300px;
-  
+
 }
 
 #storyNetwork {
@@ -150,7 +150,7 @@ rect {
 
   border-bottom: 1px #EAEAEA solid;
   padding-bottom: 4px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 
 }
 

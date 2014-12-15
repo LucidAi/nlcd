@@ -13,8 +13,13 @@ function StoryApi(data) {
      */
 
     this.data = data;
-    this.dateAPI = new DateAPI(data, this);
 
+    for (var i in this.data.nodes)
+        if (this.data.nodes[i].sources.length > 0)
+            this.data.nodes[i].sources = [this.data.nodes[i].sources[0]];
+
+
+    this.dateAPI = new DateAPI(data, this);
 }
 
 

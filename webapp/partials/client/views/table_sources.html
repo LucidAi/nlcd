@@ -1,47 +1,64 @@
 <table class="table table-condensed table-striped table-bordered table-hover">
     <thead>
-    <tr>
-        <th ng-click="tableAPI.OrderBy('source', 'name')" style="cursor:pointer;">
-            Source
-                <span ng-show="tableAPI.sort.sourceP == 'name'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
-                </span>
-        </th>
-        <th ng-click="tableAPI.OrderBy('source', 'ref.article.length')" style="cursor:pointer;">
-            Articles
-                <span ng-show="tableAPI.sort.sourceP == 'ref.article.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
-                </span>
-        </th>
-        <th ng-click="tableAPI.OrderBy('source', 'ref.author.length')" style="cursor:pointer;">
-            Authors
-                <span ng-show="tableAPI.sort.sourceP == 'ref.author.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
-                </span>
-        </th>
-    </tr>
+        <tr>
+            <th ng-click="tableAPI.OrderBy('source', 'isRelated', true)" style="cursor:pointer;"
+                class="tip-tooltip" data-placement="top" title="Sort by relation to currently selected entity (marked red)">
+                <i class="glyphicon glyphicon-asterisk"></i>
+            </th>
+            <th ng-click="tableAPI.OrderBy('source', 'name')" style="cursor:pointer;">
+                <small>Source
+                    <i class="glyphicon glyphicon-link"></i>
+                    <span ng-show="tableAPI.sort.sourceP == 'name'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
+                    </span>
+                </small>
+            </th>
+            <th ng-click="tableAPI.OrderBy('source', 'ref.article.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by articles">
+                <small>
+                    <i class="glyphicon glyphicon-file"></i>
+                    <span ng-show="tableAPI.sort.sourceP == 'ref.article.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
+                    </span>
+                </small>
+            </th>
+            <th ng-click="tableAPI.OrderBy('source', 'ref.author.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by authors">
+                <small>
+                    <i class="glyphicon glyphicon-user"></i>
+                    <span ng-show="tableAPI.sort.sourceP == 'ref.author.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.sourceR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.sourceR"></span>
+                    </span>
+                </small>
+            </th>
+        </tr>
     </thead>
-    <tbody>
-    <tr ng-repeat="entity in sources | filter : {name: filterQuery} | orderBy : tableAPI.sort.sourceP : tableAPI.sort.sourceR"
-        ng-class="{danger: entity.isSelected, info: entity.isRelated}">
-        <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="TODO" style="cursor:pointer;">
+    <tbody class="entity-table">
+        <tr ng-repeat="entity in sources | filter : {name: filterQuery} | orderBy : tableAPI.sort.sourceP : tableAPI.sort.sourceR"
+            ng-class="{danger: entity.isSelected, info: entity.isRelated}">
+            <td>
+                <a ng-show="entity.isRelated"  class="tip-tooltip" data-placement="left" title="Idicates that this source is related to curretly selected entity">
+                    <i class="glyphicon glyphicon-asterisk"></i>
+                </a>
+            </td>
+            <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="Click to highlight related entities" style="cursor:pointer;">
                 <span>
                     {{entity.name}}
                 </span>
-        </td>
-        <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            </td>
+            <td class="tip-tooltip" data-placement="top" title="{{entity.ref.article.length||'0'}} articles at this source are related to the main article" style="cursor:pointer;">
                 <span>
-                    {{entity.ref.article.length}}
+                    {{entity.ref.article.length||"0"}}
                 </span>
-        </td>
-        <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            </td>
+            <td class="tip-tooltip" data-placement="top" title="{{entity.ref.author.length||'0'}} authors from this source are related to the main article" style="cursor:pointer;">
                 <span>
-                    {{entity.ref.author.length}}
+                    {{entity.ref.author.length||"0"}}
                 </span>
-        </td>
-    </tr>
+            </td>
+        </tr>
     </tbody>
 </table>

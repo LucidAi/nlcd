@@ -1,43 +1,60 @@
-<table class="table table-condensed table-striped table-bordered table-hover">
+<table class="table table-condensed table-striped table-bordered table-hover entity-table">
     <thead>
         <tr>
+            <th ng-click="tableAPI.OrderBy('author', 'isRelated', true)" style="cursor:pointer;"
+                class="tip-tooltip" data-placement="top" title="Sort by relation to currently selected entity (marked red)">
+                <i class="glyphicon glyphicon-asterisk"></i>
+            </th>
             <th ng-click="tableAPI.OrderBy('author', 'name')" style="cursor:pointer;">
-                Author
-                <span ng-show="tableAPI.sort.authorP == 'name'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
-                </span>
+                <small>Author
+                    <i class="glyphicon glyphicon-user"></i>
+                    <span ng-show="tableAPI.sort.authorP == 'name'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                    </span>
+                </small>
             </th>
-            <th ng-click="tableAPI.OrderBy('author', 'ref.source.length')" style="cursor:pointer;">
-                Sources
-                <span ng-show="tableAPI.sort.authorP == 'ref.source.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
-                </span>
+            <th ng-click="tableAPI.OrderBy('author', 'ref.source.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by sources">
+                <small>
+                    <i class="glyphicon glyphicon-link"></i>
+                    <span ng-show="tableAPI.sort.authorP == 'ref.source.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                    </span>
+                </small>
             </th>
-            <th ng-click="tableAPI.OrderBy('author', 'ref.article.length')" style="cursor:pointer;">
-                Articles
-                <span ng-show="tableAPI.sort.authorP == 'ref.article.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
-                </span>
+            <th ng-click="tableAPI.OrderBy('author', 'ref.article.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by articles">
+                <small>
+                    <i class="glyphicon glyphicon-file"></i>
+                    <span ng-show="tableAPI.sort.authorP == 'ref.article.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.authorR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.authorR"></span>
+                    </span>
+                </small>
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="entity-table">
         <tr ng-repeat="entity in authors | filter : {name: filterQuery} | orderBy : tableAPI.sort.authorP : tableAPI.sort.authorR"
             ng-class="{danger: entity.isSelected, info: entity.isRelated}">
-            <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="TODO" style="cursor:pointer;">
+            <td>
+                <a ng-show="entity.isRelated" class="tip-tooltip" data-placement="left" title="Idicates that {{entity.name|titleCase}} is related to curretly selected entity">
+                    <i class="glyphicon glyphicon-asterisk"></i>
+                </a>
+            </td>
+            <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="Click to highlight related entities" style="cursor:pointer;">
                 <span>
-                    {{entity.name}}
+                    {{entity.name|titleCase}}
                 </span>
             </td>
-            <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            <td class="tip-tooltip" data-placement="top" title="Appears in {{entity.ref.source.length||'0'}} related sources" style="cursor:pointer;">
                 <span>
                     {{entity.ref.source.length}}
                 </span>
             </td>
-            <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            <td class="tip-tooltip" data-placement="top" title="Appears in {{entity.ref.article.length||'0'}} related articles" style="cursor:pointer;">
                 <span>
                     {{entity.ref.article.length}}
                 </span>

@@ -1,47 +1,73 @@
-<table class="table table-condensed table-striped table-bordered table-hover">
+<table class="table table-condensed table-striped table-bordered table-hover entity-table">
     <thead>
-    <tr>
-        <th ng-click="tableAPI.OrderBy('article', 'name')" style="cursor:pointer;">
-            Article
-                <span ng-show="tableAPI.sort.articleP == 'name'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
-                </span>
-        </th>
-        <th ng-click="tableAPI.OrderBy('article', 'ref.source.length')" style="cursor:pointer;">
-            Sources
-                <span ng-show="tableAPI.sort.articleP == 'ref.source.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
-                </span>
-        </th>
-        <th ng-click="tableAPI.OrderBy('article', 'ref.article.length')" style="cursor:pointer;">
-            Authors
-                <span ng-show="tableAPI.sort.articleP == 'ref.article.length'">
-                    <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
-                    <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
-                </span>
-        </th>
-    </tr>
+        <tr>
+            <th ng-click="tableAPI.OrderBy('article', 'isRelated', true)" style="cursor:pointer;"
+            class="tip-tooltip" data-placement="top" title="Sort by relation to currently selected entity (marked red)">
+                <i class="glyphicon glyphicon-asterisk"></i>
+            </th>
+            <th ng-click="tableAPI.OrderBy('article', 'name')" style="cursor:pointer;">
+                <small>
+                    Article
+                    <i class="glyphicon glyphicon-file"></i>
+                    <span ng-show="tableAPI.sort.articleP == 'name'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
+                    </span>
+                </small>
+            </th>
+            <th ng-click="tableAPI.OrderBy('article', 'ref.source.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by sources">
+                <small>
+                    <i class="glyphicon glyphicon-link"></i>
+                    <span ng-show="tableAPI.sort.articleP == 'ref.source.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
+                    </span>
+                </small>
+            </th>
+            <th ng-click="tableAPI.OrderBy('article', 'ref.author.length')"
+                style="cursor:pointer;width:42px;" class="tip-tooltip" data-placement="top" title="Sort by authors">
+                <small>
+                    <i class="glyphicon glyphicon-user"></i>
+                    <span ng-show="tableAPI.sort.articleP == 'ref.author.length'">
+                        <span class="glyphicon glyphicon-chevron-down" ng-show="tableAPI.sort.articleR"></span>
+                        <span class="glyphicon glyphicon-chevron-up" ng-show="!tableAPI.sort.articleR"></span>
+                    </span>
+                </small>
+            </th>
+        </tr>
     </thead>
-    <tbody>
-    <tr ng-repeat="entity in articles | filter : {name: filterQuery} | orderBy : tableAPI.sort.articleP : tableAPI.sort.articleR"
-        ng-class="{danger: entity.isSelected, info: entity.isRelated}">
-        <td ng-click="SelectEntity(entity.gid)" class="tip-tooltip" data-placement="left" title="TODO" style="cursor:pointer;">
+    <tbody class="entity-table">
+        <tr ng-repeat="entity in articles | filter : {name: filterQuery} | orderBy : tableAPI.sort.articleP : tableAPI.sort.articleR"
+            ng-class="{danger: entity.isSelected, info: entity.isRelated}">
+            <td>
+                <a ng-show="entity.isRelated"  class="tip-tooltip" data-placement="left" title="Idicates that this article is related to curretly selected entity">
+                    <i class="glyphicon glyphicon-asterisk"></i>
+                </a>
+            </td>
+            <td ng-click="SelectEntity(entity.gid)"
+                class="pop-over"
+                data-placement="left"
+                title="{{entity.name}}"
+                data-content="{{entity.RenderPopOver()}}"
+                style="cursor:pointer;">
+                <a href="{{entity.extra.url}}" class="tip-tooltip" data-placement="left" title="Read full article" style="cursor:pointer;">
+                    <i class="glyphicon glyphicon-link"></i>
+                </a>
                 <span>
-                    {{entity.name}}
+                    {{entity.name|cut:false:24:'...'}}
                 </span>
-        </td>
-        <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            </td>
+            <td class="tip-tooltip" data-placement="left" title="FIXME:Referenced in {{entity.ref.source.length||'0'}} sources" style="cursor:pointer;">
                 <span>
-                    {{entity.ref.source.length}}
+                    {{entity.ref.source.length||"0"}}
                 </span>
-        </td>
-        <td class="tip-tooltip" data-placement="top" title="TODO" style="cursor:pointer;">
+            </td>
+            <td class="tip-tooltip" data-placement="left" title="{{entity.ref.author.length||'0'}} authors" style="cursor:pointer;">
                 <span>
-                    {{entity.ref.author.length}}
+                    {{entity.ref.author.length||"0"}}
                 </span>
-        </td>
-    </tr>
+            </td>
+        </tr>
     </tbody>
 </table>

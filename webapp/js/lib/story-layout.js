@@ -8,23 +8,25 @@ function TableAPI () {
 
     this.sort = {
 
-        articleR:   false,
-        articleP:   "name",
+        articleR:   true,
+        articleP:   "isRelated",
 
-        sourceR:    false,
-        sourceP:    "name",
+        sourceR:    true,
+        sourceP:    "isRelated",
 
-        authorR:    false,
-        authorP:    "name"
+        authorR:    true,
+        authorP:    "isRelated"
 
     };
 
 }
 
-TableAPI.prototype.OrderBy = function(table, predicate) {
+TableAPI.prototype.OrderBy = function(table, predicate, alwaysTrue) {
     if (this.sort[table + "P"] == predicate) {
         this.sort[table + "R"] = !this.sort[table + "R"];
     }
+    if (Boolean(alwaysTrue))
+        this.sort[table + "R"] = true;
     this.sort[table + "P"] = predicate;
 };
 
@@ -43,11 +45,21 @@ function StoryLayout() {
 
     // Init tool-tips
     $("body").tooltip({
-        "delay"         : 1,
+        "delay"         : {"show": 0, "hide": 0 },
         "container"     : "body",
         "trigger"       : "hover",
         "animation"     : true,
         "selector"      : ".tip-tooltip"
+    });
+
+    // Init pop-overs
+    $("body").popover({
+        "delay"         : {"show": 0, "hide": 0},
+        "container"     : "body",
+        "trigger"       : "hover",
+        "animation"     : true,
+        "html"          : true,
+        "selector"      : ".pop-over"
     });
 
     // Init table API functions
@@ -103,3 +115,6 @@ StoryLayout.prototype.AddComponent = function (component, placeId, widthFunc, he
         component.Resize(placeId, place, width, height);
     });
 };
+
+
+StoryLayout.prototype.Date2Str = d3.time.format("%b %d, %Y");

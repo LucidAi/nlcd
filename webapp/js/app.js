@@ -20,26 +20,33 @@ var app = angular.module("MdApp", ["ngRoute", "ngSanitize", "nvd3"])
 }]);
 
 
+angular.module("MdApp").filter("cut", function () {
+    return function (value, wordwise, max, tail) {
+        if (!value) return "";
 
-// angular.module("ng").filter("cut", function () {
-//     return function (value, wordwise, max, tail) {
-//         if (!value) return "";
+        max = parseInt(max, 10);
+        if (!max) return value;
+        if (value.length <= max) return value;
 
-//         max = parseInt(max, 10);
-//         if (!max) return value;
-//         if (value.length <= max) return value;
+        value = value.substr(0, max);
+        if (wordwise) {
+            var lastspace = value.lastIndexOf(' ');
+            if (lastspace != -1) {
+                value = value.substr(0, lastspace);
+            }
+        }
 
-//         value = value.substr(0, max);
-//         if (wordwise) {
-//             var lastspace = value.lastIndexOf(' ');
-//             if (lastspace != -1) {
-//                 value = value.substr(0, lastspace);
-//             }
-//         }
+        return value + (tail || " ...");
+    };
+});
 
-//         return value + (tail || " ...");
-//     };
-// });
+
+angular.module("MdApp").filter("titleCase", function() {
+    return function(input) {
+        input = input || "";
+        return input.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    };
+})
 
 
 // angular.module("ng")
@@ -50,25 +57,24 @@ var app = angular.module("MdApp", ["ngRoute", "ngSanitize", "nvd3"])
 //     }]);
 
 
-//String.prototype.toTitleCase = function () {
-//    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-//};
-//
-//
-//String.prototype.CutStr =  function (value, wordwise, max, tail) {
-//    if (!value) return "";
-//
-//    max = parseInt(max, 10);
-//    if (!max) return value;
-//    if (value.length <= max) return value;
-//
-//    value = value.substr(0, max);
-//    if (wordwise) {
-//        var lastspace = value.lastIndexOf(' ');
-//        if (lastspace != -1) {
-//            value = value.substr(0, lastspace);
-//        }
-//    }
-//
-//    return value + (tail || " ...");
-//};
+String.prototype.ToTitleCase = function () {
+   return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+};
+
+
+String.prototype.CutStr =  function (wordwise, max, tail) {
+
+   max = parseInt(max, 10);
+   if (!max) return this;
+   if (this.length <= max) return this;
+
+   var value = this.substr(0, max);
+   if (wordwise) {
+       var lastspace = value.lastIndexOf(' ');
+       if (lastspace != -1) {
+           value = value.substr(0, lastspace);
+       }
+   }
+
+   return value + (tail || " ...");
+};

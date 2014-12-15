@@ -5,7 +5,7 @@
 /*   */
 
 .Component {
-    border: black 1px solid;
+    /*border: black 1px solid;*/
     height:236px;
     margin-bottom: 16px;
 }
@@ -41,11 +41,47 @@
     margin-right: 0;
     margin-left:  0;
     -webkit-box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
-    -moz-box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
-    box-shadow: 0px 4px 20px 0px rgba(222,222,222,1);
+    -moz-box-shadow:    0px 4px 20px 0px rgba(222,222,222,1);
+    box-shadow:         0px 4px 20px 0px rgba(222,222,222,1);
 }
 
 #HeatmapComponent {
     padding:8px;
     /*background: #eee;*/
+}
+
+#FooterComponent {
+
+}
+
+.TableComponent {
+    -webkit-box-shadow: inset 0px -8px 19px -9px rgba(174,174,174,1);
+    -moz-box-shadow:    inset 0px -8px 19px -9px rgba(174,174,174,1);
+    box-shadow:         inset 0px -8px 19px -9px rgba(174,174,174,1);
+    border:             solid 1px #EEEEEE;
+}
+
+.TableComponent tbody {
+    /*font-family: "Gentium Book Basic", Georgia, Cambria, "Times New Roman", Times,serif;*/
+    font-weight: normal;
+}
+
+
+.entity-table {
+    font-size: 12px;
+}
+
+.popover {
+    max-width: none;
+    width: 450px;
+}
+
+.MdSerif {
+    font-family: "Gentium Book Basic", Georgia, Cambria, "Times New Roman", Times,serif;
+}
+
+
+.cal-heatmap-container rect.highlight {
+    stroke: #7777FF;
+    stroke-width: 1.5;
 }

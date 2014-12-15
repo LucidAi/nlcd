@@ -1,61 +1,30 @@
 <div id="DocumentContentTitle">
-  <h3>
-
-
-    <a target="_blank"
-       href="{{central.url}}"
-       class="tip-tooltip"
-       data-toggle="tooltip"
-       data-placement="left"
-       title="Open Original">
-      <sup class="vertical-align:super;">
-        <span style="font-size:12px;"
-              class="glyphicon glyphicon-link "></span>
-      </sup>
-    </a>
-
-    <span ng-repeat="chunk in meta.markup.title.taggedText"
-          ng-class="{taggedTextPassive: !chunk.tagged, taggedTextActive: chunk.tagged && !chunk.isSelected, taggedTextSelected: chunk.tagged && chunk.isSelected}"
-          ng-click="TextSelection(chunk, chunk.references)"><span class="text-font-serif-bold" style="font-size:32px;">{{chunk.text}}</span></span>
-
-  </h3>
-
+    <h2 class="MdSerif">
+        <a target="_blank"
+           href="{{central.url}}"
+           class="tip-tooltip"
+           data-toggle="tooltip"
+           data-placement="left"
+           title="Open original">
+           <span class="glyphicon glyphicon-link "></span>
+        </a>
+        {{central.title}}
+    </h2>
 </div>
 
 
-<!-- AUTHOR -->
-<div id="DocuementContentByline">
-    <span style="font-size:12px;" class="text-muted"><span class="glyphicon glyphicon-user"></span> </span>
-    <a ng-repeat="author in central.authors"
-       class="author-tag tip-tooltip"
-       data-toggle="tooltip"
-       data-placement="left"
-       title="Select Articles By This Author">
-      {{author.toTitleCase()}}
-    </a>
+<div id="DocuementContentByline" class="MdSerif">
+    <span ng-show="central.sources.length">{{central.sources[0]}}<br/></span>
+    <span ng-show="central.authors.length">by {{central.authors.join(", ").ToTitleCase()}}<br/></span>
+    <span ng-show="central.pubDatePretty">published on {{central.pubDatePretty}}<br/></span>
+    <br/>
 </div>
 
-
-<!-- SOURCE -->
-<div id="DocuementContentSource">
-  <span style="font-size:12px;" class="text-muted"><span class="glyphicon glyphicon-bullhorn"></span></span>
-  <a class="tip-tooltip"
-     data-toggle="tooltip"
-     data-placement="left"
-     title="Select Articles From This Source">
-    {{central.sources[0]}}
-  </a>
-</div>
-
-
-<!-- id="CentralDocumentText" -->
-<!--  <span ng-show="chunk.tagged" class="label label-warning">{{chunk.references.length}}</span></span> -->
 
 <div>
 
-  <p ng-repeat="paragraphFragments in bodyFragments" class="text-font-serif">
-    <span ng-repeat="fragment in paragraphFragments" ng-class="{taggedTextPassive: !fragment.extra.tagged, taggedTextActive: fragment.extra.tagged && !fragment.isSelected && !fragment.isRelated, taggedTextSelected: fragment.extra.tagged && fragment.isSelected, taggedTextRelated: fragment.extra.tagged && fragment.isRelated}" style="font-size:18px;"><span class="tip-tooltip" ng-show="fragment.extra.tagged" data-toggle="tooltip" data-placement="left" title="TODO" ng-click="SelectEntity(fragment.gid)">{{fragment.name}} </span><span ng-show="!fragment.extra.tagged">{{fragment.name}}</span><span ng-show="fragment.extra.tagged"></span><span ng-show="fragment.extra.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">{{fragment.ref.article.length}}</span></span>
-  </p>
+    <p ng-repeat="paragraphFragments in bodyFragments" class="text-font-serif">
+        <span ng-repeat="fragment in paragraphFragments" ng-class="{taggedTextPassive: !fragment.extra.tagged, taggedTextActive: fragment.extra.tagged && !fragment.isSelected && !fragment.isRelated, taggedTextSelected: fragment.extra.tagged && fragment.isSelected, taggedTextRelated: fragment.extra.tagged && fragment.isRelated}" style="font-size:18px;"><span class="pop-over" data-content="{{fragment.RenderPopOver()}}" id="fragment_{{fragment.extra.taggedCounter}}" title="Fragment #{{fragment.extra.taggedCounter}}" ng-show="fragment.extra.tagged" data-placement="top" ng-click="SelectEntity(fragment.gid)">{{fragment.name}} </span><span ng-show="!fragment.extra.tagged">{{fragment.name}}</span><span ng-show="fragment.extra.tagged"></span><span ng-show="fragment.extra.tagged" class="text-normal-sans" style="font-size:9px;vertical-align:super;">{{fragment.ref.article.length}}</span></span>
+    </p>
 
 </div>
-

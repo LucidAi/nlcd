@@ -9,13 +9,19 @@ var app = angular.module("MdApp", ["ngRoute", "ngSanitize", "nvd3"])
     .config(["$routeProvider", "$locationProvider",
     function($routeProvider, $locationPrvioder) {
 
-        $routeProvider.when("/", {
-             templateUrl:   "/webapp/partials/client.html",
-             controller:    "MdClientController"
+        $routeProvider.when("/track", {
+             templateUrl:   "/webapp/partials/track.html",
+             controller:    "LucidAITrackC"
 
         });
 
-        $routeProvider.otherwise({redirectTo: "/"});
+        $routeProvider.when("/search", {
+             templateUrl:   "/webapp/partials/search.html",
+             controller:    "LucidAISearchC"
+
+        });
+
+        $routeProvider.otherwise({redirectTo: "/track"});
 
 }]);
 

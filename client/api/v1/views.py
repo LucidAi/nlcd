@@ -9,6 +9,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 from client.api.decorators import nlcd_api_call
 
+from husky.tpas import create_api
+
+
+with open("conf/dev.json", "rb") as fl:
+    nlcd_config = json.load(fl)
+
+cse_api = create_api(nlcd_config["nlcd"]["tpas"]["api.GoogleCSE"])
+
 
 @csrf_exempt
 @nlcd_api_call
@@ -20,3 +28,10 @@ def get_test_graph(request):
         graph = json.load(i_fl)
 
     return graph
+
+
+@csrf_exempt
+@nlcd_api_call
+def tpas(request):
+
+    return {}

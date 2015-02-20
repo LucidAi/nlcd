@@ -2,8 +2,8 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 # Import Google APIs
-from husky.api.google import CseAPI
-from husky.api.google import CseError
+from husky.tpas.google import CseAPI
+from husky.tpas.google import CseError
 
 API_ID_2_API = {
     "api.GoogleCSE": CseAPI,

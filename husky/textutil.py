@@ -229,7 +229,7 @@ class TextUtil(object):
 
         min_len = max(len(query_text) * min_threshold, min_m_size)
         max_len = len(query_text) * max_threshold
-        
+
         mm = fuzzy_pattern.findall(text)
         matches = [m for m in mm if min_len < len(m) < max_len]
 
@@ -334,6 +334,5 @@ class TextUtil(object):
                                                  references=found_refs,
                                                  extra_attr={"ratio": ratio})
                     paragraph_markup.add_ref(ref_object)
-
 
         return markup

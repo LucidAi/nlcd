@@ -11,4 +11,5 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = patterns("client.api.v1.views",
     url(r"get_test_graph/$", "get_test_graph", name="get_test_graph"),
+    url(r"tpas/$",           "tpas",           name="tpas"),
 )

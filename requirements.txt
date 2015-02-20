@@ -1,6 +1,6 @@
 parsedatetime
 scikit-learn
-readability
+readability-lxml
 jsonpath-rw
 newspaper
 grequests

@@ -3,8 +3,8 @@
  */
 
 
-app.controller("MdClientController", ["$scope", "$rootScope", "$location", "MdApi",
-    function ($scope, $rootScope, $location, MdApi) {
+app.controller("LucidTrackC", ["$scope", "$rootScope", "$location", "LucidAPIProvider",
+    function ($scope, $rootScope, $location, LucidAPIProvider) {
 
         // Get node ID from URL parameters.
         var graphId = $location.search().g;  //
@@ -21,7 +21,7 @@ app.controller("MdClientController", ["$scope", "$rootScope", "$location", "MdAp
         var storyHeatmap;
         var layout;
 
-        MdApi.getTestGraph(graphId).success(function(response) {
+        LucidAPIProvider.getTestGraph(graphId).success(function(response) {
 
             var data        = response.data;                                    // unpack data
             storyApi        = new StoryApi(data);                               // create API to story data

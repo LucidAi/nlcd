@@ -1,0 +1,48 @@
+name: lucid
+stage: alpha
+version: 0.2.1-proto-alpha
+
+build:
+    root        : ./docker/build/alpha
+
+deploy:
+    branch                      : alpha
+    host                        : 162.243.42.148
+    hostname                    : lucid.ai
+    root                        : /home/docker/lucid
+    path                        : /home/docker/lucid/app
+    repository                  : https://github.com/LucidAi/LucidAi.github.io.git
+    user                        : root
+
+webapp:
+
+    service:
+        module                  : nlcd
+        debug                   : False
+        django_log              : /home/docker/lucid/log/django.log
+        lucid_api_log           : /home/docker/lucid/log/lucid.api.log
+
+    nginx:
+        port                    : 80
+        worker_connections      : 1024
+        worker_processes        : 2
+        server_name             : localhost
+        access_log              : /home/docker/lucid/log/nginx.access.log
+        error_log               : /home/docker/lucid/log/nginx.error.log
+
+    uwsgi:
+        max_requests            : 1024
+        uwsgi_log               : /home/docker/lucid/log/uwsgi.log
+        processes               : 2
+        threads                 : 4
+
+credentials:
+    husky.tpas.GoogleAPI:
+        api_key                 : "AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU"
+        engine_id               : "006963090954080588802:tttidla4was"
+    husky.tpas.FarooAPI:
+        api_key                 : "EGVmK3yM0zipx6HYsUhYPgq916I_"
+    husky.tpas.BingAPI:
+        api_key                 : "L7j9aAYhkcKYZMZ4Zd0VoRFgRHrEATMK3uG90mJ9evk="
+    husky.tpas.YandexAPI:
+        api_key                 : ""

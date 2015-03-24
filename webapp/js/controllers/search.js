@@ -3,14 +3,37 @@
  */
 
 
-app.controller("LucidAISearchC", ["$scope", "$rootScope", "$location", "LucidAIApi",
-    function ($scope, $rootScope, $location, LucidAIApi) {
+app.controller("LucidSearchC", ["$scope", "$rootScope", "$location", "LucidAPIProvider",
+    function ($scope, $rootScope, $location, LucidAPIProvider) {
 
-        // Get node ID from URL parameters.
-        var queryText = $location.search().qT;
+        $scope.compareAgainstEngine  = "";
+        $scope.textQuery             = "Vova Zaytsev";
 
-        LucidAIApi.tpas(queryText).success(function(response) {
-
+        LucidAPIProvider.tpasEngineList().success(function(response) {
+            $scope.engines = response.data.engines;
+            $scope.SetEngine("husky.tpas.GoogleAPI");
         });
+
+        $scope.SetEngine = function(eId) {
+            for (var i in $scope.engines) {
+                $scope.engines[i].selected = eId != $scope.engines[i].eId;
+            }
+            $scope.compareAgainstEngine = eId;
+        }
+
+        $scope.RunEngines = function() {
+            var selected = [];
+            for (var i in $scope.engines)
+                if ($scope.engines[i].selected)
+                    selected.push($scope.engines[i].eId);
+
+            console.log({
+                "selected": selected,
+                "compareAgainstEngine": $scope.compareAgainstEngine
+            });
+
+            LucidAPIProvider.tpasEngineCall($scope.textQuery, $scope.compareAgainstEngine, selected);
+
+        }
 
 }]);

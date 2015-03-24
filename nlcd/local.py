@@ -2,15 +2,17 @@
 # Author: Vova Zaytsev <zaytsev@usc.edu>
 
 import os
-import json
+import yaml
 
 
 def project_dir(dir_name):
     return os.path.join(os.path.dirname(__file__), "..", dir_name)\
         .replace("\\", "//")
 
-# with open(project_dir("conf/dev.json"), "rb") as fp:
-#     CONF = json.load(fp)
+NLCD_CONF = {}
+
+with open(project_dir("conf/local.yml"), "rb") as fp:
+    NLCD_CONF = yaml.load(fp)
 
 
 SECRET_KEY = "h8(e(u3#k)l802(4mfh^f&&jp!@p*s#98tf++l#z-e83(#$x@*"

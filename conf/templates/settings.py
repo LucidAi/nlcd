@@ -17,8 +17,8 @@ def project_dir(dir_name):
         .replace("\\", "//")
 
 SECRET_KEY      = "h8(e(u3#k)l802(4mfh^f&&jp!@p*s#98tf++l#z-e83(#$x@*"
-DEBUG           = {{DJANGO_DEBUG}}
-TEMPLATE_DEBUG  = {{DJANGO_DEBUG}}
+DEBUG           = {{webapp.service.debug}}
+TEMPLATE_DEBUG  = {{webapp.service.debug}}
 ALLOWED_HOSTS   = ["localhost"]
 
 
@@ -44,21 +44,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 
-ROOT_URLCONF = "{{APP}}.urls"
-WSGI_APPLICATION = "{{APP}}.wsgi.application"
-
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE":   "django.db.backends.postgresql_psycopg2",
-#         "NAME":     "{{DJANGO_DB_NAME}}",
-#         "USER":     "{{DJANGO_DB_USER}}",
-#         "PASSWORD": "{{DJANGO_DB_PASS}}",
-#         "HOST":     "{{DJANGO_DB_HOST}}",
-#         "PORT":     "{{DJANGO_DB_PORT}}",
-#     }
-# }
-
+ROOT_URLCONF = "{{webapp.service.module}}.urls"
+WSGI_APPLICATION = "{{webapp.service.module}}.wsgi.application"
 
 LANGUAGE_CODE   = "en-us"
 TIME_ZONE       = "America/Los_Angeles"
@@ -99,7 +86,7 @@ LOGGING = {
 
         "django-file": {
             "class":        "logging.handlers.RotatingFileHandler",
-            "filename":     "{{LOGGING_DJANGO_FILE}}",
+            "filename":     "{{webapp.service.django_log}}",
             "formatter":    "verbose",
             "backupCount":  32,
             "maxBytes":     1024 * 1024 * 128,
@@ -107,7 +94,7 @@ LOGGING = {
 
         "apilog-file": {
             "class":        "logging.handlers.RotatingFileHandler",
-            "filename":     "{{LOGGING_APILOG_FILE}}",
+            "filename":     "{{webapp.service.lucid_api_log}}",
             "formatter":    "verbose",
             "backupCount":  32,
             "maxBytes":     1024 * 1024 * 128,

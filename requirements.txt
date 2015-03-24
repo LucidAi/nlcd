@@ -16,3 +16,4 @@ django-filter
 markdown
 djangorestframework
 PyJWT
+pyyaml

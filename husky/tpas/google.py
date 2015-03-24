@@ -32,7 +32,7 @@ class CseAPI(object):
 
     @staticmethod
     def from_config(api_config):
-        api = CseAPI(key=api_config["googleApiKey"], engine_id=api_config["googleEngineId"])
+        api = CseAPI(key=api_config["api_key"], engine_id=api_config["engine_id"])
         api.config = GoogleApiConfig(api_config)
         return api
 

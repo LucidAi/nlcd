@@ -1,0 +1,12 @@
+credentials:
+    husky.tpas.GoogleAPI:
+        api_key                 : "AIzaSyCPgS44dQwte1_H5-AK_kAZIbLjrZSwXIU"
+        engine_id               : "006963090954080588802:tttidla4was"
+    husky.tpas.FarooAPI:
+        api_key                 : "EGVmK3yM0zipx6HYsUhYPgq916I_"
+    husky.tpas.BingAPI:
+        account_key             : "KvUxhsqNTslaNe3fBpKgl0c9c4nab+u3y+NkPG9Nesg"
+        customer_id             : "a0fc1874-cf3b-4035-87d7-59d5968057e0"
+    husky.tpas.YahooAPI:
+        consumer_key            : "dj0yJmk9TTFRQ0RXWXJNWUNNJmQ9WVdrOWJrcFBjWGwxTkdrbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1iOA--"
+        consumer_secret         : "d678330f83c7298d3f271f485cd040f2427ef20a"

@@ -4,7 +4,7 @@
 
 "use strict";
 
-app.factory("LucidAIApi", ["$http", "$location",
+app.factory("LucidAPIProvider", ["$http", "$location",
     function($http, $location) {
 
         return {
@@ -21,12 +21,25 @@ app.factory("LucidAIApi", ["$http", "$location",
             },
 
             //
-            tpas: function(queryText) {
+            tpasEngineList: function() {
                 return $http({
-                    url:    "/api/v1/tpas",
+                    url:    "/api/v1/tpas_engine_list",
                     method: "GET",
                     params: {
-                        "queryText": queryText
+
+                    }
+                });
+            },
+
+            //
+            tpasEngineCall: function(queryText, controlEngine, treatmentEngines) {
+                return $http({
+                    url:    "/api/v1/tpas_engine_call",
+                    method: "GET",
+                    params: {
+                        "queryText"         : queryText,
+                        "controlEngine"     : controlEngine,
+                        "treatmentEngines"  : treatmentEngines.join(",")
                     }
                 });
             }

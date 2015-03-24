@@ -10,6 +10,7 @@ from django.views.generic.base import RedirectView
 
 
 urlpatterns = patterns("client.api.v1.views",
-    url(r"get_test_graph/$", "get_test_graph", name="get_test_graph"),
-    url(r"tpas/$",           "tpas",           name="tpas"),
+    url(r"get_test_graph/$",    "get_test_graph",     name="get_test_graph"),
+    url(r"tpas_engine_call/$",  "tpas_engine_call",   name="tpas_engine_call"),
+    url(r"tpas_engine_list/$",  "tpas_engine_list",   name="tpas_engine_list"),
 )

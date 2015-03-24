@@ -5,28 +5,28 @@ Author: Vova Zaytsev <zaytsev@usc.edu>
 "use strict";
 
 
-var app = angular.module("MdApp", ["ngRoute", "ngSanitize", "nvd3"])
+var app = angular.module("LucidApp", ["ngRoute", "ngSanitize", "nvd3"])
     .config(["$routeProvider", "$locationProvider",
     function($routeProvider, $locationPrvioder) {
 
-        $routeProvider.when("/track", {
+        $routeProvider.when("/", {
              templateUrl:   "/webapp/partials/track.html",
-             controller:    "LucidAITrackC"
+             controller:    "LucidTrackC"
 
         });
 
         $routeProvider.when("/search", {
              templateUrl:   "/webapp/partials/search.html",
-             controller:    "LucidAISearchC"
+             controller:    "LucidSearchC"
 
         });
 
-        $routeProvider.otherwise({redirectTo: "/track"});
+        $routeProvider.otherwise({redirectTo: "/"});
 
 }]);
 
 
-angular.module("MdApp").filter("cut", function () {
+angular.module("LucidApp").filter("cut", function () {
     return function (value, wordwise, max, tail) {
         if (!value) return "";
 
@@ -47,7 +47,7 @@ angular.module("MdApp").filter("cut", function () {
 });
 
 
-angular.module("MdApp").filter("titleCase", function() {
+angular.module("LucidApp").filter("titleCase", function() {
     return function(input) {
         input = input || "";
         return input.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});

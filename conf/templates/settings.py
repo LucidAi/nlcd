@@ -19,7 +19,7 @@ def project_dir(dir_name):
 SECRET_KEY      = "h8(e(u3#k)l802(4mfh^f&&jp!@p*s#98tf++l#z-e83(#$x@*"
 DEBUG           = {{webapp.service.debug}}
 TEMPLATE_DEBUG  = {{webapp.service.debug}}
-ALLOWED_HOSTS   = ["localhost"]
+ALLOWED_HOSTS   = []
 
 
 INSTALLED_APPS = (

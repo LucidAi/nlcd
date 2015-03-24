@@ -65,3 +65,4 @@ log.txt
 .idea
 
 Dockerfile
+*.tar*

@@ -29,16 +29,21 @@ RUN git clone -b {{deploy.branch}} {{deploy.repository}} {{deploy.path}}
 RUN pip install -r {{deploy.path}}/requirements.txt
 
 # Create log root
-RUN {{webapp.logdir}}
+RUN mkdir {{webapp.logdir}}
 
 # Add nginx configs
+RUN rm /etc/nginx/sites-enabled/default
+RUN rm /etc/nginx/sites-available/default
 ADD {{build.root}}/conf/nginx.conf /etc/nginx/nginx.conf
 ADD {{build.root}}/conf/nginx-site.conf /etc/nginx/sites-available/lucid.conf
 ADD {{build.root}}/conf/nginx-site.conf /etc/nginx/sites-enabled/lucid.conf
 
 # Add UWSGI configs
-ADD {{build.root}}/conf/uwsgi.conf /etc/uwsgi/apps-available/lucid.conf
-ADD {{build.root}}/conf/uwsgi.conf /etc/uwsgi/apps-enabled/lucid.conf
+ADD {{build.root}}/conf/uwsgi.ini /etc/uwsgi/apps-available/lucid.ini
+ADD {{build.root}}/conf/uwsgi.ini /etc/uwsgi/apps-enabled/lucid.ini
+
+# Add lucid app configs
+ADD {{build.root}}/conf/settings.py {{deploy.path}}/nlcd/settings.py
 
 # VOLUME ["/lucid_app"]
 

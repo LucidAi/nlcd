@@ -47,7 +47,8 @@ def build_container(stage="alpha"):
             o_fl.write(template.render(config))
     local("mv %s/conf/Dockerfile ./Dockerfile" % config["build"]["root"])
     local("echo '*' > %s/.gitignore" % config["build"]["root"])
-    local("docker build .")
+    local("docker build -t lucid_ai_image .")
+    local("docker save lucid_ai_image | pbzip2 -9 > lucid_ai_image.tar.bz2")
 
 
 

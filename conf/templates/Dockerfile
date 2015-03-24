@@ -45,10 +45,9 @@ ADD {{build.root}}/conf/uwsgi.ini /etc/uwsgi/apps-enabled/lucid.ini
 # Add lucid app configs
 ADD {{build.root}}/conf/settings.py {{deploy.path}}/nlcd/settings.py
 
-# VOLUME ["/lucid_app"]
-
 EXPOSE 80
 EXPOSE 443
 
-# CMD ["supervisord", "-n"]
-# CMD ["nginx"]
+CMD ["supervisord", "-n"]
+CMD ["service uwsgi start"]
+CMD ["service nginx start"]

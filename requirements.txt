@@ -17,4 +17,3 @@ markdown
 djangorestframework
 PyJWT
 pyyaml
-ouath2

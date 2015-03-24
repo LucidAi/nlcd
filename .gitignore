@@ -63,3 +63,5 @@ tests.json
 .fuse_hidden0000006d00000004
 log.txt
 .idea
+
+Dockerfile

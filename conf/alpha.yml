@@ -11,10 +11,12 @@ deploy:
     hostname                    : lucid.ai
     root                        : /home/docker/lucid
     path                        : /home/docker/lucid/app
-    repository                  : https://github.com/LucidAi/LucidAi.github.io.git
+    repository                  : https://github.com/LucidAi/nlcd.git
     user                        : root
 
 webapp:
+
+    logdir                      : /home/docker/lucid/log
 
     service:
         module                  : nlcd

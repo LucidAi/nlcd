@@ -25,7 +25,7 @@ ADD {{build.root}} {{deploy.root}}
 
 # Clone repository & install dependences
 RUN git clone -b {{deploy.branch}} {{deploy.repository}} {{deploy.path}}
-RUN rm {{deploy.path}}/.git
+RUN rm -rf {{deploy.path}}/.git
 RUN pip install -r {{deploy.path}}/requirements.txt
 
 # Create log root

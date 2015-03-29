@@ -48,4 +48,7 @@ ADD {{build.root}}/conf/settings.py {{deploy.path}}/nlcd/settings.py
 EXPOSE 80
 EXPOSE 443
 
-CMD ["{{deploy.path}}/run-docker.sh"]
+RUN service uwsgi restart
+RUN service nginx restart
+
+CMD ["supervisord", "-n"]

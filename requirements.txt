@@ -1,5 +1,4 @@
 parsedatetime
-scikit-learn
 readability-lxml
 jsonpath-rw
 newspaper

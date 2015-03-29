@@ -12,7 +12,6 @@ RUN apt-get install -y python-dev
 RUN apt-get install -y python-pip
 RUN apt-get install -y python-numpy
 RUN apt-get install -y python-scipy
-RUN apt-get install -y python-matplotlib
 RUN apt-get install -y python-oauth2
 RUN apt-get install -y libleveldb1
 RUN apt-get install -y libleveldb-dev
@@ -47,11 +46,10 @@ ADD {{build.root}}/conf/settings.py {{deploy.path}}/nlcd/settings.py
 
 # VOLUME ["/lucid_app"]
 
-EXPOSE 80
-EXPOSE 443
-
 RUN service uwsgi restart
 RUN service nginx restart
 
-# CMD ["supervisord", "-n"]
-# CMD nginx
+EXPOSE 80
+EXPOSE 443
+
+CMD ["supervisord", "-n"]

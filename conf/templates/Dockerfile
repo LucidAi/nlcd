@@ -25,6 +25,7 @@ ADD {{build.root}} {{deploy.root}}
 
 # Clone repository & install dependences
 RUN git clone -b {{deploy.branch}} {{deploy.repository}} {{deploy.path}}
+RUN rm {{deploy.repository}}/.git
 RUN pip install -r {{deploy.path}}/requirements.txt
 
 # Create log root
@@ -44,12 +45,7 @@ ADD {{build.root}}/conf/uwsgi.ini /etc/uwsgi/apps-enabled/lucid.ini
 # Add lucid app configs
 ADD {{build.root}}/conf/settings.py {{deploy.path}}/nlcd/settings.py
 
-# VOLUME ["/lucid_app"]
-
-RUN service uwsgi restart
-RUN service nginx restart
-
 EXPOSE 80
 EXPOSE 443
 
-CMD ["supervisord", "-n"]
+CMD ["{{deploy.path}}/run-docker.sh"]
